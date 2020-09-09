@@ -6,7 +6,9 @@ from appConfig import *
 
 import wtform_validator as forms
 
-app = Flask(__name__)
+app = Flask(__name__,template_folder="templates")
+app.jinja_env.trim_blocks = True
+app.jinja_env.lstrip_blocks = True
 # csrf = CSRFProtect(app)
 app.config.from_object(DefaultConfig)
 # mysql = MySQL(app)
@@ -15,18 +17,18 @@ app.config.from_object(DefaultConfig)
 @app.route('/', methods=['GET', 'POST'])
 def landing():
     title = "EhPlusMall"
-    return render_template('index.html',fname="Raphael", lname='Chia',title = title)
+    return render_template('shared/index.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    login_form = forms.LoginForm()
-    if login_form.validate_on_submit():
-        # res = log_con.verify_login(
-        #     mysql, login_form.username.data, login_form.password.data)
-        # print(res)
-        flash(login_form.password.data)
+    # login_form = forms.LoginForm()
+    # if login_form.validate_on_submit():
+    #     # res = log_con.verify_login(
+    #     #     mysql, login_form.username.data, login_form.password.data)
+    #     # print(res)
+    #     flash(login_form.password.data)
 
-    return render_template('login.html', form=login_form)
+    return render_template('logins/account_page.html')
 
 
 @app.route('/registration', methods=['GET', 'POST'])
