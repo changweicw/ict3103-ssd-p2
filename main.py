@@ -9,10 +9,14 @@ import wtform_validator as forms
 app = Flask(__name__)
 # csrf = CSRFProtect(app)
 app.config.from_object(DefaultConfig)
-mysql = MySQL(app)
+# mysql = MySQL(app)
 
 
 @app.route('/', methods=['GET', 'POST'])
+def landing():
+    title = "EhPlusMall"
+    return render_template('index.html',fname="Raphael", lname='Chia',title = title)
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     login_form = forms.LoginForm()
@@ -33,10 +37,6 @@ def registration():
         # return redirect(url_for('login'))
     return render_template('registration.html', form=registration_form)
 
-
-@app.route('/landing')
-def landing():
-    return 'Hello Landing'
 
 
 if __name__ == '__main__':

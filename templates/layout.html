@@ -1,10 +1,165 @@
-<!DOCTYPE html>
-<title>E-Commerce</title>
-<h1>I AM ALWAYS HERE</h1>
-{% with messages = get_flashed_messages() %} {% if messages %}
-<ul class="flashes">
-  {% for message in messages %}
-  <li>{{ message }}</li>
-  {% endfor %}
-</ul>
-{% endif %} {% endwith %} {% block body %}{% endblock %}
+﻿<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+  <!-- Basic page needs -->
+  <meta charset="utf-8">
+  <!--[if IE]>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <![endif]-->
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <title>{{title}}</title>
+  
+  <!-- Mobile specific metas  , -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Favicon  -->
+  <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+
+  <!-- Google Fonts -->
+  <link href='https://fonts.googleapis.com/css?family=PT+Sans:400,700italic,700,400italic' rel='stylesheet'
+    type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Roboto+Condensed:300,300i,400,400i,700,700i' rel='stylesheet'
+    type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Dosis:400,300,200,500,600,700,800' rel='stylesheet'
+    type='text/css'>
+
+  <!-- CSS Style -->
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" type="text/css" href="/static/css/bootstrap.min.css">
+
+  <!-- font-awesome & simple line icons CSS -->
+  <link rel="stylesheet" type="text/css" href="/static/css/font-awesome.css" media="all">
+  <link rel="stylesheet" type="text/css" href="/static/css/simple-line-icons.css" media="all">
+
+  <!-- owl.carousel CSS -->
+  <link rel="stylesheet" type="text/css" href="/static/css/owl.carousel.css">
+  <link rel="stylesheet" type="text/css" href="/static/css/owl.theme.css">
+  <link rel="stylesheet" type="text/css" href="/static/css/owl.transitions.css">
+
+  <!-- animate CSS  -->
+  <link rel="stylesheet" type="text/css" href="/static/css/animate.css" media="all">
+
+  <!-- flexslider CSS -->
+  <link rel="stylesheet" type="text/css" href="/static/css/flexslider.css">
+
+  <!-- jquery-ui.min CSS  -->
+  <link rel="stylesheet" type="text/css" href="/static/css/jquery-ui.css">
+
+  <!-- Revolution Slider CSS -->
+  <link href="/static/css/revolution-slider.css" rel="stylesheet">
+
+  <!-- style CSS -->
+  <link rel="stylesheet" type="text/css" href="/static/css/style.css" media="all">
+</head>
+
+<body class="cms-index-index cms-home-page">
+
+  <!--[if lt IE 8]>
+      <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+  <![endif]-->
+
+  <!-- mobile menu -->
+  {% include 'mobile-menu.html' %}
+  <!-- end mobile menu -->
+  <div id="page">
+
+
+    <!-- Header -->
+    {% include 'header.html' %}
+    <!-- end header -->
+
+    <!-- Navbar -->
+    {% include 'navbar.html' %}
+    <!-- end nav -->
+    {% block content %}{% endblock %}
+    <!-- Footer -->
+    {% include 'footer.html' %}
+    <!-- End Footer -->
+
+  </div>
+
+
+  <!-- JS -->
+
+  <!-- jquery js -->
+  <script src="/static/js/jquery.min.js"></script>
+
+  <!-- bootstrap js -->
+  <script src="/static/js/bootstrap.min.js"></script>
+
+
+  <!-- owl.carousel.min js -->
+  <script src="/static/js/owl.carousel.min.js"></script>
+
+  <!-- bxslider js -->
+  <script src="/static/js/jquery.bxslider.js"></script>
+
+  <!-- Slider Js -->
+  <script src="/static/js/revolution-slider.js"></script>
+
+  <!-- megamenu js -->
+  <script src="/static/js/megamenu.js"></script>
+  <script>
+    /* <![CDATA[ */
+    var mega_menu = '0';
+
+    /* ]]> */
+  </script>
+
+  <!-- jquery.mobile-menu js -->
+  <script src="/static/js/mobile-menu.js"></script>
+
+  <!--jquery-ui.min js -->
+  <script src="/static/js/jquery-ui.js"></script>
+
+  <!-- main js -->
+  <script src="/static/js/main.js"></script>
+
+  <!-- countdown js -->
+  <script src="/static/js/countdown.js"></script>
+
+  <!-- Revolution Slider -->
+  <script>
+    jQuery(document).ready(function () {
+      jQuery('.tp-banner').revolution({
+        delay: 9000,
+        startwidth: 1170,
+        startheight: 530,
+        hideThumbs: 10,
+
+        navigationType: "bullet",
+        navigationStyle: "preview1",
+
+        hideArrowsOnMobile: "on",
+
+        touchenabled: "on",
+        onHoverStop: "on",
+        spinner: "spinner4"
+      });
+    });
+  </script>
+
+  <!-- Hot Deals Timer 1-->
+  <script>
+    var dthen1 = new Date("12/25/20 11:59:00 PM");
+    start = "06/04/18 03:02:11 AM";
+    start_date = Date.parse(start);
+    var dnow1 = new Date(start_date);
+    if (CountStepper > 0)
+      ddiff = new Date((dnow1) - (dthen1));
+    else
+      ddiff = new Date((dthen1) - (dnow1));
+    gsecs1 = Math.floor(ddiff.valueOf() / 1000);
+
+    var iid1 = "countbox_1";
+    CountBack_slider(gsecs1, "countbox_1", 1);
+  </script>
+
+
+</body>
+
+
+</html>
