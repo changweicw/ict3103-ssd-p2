@@ -1,0 +1,20 @@
+{% extends "layout.html" %} {% block body %}
+
+<div>
+  <a href="{{ url_for('registration') }}">Register</a>
+  <a href="{{ url_for('login') }}">Login</a>
+</div>
+<form method="post">
+  {{ form.hidden_tag() }}
+  <div>
+    <p>Username</p>
+    {{ form.username }}
+  </div>
+  <div>
+    <p>Password</p>
+    {{ form.password }}
+  </div>
+  <input type="submit" value="Login" />
+</form>
+
+{% endblock %}
