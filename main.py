@@ -1,6 +1,7 @@
-from flask import Flask, render_template, redirect, url_for, flash, session
+from flask import Flask, render_template, redirect, url_for, flash, session, request
 from flask_mysqldb import MySQL
-from flask_wtf import CSRFProtect
+from flask_wtf import CSRFProtect,FlaskForm
+from wtforms import StringField,FileField,DecimalField
 
 from appConfig import DefaultConfig
 
@@ -15,7 +16,11 @@ app.jinja_env.lstrip_blocks = True
 app.config.from_object(DefaultConfig)
 mysql = MySQL(app)
 
-
+class publishForm(FlaskForm):
+    title = StringField("title")
+    desc = StringField("desc")
+    price = DecimalField("price")
+    files = FileField("files")
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -39,6 +44,12 @@ def login():
 
     return render_template('account/login.html')
 
+@app.route("/sell/publish", methods=['POST'])
+def publish():
+    # files = request.form.getlist("files")
+    files = request.files.getlist("files")
+    print(files)
+    return render_template('landing.html')
 
 @app.route('/registration', methods=['GET', 'POST'])
 def registration():
