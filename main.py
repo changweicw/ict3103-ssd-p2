@@ -4,6 +4,8 @@ from flask import Flask, render_template, redirect, url_for, flash
 from flask_mysqldb import MySQL
 from flask_wtf import CSRFProtect
 
+import re
+
 from appConfig import *
 
 import wtform_validator as forms
@@ -34,7 +36,10 @@ def login():
 def registration():
     registration_form = forms.RegistrationForm()
     if registration_form.validate_on_submit():
-        flash(registration_form.password.data)
+        emailRegex = "^(([^<>()\[\]\\.,;:\s@\"]+(\.[^<>()\[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$"
+        emailPat = re.compile(emailRegex)
+        passwordRegex = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-_]).{8,}$"
+        passwordPat = re.compile(passwordRegex)
         # return redirect(url_for('landing'))
     return render_template('registration.html', form=registration_form, src=src)
 

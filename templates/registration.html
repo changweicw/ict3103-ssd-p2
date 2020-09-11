@@ -31,8 +31,7 @@
 </form>
 
 {% endblock %} {% block javascript %}
-<script src="{{src}}static/js/validators.js"></script>
-<script>
+<!-- <script>
   $('#registration_form').submit(function (e) {
     e.preventDefault(); // avoid to execute the actual submit of the form.
     var enteredEmail = document.getElementById('email').value;
@@ -55,5 +54,5 @@
     //   success: function (data) {},
     // });
   });
-</script>
+</script> -->
 {% endblock %}
