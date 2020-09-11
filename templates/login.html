@@ -4,7 +4,7 @@
   <a href="{{ url_for('registration') }}">Register</a>
   <a href="{{ url_for('login') }}">Login</a>
 </div>
-<form method="post">
+<form method="post" id="login_form">
   {{ form.hidden_tag() }}
   <div>
     <p>Username</p>
@@ -14,7 +14,20 @@
     <p>Password</p>
     {{ form.password }}
   </div>
-  <input type="submit" value="Login" />
+  <button type="submit" value="Login">Login</button>
 </form>
 
+{% endblock %} {% block javascript %}
+<script>
+  $('#login_form').submit(function (e) {
+    e.preventDefault(); // avoid to execute the actual submit of the form.
+    var url = '/login';
+    $.ajax({
+      type: 'POST',
+      url: url,
+      data: form.serialize(), // serializes the form's elements.
+      success: function (data) {},
+    });
+  });
+</script>
 {% endblock %}
