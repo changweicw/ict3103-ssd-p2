@@ -16,6 +16,7 @@ app.jinja_env.lstrip_blocks = True
 # csrf = CSRFProtect(app)
 app.config.from_object(DefaultConfig)
 # login = LoginManager(app)
+# tesitng
 mysql = MySQL(app)
 
 src = "http://127.0.0.1:8080/"
