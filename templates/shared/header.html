@@ -21,7 +21,7 @@
                                 <a class="angle-icon" href="#">Settings</a>
                                 <ul class="dropdown-nav">
                                     <li><a href="/account">My Account</a></li>
-                                    <li><a href="checkout.html">Checkout</a></li>
+                                    <li><a href="/products/checkout">Checkout</a></li>
                                     <li><a href="/login">Login</a></li>
                                 </ul>
                             </li>
@@ -301,13 +301,17 @@
                         <div class="cart-info d-flex">
                             <div class="mini-cart-warp">
                                 <a href="#" class="count-cart">
-                                    <span>$20.00</span>
-                                    {% if cart_num is defined %}
-                                    {% if cart_num>0 %}
+                                    <span>$
+                                    {% if cart_price is defined and cart_price>0%}
+                                    {{cart_price}}
+                                    {% else %}
+                                    0.00
+                                    {% endif %}
+                                    </span>
+                                    {% if cart_num_items is defined and cart_num_items>0 %}
                                     <div id="cart_number"
                                         style="font-size: 12px;position:absolute;top:9px;left:-26px;right:auto;width:18px;height:18px;background:#4fb68d;color:#fff;line-height:18px;text-align:center;border-radius:50%;float:right">
-                                        {{cart_num}}</div>
-                                    {% endif %}
+                                        {{cart_num_items}}</div>
                                     {% endif %}
                                 </a>
 
@@ -349,7 +353,7 @@
                                         <h4 class="shop-total">Total : <span>$27.00</span></h4>
                                     </div>
                                     <div class="shopping-cart-btn text-center">
-                                        <a class="default-btn" href="checkout.html">checkout</a>
+                                        <a class="default-btn" href="/products/checkout">checkout</a>
                                     </div>
                                 </div>
                             </div>
@@ -468,7 +472,7 @@
                                 <ul>
                                     <li><a href="about.html">About Page</a></li>
                                     <li><a href="cart.html">Cart Page</a></li>
-                                    <li><a href="checkout.html">Checkout Page</a></li>
+                                    <li><a href="/products/checkout">Checkout Page</a></li>
                                     <li><a href="compare.html">Compare Page</a></li>
                                     <li><a href="login.html">Login & Regiter Page</a></li>
                                     <li><a href="my-account.html">Account Page</a></li>

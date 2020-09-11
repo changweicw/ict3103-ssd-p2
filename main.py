@@ -27,7 +27,7 @@ class publishForm(FlaskForm):
 def landing():
     title = "EhPlusMall"
     # return redirect("/shop/")
-    return render_template('landing.html',cart_num=18)
+    return render_template('landing.html')
 
 @app.route('/account',methods=['GET','POST'])
 def account():
@@ -44,12 +44,20 @@ def login():
 
     return render_template('account/login.html')
 
-@app.route("/sell/publish", methods=['POST'])
+@app.route("/sell/publish_listing", methods=['POST'])
 def publish():
     # files = request.form.getlist("files")
     files = request.files.getlist("files")
     print(files)
     return render_template('landing.html')
+
+@app.route('/sell/dashboard')
+def sell_dashboard():
+    return render_template('sell/sell_dashboard.html')
+
+@app.route('/products/checkout')
+def checkout():
+    return render_template('products/checkout.html')
 
 @app.route('/registration', methods=['GET', 'POST'])
 def registration():
@@ -59,9 +67,6 @@ def registration():
         # return redirect(url_for('login'))
     return render_template('registration.html', form=registration_form)
 
-@app.route('/sell/dashboard')
-def sell_dashboard():
-    return render_template('sell/sell_dashboard.html')
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=8080, debug=True)
