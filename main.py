@@ -21,7 +21,7 @@ mysql = MySQL(app)
 src = "http://127.0.0.1:8080/"
 
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/')
 def landing():
     title = "EhPlusMall"
     return render_template('shared/index.html')
