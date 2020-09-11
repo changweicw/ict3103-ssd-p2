@@ -13,49 +13,26 @@
                 <!--Right Start-->
                 <div class="col-lg-8 col-md-8 text-right">
                     <div class="header-right-nav">
-                        <ul class="res-xs-flex">
-                            <li class="after-n">
-                                <a href="compare.html"><i class="ion-ios-shuffle-strong"></i>Compare (0)</a>
-                            </li>
+                        <ul>
                             <li>
                                 <a href="/sell/dashboard"><i class="fas fa-money"></i>Sell</a>
                             </li>
+                            <li class="dropdown">
+                                <a class="angle-icon" href="#">Settings</a>
+                                <ul class="dropdown-nav">
+                                    <li><a href="/account">My Account</a></li>
+                                    <li><a href="checkout.html">Checkout</a></li>
+                                    <li><a href="/login">Login</a></li>
+                                </ul>
+                            </li>
                         </ul>
-                        <div class="dropdown-navs">
-                            <ul>
-                                <!-- Settings Start -->
-                                <li class="dropdown xs-after-n">
-                                    <a class="angle-icon" href="#">Settings</a>
-                                    <ul class="dropdown-nav">
-                                        <li><a href="/account">My Account</a></li>
-                                        <li><a href="checkout.html">Checkout</a></li>
-                                        <li><a href="/login">Login</a></li>
-                                    </ul>
-                                </li>
-                                <!-- Settings End -->
-                                <!-- Currency Start -->
-                                <li class="top-10px first-child">
-                                    <select>
-                                        <option value="1">USD $</option>
-                                        <option value="2">EUR €</option>
-                                    </select>
-                                </li>
-                                <!-- Currency End -->
-                                <!-- Language Start -->
-                                <li class="top-10px mr-15px">
-                                    <select>
-                                        <option value="1">English</option>
-                                        <option value="2">France</option>
-                                    </select>
-                                </li>
-                                <!-- Language End -->
-                            </ul>
-                        </div>
                     </div>
                 </div>
-                <!--Right End-->
             </div>
         </div>
+        <!--Right End-->
+    </div>
+    </div>
     </div>
     <!-- Header Top End -->
     <!-- Header Buttom Start -->
@@ -174,8 +151,7 @@
                                     </li>
                                     <li class="banner-wrapper">
                                         <a href="single-product.html"><img
-                                                src="/static/assets/images/banner-image/banner-menu.jpg"
-                                                alt="" /></a>
+                                                src="/static/assets/images/banner-image/banner-menu.jpg" alt="" /></a>
                                     </li>
                                 </ul>
                             </li>
@@ -320,17 +296,21 @@
                             </div>
                         </div>
                         <!--Seach Area End -->
-                       
+
                         <!--Cart info Start -->
                         <div class="cart-info d-flex">
                             <div class="mini-cart-warp">
                                 <a href="#" class="count-cart">
                                     <span>$20.00</span>
+                                    {% if cart_num is defined %}
                                     {% if cart_num>0 %}
-                                    <div id="cart_count" style="font-size: 12px;position:absolute;top:9px;left:-26px;right:auto;width:18px;height:18px;background:#4fb68d;color:#fff;line-height:18px;text-align:center;border-radius:50%;float:right">{{cart_num}}</div>
+                                    <div id="cart_number"
+                                        style="font-size: 12px;position:absolute;top:9px;left:-26px;right:auto;width:18px;height:18px;background:#4fb68d;color:#fff;line-height:18px;text-align:center;border-radius:50%;float:right">
+                                        {{cart_num}}</div>
+                                    {% endif %}
                                     {% endif %}
                                 </a>
-                                    
+
                                 <div class="mini-cart-content">
                                     <ul>
                                         <li class="single-shopping-cart">
