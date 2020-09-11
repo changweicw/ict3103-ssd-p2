@@ -1,0 +1,58 @@
+{% extends "layout.html" %} {% block body %}
+
+<div>
+  <a href="{{ url_for('registration') }}">Register</a>
+  <a href="{{ url_for('login') }}">Login</a>
+</div>
+
+<form method="post" id="registration_form">
+  {{ form.hidden_tag() }}
+  <div>
+    <p>Email</p>
+    {{ form.email }}
+  </div>
+  <div>
+    <p>Last Name</p>
+    {{ form.lastName }}
+  </div>
+  <div>
+    <p>First Name</p>
+    {{ form.firstName }}
+  </div>
+  <div>
+    <p>Password</p>
+    {{ form.password }}
+  </div>
+  <div>
+    <p>Confirm Password</p>
+    {{ form.confirmPassword }}
+  </div>
+  <input type="submit" value="Register" />
+</form>
+
+{% endblock %} {% block javascript %}
+<!-- <script>
+  $('#registration_form').submit(function (e) {
+    e.preventDefault(); // avoid to execute the actual submit of the form.
+    var enteredEmail = document.getElementById('email').value;
+    var firstpw = document.getElementById('password').value;
+    var secondpw = document.getElementById('confirmPassword').value;
+    if (validateEmail(enteredEmail)) {
+      console.log('Email is valid');
+    }
+    if (firstpw != secondpw) {
+      console.log('Please enter the same password for both fields');
+    }
+    if (validatePassword(firstpw)) {
+      console.log('valid password');
+    }
+    var url = '/login';
+    // $.ajax({
+    //   type: 'POST',
+    //   url: url,
+    //   data: form.serialize(), // serializes the form's elements.
+    //   success: function (data) {},
+    // });
+  });
+</script> -->
+{% endblock %}
