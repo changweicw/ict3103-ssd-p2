@@ -35,14 +35,22 @@
                         <div id="lg1" class="tab-pane">
                             <div class="login-form-container">
                                 <div class="login-register-form">
-
+                                    <div class="card" style="width: 18rem;">
+                                        <img class="card-img-top" src="..." alt="Card image cap">
+                                        <div class="card-body">
+                                            <h5 class="card-title">Card title</h5>
+                                            <p class="card-text">Some quick example text to build on the card title and
+                                                make up the bulk of the card's content.</p>
+                                            <a href="#" class="btn btn-primary">Go somewhere</a>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                         <div id="lg2" class="tab-pane active">
                             <div class="login-form-container">
                                 <div class="login-register-form">
-                                    <form  enctype = "multipart/form-data" action="{{url_for('publish')}}" method="post">
+                                    <form enctype="multipart/form-data" action="{{url_for('publish')}}" method="post">
                                         <div class="form-group">
                                             <label for="publish_desc">Title of Listing</label>
                                             <input type="text" name="title" class="form-control" id="publish_desc"
@@ -82,7 +90,8 @@
         </div>
     </div>
 </div>
-
+{% endblock %}
+{% block js %}
 <script>
     var fileList = [];
     var err = "";
@@ -92,9 +101,9 @@
 
     function reader_loaded(e, files, i) {
         var bin = e.target.result
-        if(!files[i].name.endsWith(".jpg")&&!files[i].name.endsWith(".png")){
+        if (!files[i].name.endsWith(".jpg") && !files[i].name.endsWith(".png")) {
             $("#fileHelp").removeClass("text-muted")
-            if(i<files.length-1) readAllFiles(files,i+1)
+            if (i < files.length - 1) readAllFiles(files, i + 1)
         } else {
             var img = document.createElement("img");
             img.setAttribute("style",
@@ -119,7 +128,7 @@
         $("#publish_image").change(function (e) {
             $("#images-container").empty()
             var files = e.originalEvent.srcElement.files
-            if(files.length>0) readAllFiles(files, 0);
+            if (files.length > 0) readAllFiles(files, 0);
         })
     }
 
