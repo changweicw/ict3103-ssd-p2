@@ -27,7 +27,7 @@ class publishForm(FlaskForm):
 def landing():
     title = "EhPlusMall"
     # return redirect("/shop/")
-    return render_template('landing.html')
+    return render_template('landing.html',cart_num=18)
 
 @app.route('/account',methods=['GET','POST'])
 def account():

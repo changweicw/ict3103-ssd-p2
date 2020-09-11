@@ -324,7 +324,13 @@
                         <!--Cart info Start -->
                         <div class="cart-info d-flex">
                             <div class="mini-cart-warp">
-                                <a href="#" class="count-cart"><span>$20.00</span></a>
+                                <a href="#" class="count-cart">
+                                    <span>$20.00</span>
+                                    {% if cart_num>0 %}
+                                    <div id="cart_count" style="font-size: 12px;position:absolute;top:9px;left:-26px;right:auto;width:18px;height:18px;background:#4fb68d;color:#fff;line-height:18px;text-align:center;border-radius:50%;float:right">{{cart_num}}</div>
+                                    {% endif %}
+                                </a>
+                                    
                                 <div class="mini-cart-content">
                                     <ul>
                                         <li class="single-shopping-cart">

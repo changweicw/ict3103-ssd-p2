@@ -55,23 +55,23 @@
                                     <form enctype="multipart/form-data" action="{{url_for('publish')}}" method="post">
                                         <div class="form-group">
                                             <label for="publish_desc">Title of Listing</label>
-                                            <input type="text" name="title" class="form-control" id="publish_desc"
+                                            <input type="text" name="title" required="required" class="form-control" id="publish_desc"
                                                 placeholder="What should your listing be called?">
                                         </div>
                                         <div class="form-group">
                                             <label for="publish_desc">Description</label>
-                                            <span role="textbox" contenteditable type="text" class="textarea"
+                                            <span role="textbox" aria-required="true" contenteditable type="text" class="textarea"
                                                 id="publish_desc" placeholder="Talk about your item!"></span>
                                         </div>
                                         <div class="form-group">
                                             <label for="publish_price">Price (SG$)</label>
-                                            <input type="number" name="price" class="form-control" id="publish_price"
+                                            <input type="number" name="price" required="required" class="form-control" id="publish_price"
                                                 placeholder="0">
                                         </div>
                                         <div class="form-group">
                                             <label for="publish_image">Image input</label>
                                             <!-- <input type="file" multiple accept=".jpg,.png" class="form-control-file" -->
-                                            <input type="file" multiple class="form-control-file" id="publish_image"
+                                            <input type="file" required="required" multiple class="form-control-file" id="publish_image"
                                                 name="files" aria-describedby="fileHelp">
                                             <small id="fileHelp" class="form-text text-muted">Only JPG and PNG are
                                                 accepted.</small>
