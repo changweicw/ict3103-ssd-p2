@@ -1,7 +1,10 @@
 from flask import Flask, render_template, redirect, url_for, flash, session, request
+from flask_login import LoginManager
 from flask_mysqldb import MySQL
 from flask_wtf import CSRFProtect,FlaskForm
 from wtforms import StringField,FileField,DecimalField
+
+import re
 
 from appConfig import DefaultConfig
 
@@ -14,7 +17,10 @@ app.jinja_env.lstrip_blocks = True
 
 # csrf = CSRFProtect(app)
 app.config.from_object(DefaultConfig)
+# login = LoginManager(app)
 mysql = MySQL(app)
+
+src = "http://127.0.0.1:8080/"
 
 class publishForm(FlaskForm):
     title = StringField("title")
@@ -22,7 +28,7 @@ class publishForm(FlaskForm):
     price = DecimalField("price")
     files = FileField("files")
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/')
 def landing():
     session['title'] = "Collaboratory Mall"
     return render_template('landing.html')
@@ -31,16 +37,23 @@ def landing():
 def account():
     return render_template('account/my-account.html')
 
+
 @app.route('/login', methods=['GET', 'POST'])
 def login_landing():
     # login_form = forms.LoginForm()
+    return render_template('account/login.html')
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    login_form = forms.LoginForm()
     # if login_form.validate_on_submit():
     #     # res = log_con.verify_login(
     #     #     mysql, login_form.username.data, login_form.password.data)
     #     # print(res)
     #     flash(login_form.password.data)
 
-    return render_template('account/login.html')
+    return render_template('logins/account_page.html', form=login_form, src=src)
 
 # This to be completed. 
 @app.route("/sell/publish_listing", methods=['POST'])
@@ -62,10 +75,12 @@ def checkout():
 def registration():
     registration_form = forms.RegistrationForm()
     if registration_form.validate_on_submit():
-        flash(registration_form.password.data)
-        # return redirect(url_for('login'))
-    return render_template('registration.html', form=registration_form)
-
+        emailRegex = "^(([^<>()\[\]\\.,;:\s@\"]+(\.[^<>()\[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$"
+        emailPat = re.compile(emailRegex)
+        passwordRegex = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-_]).{8,}$"
+        passwordPat = re.compile(passwordRegex)
+        # return redirect(url_for('landing'))
+    return render_template('registration.html', form=registration_form, src=src)
 
 if __name__ == '__main__':
     app.secret_key=b'_5#y2L"4Q8z178s/\\n\xec]/'
