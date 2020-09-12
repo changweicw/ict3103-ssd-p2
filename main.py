@@ -22,7 +22,6 @@ class publishForm(FlaskForm):
     price = DecimalField("price")
     files = FileField("files")
 
-
 @app.route('/', methods=['GET', 'POST'])
 def landing():
     session['title'] = "Collaboratory Mall"
