@@ -33,18 +33,26 @@
                     </div>
                     <div class="tab-content">
                         <div id="lg1" class="tab-pane">
-                            <div class="login-form-container">
-                                <div class="login-register-form">
-                                    <div class="card" style="width: 18rem;">
-                                        <div class="row">
-                                            <div class="card-body">
-                                                <h5 class="card-title">Card title</h5>
-                                                <p class="card-text">Some quick example text to build on the card title
-                                                    and
-                                                    make up the bulk of the card's content.</p>
-                                                <a href="#" class="btn btn-primary">Go somewhere</a>
-                                            </div>
-                                        </div>
+                            <div id="seller-dashboard-contents" class="row">
+                                <div class="card col-sm column" style="">
+                                    <div class="card-body">
+                                        <h5 class="card-title">$63,872</h5>
+                                        <p class="card-text">Lifetime Revenue</p>
+                                        <a href="#" class="btn btn-primary">See more</a>
+                                    </div>
+                                </div>
+                                <div class="card col-sm column" style="">
+                                    <div class="card-body">
+                                        <h5 class="card-title">60</h5>
+                                        <p class="card-text">Lifetime listings</p>
+                                        <a href="#" class="btn btn-primary">See more</a>
+                                    </div>
+                                </div>
+                                <div class="card col-sm column" style="">
+                                    <div class="card-body">
+                                        <h5 class="card-title">4.7</h5>
+                                        <p class="card-text">Out of 5 Stars</p>
+                                        <a href="#" class="btn btn-primary">See more</a>
                                     </div>
                                 </div>
                             </div>
@@ -55,24 +63,25 @@
                                     <form enctype="multipart/form-data" action="{{url_for('publish')}}" method="post">
                                         <div class="form-group">
                                             <label for="publish_desc">Title of Listing</label>
-                                            <input type="text" name="title" required="required" class="form-control" id="publish_desc"
-                                                placeholder="What should your listing be called?">
+                                            <input type="text" name="title" required="required" class="form-control"
+                                                id="publish_desc" placeholder="What should your listing be called?">
                                         </div>
                                         <div class="form-group">
                                             <label for="publish_desc">Description</label>
-                                            <span role="textbox" aria-required="true" contenteditable type="text" class="textarea"
-                                                id="publish_desc" placeholder="Talk about your item!"></span>
+                                            <span role="textbox" aria-required="true" contenteditable type="text"
+                                                class="textarea" id="publish_desc"
+                                                placeholder="Talk about your item!"></span>
                                         </div>
                                         <div class="form-group">
                                             <label for="publish_price">Price (SG$)</label>
-                                            <input type="number" name="price" required="required" class="form-control" id="publish_price"
-                                                placeholder="0">
+                                            <input type="number" name="price" required="required" class="form-control"
+                                                id="publish_price" placeholder="0">
                                         </div>
                                         <div class="form-group">
                                             <label for="publish_image">Image input</label>
                                             <!-- <input type="file" multiple accept=".jpg,.png" class="form-control-file" -->
-                                            <input type="file" required="required" multiple class="form-control-file" id="publish_image"
-                                                name="files" aria-describedby="fileHelp">
+                                            <input type="file" required="required" multiple class="form-control-file"
+                                                id="publish_image" name="files" aria-describedby="fileHelp">
                                             <small id="fileHelp" class="form-text text-muted">Only JPG and PNG are
                                                 accepted.</small>
                                             <div id="images-container">
