@@ -1,18 +1,20 @@
+from flask import Flask, render_template, redirect, url_for, flash, session, request
 from flask_login import LoginManager
-
-from flask import Flask, render_template, redirect, url_for, flash
 from flask_mysqldb import MySQL
-from flask_wtf import CSRFProtect
+from flask_wtf import CSRFProtect,FlaskForm
+from wtforms import StringField,FileField,DecimalField
 
 import re
 
-from appConfig import *
+from appConfig import DefaultConfig
 
 import wtform_validator as forms
 
-app = Flask(__name__, template_folder="templates")
+app = Flask(__name__,template_folder="templates")
+
 app.jinja_env.trim_blocks = True
 app.jinja_env.lstrip_blocks = True
+
 # csrf = CSRFProtect(app)
 app.config.from_object(DefaultConfig)
 # login = LoginManager(app)
@@ -20,11 +22,26 @@ mysql = MySQL(app)
 
 src = "http://127.0.0.1:8080/"
 
+class publishForm(FlaskForm):
+    title = StringField("title")
+    desc = StringField("desc")
+    price = DecimalField("price")
+    files = FileField("files")
 
 @app.route('/')
 def landing():
-    title = "EhPlusMall"
-    return render_template('shared/index.html')
+    session['title'] = "Collaboratory Mall"
+    return render_template('landing.html')
+
+@app.route('/account',methods=['GET','POST'])
+def account():
+    return render_template('account/my-account.html')
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login_landing():
+    # login_form = forms.LoginForm()
+    return render_template('account/login.html')
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -38,6 +55,21 @@ def login():
 
     return render_template('logins/account_page.html', form=login_form, src=src)
 
+# This to be completed. 
+@app.route("/sell/publish_listing", methods=['POST'])
+def publish():
+    # files = request.form.getlist("files")
+    files = request.files.getlist("files")
+    print(files)
+    return render_template('landing.html')
+
+@app.route('/sell/dashboard')
+def sell_dashboard():
+    return render_template('sell/sell_dashboard.html')
+
+@app.route('/products/checkout')
+def checkout():
+    return render_template('products/checkout.html')
 
 @app.route('/registration', methods=['GET', 'POST'])
 def registration():
@@ -50,6 +82,6 @@ def registration():
         # return redirect(url_for('landing'))
     return render_template('registration.html', form=registration_form, src=src)
 
-
 if __name__ == '__main__':
+    app.secret_key=b'_5#y2L"4Q8z178s/\\n\xec]/'
     app.run(host='127.0.0.1', port=8080, debug=True)
