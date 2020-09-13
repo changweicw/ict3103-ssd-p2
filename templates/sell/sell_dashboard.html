@@ -36,8 +36,8 @@
                             <div id="seller-dashboard-contents" class="row">
                                 <div class = "column">
                                     <div class="card">
-                                        {% if lifetime_revenue is defined%}
-                                        <h3>${{ lifetime_revenue }}</h3>
+                                        {% if dashboard is defined and dashboard.lifetime_revenue is defined %}
+                                        <h3>{{ dashboard['lifetime_revenue'] }}</h3>
                                         {% else %}
                                         <h3>$0</h3>
                                         {% endif %}
@@ -48,8 +48,8 @@
 
                                 <div class = "column">
                                     <div class="card">
-                                        {% if wallet_amt is defined %}
-                                        <h3>${{ wallet_amt }}</h3>
+                                        {% if dashboard is defined and dashboard.wallet_amt is defined %}
+                                        <h3>{{ dashboard.wallet_amt }}</h3>
                                         {% else %}
                                         <h3>$0</h3>
                                         {% endif %}
@@ -61,8 +61,8 @@
                                 <div class = "column">
                                     <div class="card">
                                         <h3>
-                                            {% if star_rating_avg is defined %}
-                                            {{ star_rating_avg }}
+                                            {% if dashboard is defined and dashboard.star_rating_avg is defined %}
+                                            {{ dashboard.star_rating_avg }}
                                             {% else %}
                                             -
                                             {% endif %}

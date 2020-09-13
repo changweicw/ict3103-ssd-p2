@@ -65,7 +65,12 @@ def publish():
 
 @app.route('/sell/dashboard')
 def sell_dashboard():
-    return render_template('sell/sell_dashboard.html',lifetime_revenue="67,872",wallet_amt="273",star_rating_avg="4.6")
+    dashboard={}
+    
+    dashboard["lifetime_revenue"] = str.format("${:,.2f}",67876.90)
+    dashboard["wallet_amt"] = str.format("${:,.2f}",273.00)
+    dashboard["star_rating_avg"] = 4.7
+    return render_template('sell/sell_dashboard.html',dashboard = dashboard)
 
 @app.route('/products/checkout')
 def checkout():
