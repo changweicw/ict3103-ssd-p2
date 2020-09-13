@@ -39,19 +39,39 @@
 
 
 
-.column{
-    margin:10px;
+.column {
+    padding-bottom: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+    width:33%;
 }
 
-#seller-dashboard-contents{
-    text-align: center;    
+.card {
+    padding:5px;
+    padding-top: 19px;
+    padding-bottom:19px;
+    border: 1px solid gray;
 }
 
-.card-title{
-    font-size:30px;
+#seller-dashboard-contents {
+    text-align: center;
+    
 }
 
-.card-text{
-    text-align:left;
-    margin-bottom:15px;
+.card-title {
+    font-size: 30px;
+}
+
+.card-text {
+    text-align: left;
+    margin-bottom: 15px;
+}
+
+/* Responsive columns */
+@media screen and (max-width: 600px) {
+    .column {
+        width: 100%;
+        display: block;
+        margin-bottom: 20px;
+    }
 }
