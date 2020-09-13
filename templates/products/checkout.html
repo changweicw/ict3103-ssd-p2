@@ -203,10 +203,15 @@
                             </div>
                             <div class="your-order-middle">
                                 <ul>
-                                    <li><span class="order-middle-left">Product Name X 1</span> <span
-                                            class="order-price">$329 </span></li>
-                                    <li><span class="order-middle-left">Product Name X 1</span> <span
-                                            class="order-price">$329 </span></li>
+                                    {% if dict is defined %}
+                                    {% for x in dict %}
+                                    <li><span class="order-middle-left">{{dict[x].name}} X {{dict[x].quantity}}</span>
+                                        <span class="order-price">
+                                            ${{ dict[x].price or '0.00'}}
+                                        </span></li>
+                                    
+                                    {% endfor %}
+                                    {% endif %}
                                 </ul>
                             </div>
                             <div class="your-order-bottom">
@@ -218,7 +223,9 @@
                             <div class="your-order-total">
                                 <ul>
                                     <li class="order-total">Total</li>
-                                    <li>$329</li>
+                                    <li>
+                                        ${{ checkout_total or '0.00'}}
+                                    </li>
                                 </ul>
                             </div>
                         </div>

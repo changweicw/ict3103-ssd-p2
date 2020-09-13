@@ -34,25 +34,55 @@
                     <div class="tab-content">
                         <div id="lg1" class="tab-pane">
                             <div id="seller-dashboard-contents" class="row">
-                                <div class="card col-sm column" >
-                                    <div class="card-body">
-                                        <h5 class="card-title">$63,872</h5>
-                                        <p class="card-text">Lifetime Revenue</p>
-                                        <a href="#" class="btn btn-primary">See more</a>
+                                <div class = "column">
+                                    <div class="card">
+                                        {% if lifetime_revenue is defined%}
+                                        <h3>${{ lifetime_revenue }}</h3>
+                                        {% else %}
+                                        <h3>$0</h3>
+                                        {% endif %}
+                                        <p>Lifetime revenue</p>
+                                        <a class="stretched-link" href="#"></a>
                                     </div>
                                 </div>
-                                <div class="card col-sm column">
-                                    <div class="card-body">
-                                        <h5 class="card-title">60</h5>
-                                        <p class="card-text">Lifetime listings</p>
-                                        <a href="#" class="btn btn-primary">See more</a>
+
+                                <div class = "column">
+                                    <div class="card">
+                                        {% if wallet_amt is defined %}
+                                        <h3>${{ wallet_amt }}</h3>
+                                        {% else %}
+                                        <h3>$0</h3>
+                                        {% endif %}
+                                        <p>Wallet Amount</p>
+                                        <a class="stretched-link" href="#"></a>
                                     </div>
                                 </div>
-                                <div class="card col-sm column" >
-                                    <div class="card-body">
-                                        <h5 class="card-title">4.7</h5>
-                                        <p class="card-text">Out of 5 Stars</p>
-                                        <a href="#" class="btn btn-primary">See more</a>
+
+                                <div class = "column">
+                                    <div class="card">
+                                        <h3>
+                                            {% if star_rating_avg is defined %}
+                                            {{ star_rating_avg }}
+                                            {% else %}
+                                            -
+                                            {% endif %}
+                                    </h3>
+                                        <p>Out of 5 stars</p>
+                                        <a class="stretched-link" href="#"></a>
+                                    </div>
+                                </div>
+
+                                <div class = "column">
+                                    <div class="card">
+                                        <h3>
+                                            {% if star_rating_avg is defined %}
+                                            {{ star_rating_avg }}
+                                            {% else %}
+                                            -
+                                            {% endif %}
+                                    </h3>
+                                        <p>Out of 5 stars</p>
+                                        <a class="stretched-link" href="#"></a>
                                     </div>
                                 </div>
                             </div>

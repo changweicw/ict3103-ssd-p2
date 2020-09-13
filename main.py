@@ -65,11 +65,20 @@ def publish():
 
 @app.route('/sell/dashboard')
 def sell_dashboard():
-    return render_template('sell/sell_dashboard.html')
+    return render_template('sell/sell_dashboard.html',lifetime_revenue="67,872",wallet_amt="273",star_rating_avg="4.6")
 
 @app.route('/products/checkout')
 def checkout():
-    return render_template('products/checkout.html')
+    
+    td = {}
+    td["Product1"]={"name":"Chia Seeds", "price":28, "quantity":3}
+    td["Product2"]={"name":"Apple", "price":28.2, "quantity":4}
+
+    total = 0.0
+    for v in td.values():
+        total +=(v["price"]*v["quantity"])
+
+    return render_template('products/checkout.html',checkout_total = total,dict = td)
 
 @app.route('/registration', methods=['GET', 'POST'])
 def registration():
