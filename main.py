@@ -98,4 +98,4 @@ def registration():
 
 if __name__ == '__main__':
     app.secret_key=b'_5#y2L"4Q8z178s/\\n\xec]/'
-    app.run(host='127.0.0.1', port=8080, debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)
