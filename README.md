@@ -15,7 +15,7 @@ Welcome to our humble e-commerce store, the Collaboratory Mall. Where we sell _*
 
 **On your host:**
 
-`docker build -t raphaelchia/collabMall:v1.0`
+`docker build -t raphaelchia/collabMall:v1.0 .` (Note the fullstop at the end)
 
 `docker push raphaelchia/collabMall:v1.0`
 
