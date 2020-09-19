@@ -152,3 +152,11 @@
 2020-09-19 11:39:17,144 - INFO - 127.0.0.1 - - [19/Sep/2020 11:39:17] "[37mGET /?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1[0m" 200 -
 2020-09-19 11:39:17,301 - INFO - 127.0.0.1 - - [19/Sep/2020 11:39:17] "[37mGET /?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 200 -
 2020-09-19 11:39:17,306 - INFO - 127.0.0.1 - - [19/Sep/2020 11:39:17] "[37mGET /?__debugger__=yes&cmd=resource&f=ubuntu.ttf HTTP/1.1[0m" 200 -
+2020-09-19 11:42:50,682 - INFO -  * Restarting with stat
+2020-09-19 11:42:51,136 - WARNING -  * Debugger is active!
+2020-09-19 11:42:51,141 - INFO -  * Debugger PIN: 991-217-750
+2020-09-19 11:42:51,150 - INFO -  * Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)
+2020-09-19 11:43:25,526 - INFO -  * Restarting with stat
+2020-09-19 11:43:26,000 - WARNING -  * Debugger is active!
+2020-09-19 11:43:26,005 - INFO -  * Debugger PIN: 991-217-750
+2020-09-19 11:43:26,011 - INFO -  * Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)
