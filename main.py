@@ -3,6 +3,7 @@ from flask_login import LoginManager
 from flask_mysqldb import MySQL
 from flask_wtf import CSRFProtect,FlaskForm
 from wtforms import StringField,FileField,DecimalField
+import logging
 
 import re
 
@@ -21,6 +22,16 @@ app.config.from_object(DefaultConfig)
 mysql = MySQL(app)
 
 src = "http://127.0.0.1:8080/"
+
+logger = logging.getLogger(__name__)
+fh = logging.FileHandler('sys.log')
+fh.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
+logger.addHandler(fh)
+logger.setLevel(logging.INFO)
+
+logging.basicConfig(filename="server.log",level=logging.INFO,
+                format="%(asctime)s - %(levelname)s - %(message)s")
+
 
 class publishForm(FlaskForm):
     title = StringField("title")
@@ -58,18 +69,24 @@ def login():
 # This to be completed. 
 @app.route("/sell/publish_listing", methods=['POST'])
 def publish():
+    # need to check file type and probably do a file scan
     # files = request.form.getlist("files")
     files = request.files.getlist("files")
     print(files)
+    logger.info("Somebody just published a listing of "+str(len(files))+" pictures")
     return render_template('landing.html')
 
 @app.route('/sell/dashboard')
 def sell_dashboard():
-    return render_template('sell/sell_dashboard.html',lifetime_revenue="67,872",wallet_amt="273",star_rating_avg="4.6")
+    dashboard={}
+    
+    dashboard["lifetime_revenue"] = str.format("${:,.2f}",67876.90)
+    dashboard["wallet_amt"] = str.format("${:,.2f}",273.00)
+    dashboard["star_rating_avg"] = 4.7
+    return render_template('sell/sell_dashboard.html',dashboard = dashboard)
 
 @app.route('/products/checkout')
 def checkout():
-    
     td = {}
     td["Product1"]={"name":"Chia Seeds", "price":28, "quantity":3}
     td["Product2"]={"name":"Apple", "price":28.2, "quantity":4}
@@ -93,4 +110,7 @@ def registration():
 
 if __name__ == '__main__':
     app.secret_key=b'_5#y2L"4Q8z178s/\\n\xec]/'
-    app.run(host='127.0.0.1', port=8080, debug=True)
+    
+    
+
+    app.run(host='0.0.0.0', port=3389, debug=True)
