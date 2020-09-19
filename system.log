@@ -1,0 +1,154 @@
+2020-09-19 11:23:54,466 - INFO -  * Restarting with stat
+2020-09-19 11:23:54,916 - WARNING -  * Debugger is active!
+2020-09-19 11:23:54,933 - INFO -  * Debugger PIN: 991-217-750
+2020-09-19 11:23:54,942 - INFO -  * Running on http://0.0.0.0:3389/ (Press CTRL+C to quit)
+2020-09-19 11:24:11,955 - INFO - 127.0.0.1 - - [19/Sep/2020 11:24:11] "[37mGET / HTTP/1.1[0m" 200 -
+2020-09-19 11:24:12,022 - INFO - 127.0.0.1 - - [19/Sep/2020 11:24:12] "[37mGET /static/assets/css/vendor/plugins.min.css HTTP/1.1[0m" 200 -
+2020-09-19 11:24:12,143 - INFO - 127.0.0.1 - - [19/Sep/2020 11:24:12] "[37mGET /static/assets/css/style.min.css HTTP/1.1[0m" 200 -
+2020-09-19 11:24:12,325 - INFO - 127.0.0.1 - - [19/Sep/2020 11:24:12] "[37mGET /static/assets/css/responsive.min.css HTTP/1.1[0m" 200 -
+2020-09-19 11:24:12,326 - INFO - 127.0.0.1 - - [19/Sep/2020 11:24:12] "[37mGET /static/assets/css/sellerpage.css HTTP/1.1[0m" 200 -
+2020-09-19 11:24:12,329 - INFO - 127.0.0.1 - - [19/Sep/2020 11:24:12] "[37mGET /static/assets/css/font-awesome.css HTTP/1.1[0m" 200 -
+2020-09-19 11:24:12,355 - INFO - 127.0.0.1 - - [19/Sep/2020 11:24:12] "[37mGET /static/assets/js/vendor/jquery-3.5.1.min.js HTTP/1.1[0m" 200 -
+2020-09-19 11:24:12,647 - INFO - 127.0.0.1 - - [19/Sep/2020 11:24:12] "[37mGET /static/assets/fonts/fa-solid-900.woff2 HTTP/1.1[0m" 200 -
+2020-09-19 11:24:12,675 - INFO - 127.0.0.1 - - [19/Sep/2020 11:24:12] "[37mGET /static/assets/fonts/ionicons28b5.ttf?v=2.0.0 HTTP/1.1[0m" 200 -
+2020-09-19 11:24:12,682 - INFO - 127.0.0.1 - - [19/Sep/2020 11:24:12] "[37mGET /static/assets/images/icons/static-icons-1.png HTTP/1.1[0m" 200 -
+2020-09-19 11:24:12,683 - INFO - 127.0.0.1 - - [19/Sep/2020 11:24:12] "[37mGET /static/assets/images/product-image/mini-cart/1.jpg HTTP/1.1[0m" 200 -
+2020-09-19 11:24:12,684 - INFO - 127.0.0.1 - - [19/Sep/2020 11:24:12] "[37mGET /static/assets/images/banner-image/2.jpg HTTP/1.1[0m" 200 -
+2020-09-19 11:24:12,684 - INFO - 127.0.0.1 - - [19/Sep/2020 11:24:12] "[37mGET /static/assets/images/banner-image/3.jpg HTTP/1.1[0m" 200 -
+2020-09-19 11:24:12,964 - INFO - 127.0.0.1 - - [19/Sep/2020 11:24:12] "[37mGET /static/assets/images/icons/static-icons-4.png HTTP/1.1[0m" 200 -
+2020-09-19 11:24:12,988 - INFO - 127.0.0.1 - - [19/Sep/2020 11:24:12] "[37mGET /static/assets/images/icons/static-icons-2.png HTTP/1.1[0m" 200 -
+2020-09-19 11:24:12,992 - INFO - 127.0.0.1 - - [19/Sep/2020 11:24:12] "[37mGET /static/assets/images/product-image/mini-cart/2.jpg HTTP/1.1[0m" 200 -
+2020-09-19 11:24:12,992 - INFO - 127.0.0.1 - - [19/Sep/2020 11:24:12] "[37mGET /static/assets/images/icons/static-icons-3.png HTTP/1.1[0m" 200 -
+2020-09-19 11:24:12,994 - INFO - 127.0.0.1 - - [19/Sep/2020 11:24:12] "[37mGET /static/assets/images/banner-image/4.jpg HTTP/1.1[0m" 200 -
+2020-09-19 11:24:12,997 - INFO - 127.0.0.1 - - [19/Sep/2020 11:24:12] "[37mGET /static/assets/images/banner-image/1.jpg HTTP/1.1[0m" 200 -
+2020-09-19 11:24:13,304 - INFO - 127.0.0.1 - - [19/Sep/2020 11:24:13] "[37mGET /static/assets/bootstrap/js/bootstrap.min.js HTTP/1.1[0m" 200 -
+2020-09-19 11:24:13,305 - INFO - 127.0.0.1 - - [19/Sep/2020 11:24:13] "[37mGET /static/assets/images/banner-image/banner-menu.jpg HTTP/1.1[0m" 200 -
+2020-09-19 11:24:13,310 - INFO - 127.0.0.1 - - [19/Sep/2020 11:24:13] "[37mGET /static/assets/images/logo/collab-header-logo5.png HTTP/1.1[0m" 200 -
+2020-09-19 11:24:13,312 - INFO - 127.0.0.1 - - [19/Sep/2020 11:24:13] "[37mGET /static/assets/js/vendor/modernizr-3.7.1.min.js HTTP/1.1[0m" 200 -
+2020-09-19 11:24:13,314 - INFO - 127.0.0.1 - - [19/Sep/2020 11:24:13] "[37mGET /static/assets/js/main.js HTTP/1.1[0m" 200 -
+2020-09-19 11:24:13,393 - INFO - 127.0.0.1 - - [19/Sep/2020 11:24:13] "[37mGET /static/assets/js/plugins.min.js HTTP/1.1[0m" 200 -
+2020-09-19 11:24:13,613 - INFO - 127.0.0.1 - - [19/Sep/2020 11:24:13] "[37mGET /static/assets/images/slider-image/sample-1.jpg HTTP/1.1[0m" 200 -
+2020-09-19 11:24:13,621 - INFO - 127.0.0.1 - - [19/Sep/2020 11:24:13] "[37mGET /static/assets/images/slider-image/sample-2.jpg HTTP/1.1[0m" 200 -
+2020-09-19 11:24:13,623 - INFO - 127.0.0.1 - - [19/Sep/2020 11:24:13] "[37mGET /static/assets/images/product-image/organic/product-1.jpg HTTP/1.1[0m" 200 -
+2020-09-19 11:24:13,624 - INFO - 127.0.0.1 - - [19/Sep/2020 11:24:13] "[37mGET /static/assets/images/product-image/organic/product-2.jpg HTTP/1.1[0m" 200 -
+2020-09-19 11:24:13,625 - INFO - 127.0.0.1 - - [19/Sep/2020 11:24:13] "[37mGET /static/assets/images/product-image/organic/product-15.jpg HTTP/1.1[0m" 200 -
+2020-09-19 11:24:13,705 - INFO - 127.0.0.1 - - [19/Sep/2020 11:24:13] "[37mGET /static/assets/images/product-image/organic/product-3.jpg HTTP/1.1[0m" 200 -
+2020-09-19 11:24:13,938 - INFO - 127.0.0.1 - - [19/Sep/2020 11:24:13] "[37mGET /static/assets/images/product-image/organic/product-4.jpg HTTP/1.1[0m" 200 -
+2020-09-19 11:24:13,938 - INFO - 127.0.0.1 - - [19/Sep/2020 11:24:13] "[37mGET /static/assets/images/product-image/organic/product-7.jpg HTTP/1.1[0m" 200 -
+2020-09-19 11:24:13,938 - INFO - 127.0.0.1 - - [19/Sep/2020 11:24:13] "[37mGET /static/assets/images/product-image/organic/product-8.jpg HTTP/1.1[0m" 200 -
+2020-09-19 11:24:13,938 - INFO - 127.0.0.1 - - [19/Sep/2020 11:24:13] "[37mGET /static/assets/images/product-image/organic/product-6.jpg HTTP/1.1[0m" 200 -
+2020-09-19 11:24:13,939 - INFO - 127.0.0.1 - - [19/Sep/2020 11:24:13] "[37mGET /static/assets/images/product-image/organic/product-5.jpg HTTP/1.1[0m" 200 -
+2020-09-19 11:24:14,014 - INFO - 127.0.0.1 - - [19/Sep/2020 11:24:14] "[37mGET /static/assets/images/product-image/organic/product-9.jpg HTTP/1.1[0m" 200 -
+2020-09-19 11:24:14,255 - INFO - 127.0.0.1 - - [19/Sep/2020 11:24:14] "[37mGET /static/assets/images/product-image/organic/product-12.jpg HTTP/1.1[0m" 200 -
+2020-09-19 11:24:14,255 - INFO - 127.0.0.1 - - [19/Sep/2020 11:24:14] "[37mGET /static/assets/images/product-image/organic/product-13.jpg HTTP/1.1[0m" 200 -
+2020-09-19 11:24:14,256 - INFO - 127.0.0.1 - - [19/Sep/2020 11:24:14] "[37mGET /static/assets/images/product-image/organic/product-11.jpg HTTP/1.1[0m" 200 -
+2020-09-19 11:24:14,256 - INFO - 127.0.0.1 - - [19/Sep/2020 11:24:14] "[37mGET /static/assets/images/product-image/organic/product-10.jpg HTTP/1.1[0m" 200 -
+2020-09-19 11:24:14,256 - INFO - 127.0.0.1 - - [19/Sep/2020 11:24:14] "[37mGET /static/assets/images/product-image/organic/product-14.jpg HTTP/1.1[0m" 200 -
+2020-09-19 11:24:14,321 - INFO - 127.0.0.1 - - [19/Sep/2020 11:24:14] "[37mGET /static/assets/images/product-image/organic/thumb-1.jpg HTTP/1.1[0m" 200 -
+2020-09-19 11:24:14,578 - INFO - 127.0.0.1 - - [19/Sep/2020 11:24:14] "[37mGET /static/assets/images/product-image/organic/thumb-6.jpg HTTP/1.1[0m" 200 -
+2020-09-19 11:24:14,578 - INFO - 127.0.0.1 - - [19/Sep/2020 11:24:14] "[37mGET /static/assets/images/product-image/organic/thumb-2.jpg HTTP/1.1[0m" 200 -
+2020-09-19 11:24:14,579 - INFO - 127.0.0.1 - - [19/Sep/2020 11:24:14] "[37mGET /static/assets/images/product-image/organic/thumb-4.jpg HTTP/1.1[0m" 200 -
+2020-09-19 11:24:14,579 - INFO - 127.0.0.1 - - [19/Sep/2020 11:24:14] "[37mGET /static/assets/images/product-image/organic/thumb-3.jpg HTTP/1.1[0m" 200 -
+2020-09-19 11:24:14,579 - INFO - 127.0.0.1 - - [19/Sep/2020 11:24:14] "[37mGET /static/assets/images/product-image/organic/thumb-5.jpg HTTP/1.1[0m" 200 -
+2020-09-19 11:24:14,628 - INFO - 127.0.0.1 - - [19/Sep/2020 11:24:14] "[37mGET /static/assets/images/product-image/organic/thumb-7.jpg HTTP/1.1[0m" 200 -
+2020-09-19 11:24:14,890 - INFO - 127.0.0.1 - - [19/Sep/2020 11:24:14] "[37mGET /static/assets/images/product-image/organic/thumb-8.jpg HTTP/1.1[0m" 200 -
+2020-09-19 11:24:14,892 - INFO - 127.0.0.1 - - [19/Sep/2020 11:24:14] "[37mGET /static/assets/images/product-image/organic/product-16.jpg HTTP/1.1[0m" 200 -
+2020-09-19 11:24:14,894 - INFO - 127.0.0.1 - - [19/Sep/2020 11:24:14] "[37mGET /static/assets/images/product-image/organic/product-17.jpg HTTP/1.1[0m" 200 -
+2020-09-19 11:24:14,894 - INFO - 127.0.0.1 - - [19/Sep/2020 11:24:14] "[37mGET /static/assets/images/product-image/organic/product-18.jpg HTTP/1.1[0m" 200 -
+2020-09-19 11:24:14,896 - INFO - 127.0.0.1 - - [19/Sep/2020 11:24:14] "[37mGET /static/assets/images/product-image/organic/product-19.jpg HTTP/1.1[0m" 200 -
+2020-09-19 11:24:14,934 - INFO - 127.0.0.1 - - [19/Sep/2020 11:24:14] "[37mGET /static/assets/images/product-image/organic/product-20.jpg HTTP/1.1[0m" 200 -
+2020-09-19 11:24:15,198 - INFO - 127.0.0.1 - - [19/Sep/2020 11:24:15] "[37mGET /static/assets/images/product-image/organic/product-23.jpg HTTP/1.1[0m" 200 -
+2020-09-19 11:24:15,207 - INFO - 127.0.0.1 - - [19/Sep/2020 11:24:15] "[37mGET /static/assets/images/product-image/organic/product-22.jpg HTTP/1.1[0m" 200 -
+2020-09-19 11:24:15,208 - INFO - 127.0.0.1 - - [19/Sep/2020 11:24:15] "[37mGET /static/assets/images/brand-logo/2.jpg HTTP/1.1[0m" 200 -
+2020-09-19 11:24:15,209 - INFO - 127.0.0.1 - - [19/Sep/2020 11:24:15] "[37mGET /static/assets/images/brand-logo/1.jpg HTTP/1.1[0m" 200 -
+2020-09-19 11:24:15,209 - INFO - 127.0.0.1 - - [19/Sep/2020 11:24:15] "[37mGET /static/assets/images/brand-logo/3.jpg HTTP/1.1[0m" 200 -
+2020-09-19 11:24:15,242 - INFO - 127.0.0.1 - - [19/Sep/2020 11:24:15] "[37mGET /static/assets/images/brand-logo/4.jpg HTTP/1.1[0m" 200 -
+2020-09-19 11:24:15,516 - INFO - 127.0.0.1 - - [19/Sep/2020 11:24:15] "[37mGET /static/assets/images/brand-logo/5.jpg HTTP/1.1[0m" 200 -
+2020-09-19 11:24:15,518 - INFO - 127.0.0.1 - - [19/Sep/2020 11:24:15] "[37mGET /static/assets/images/icons/app_store.png HTTP/1.1[0m" 200 -
+2020-09-19 11:24:15,520 - INFO - 127.0.0.1 - - [19/Sep/2020 11:24:15] "[37mGET /static/assets/images/icons/google_play.png HTTP/1.1[0m" 200 -
+2020-09-19 11:24:15,521 - INFO - 127.0.0.1 - - [19/Sep/2020 11:24:15] "[37mGET /static/assets/images/icons/payment.png HTTP/1.1[0m" 200 -
+2020-09-19 11:24:15,523 - INFO - 127.0.0.1 - - [19/Sep/2020 11:24:15] "[37mGET /static/assets/images/logo/collab-footer-logo.png HTTP/1.1[0m" 200 -
+2020-09-19 11:24:15,835 - INFO - 127.0.0.1 - - [19/Sep/2020 11:24:15] "[37mGET /static/assets/images/favicon/favicon.png HTTP/1.1[0m" 200 -
+2020-09-19 11:24:17,406 - INFO - 127.0.0.1 - - [19/Sep/2020 11:24:17] "[37mGET /sell/dashboard HTTP/1.1[0m" 200 -
+2020-09-19 11:24:17,683 - INFO - 127.0.0.1 - - [19/Sep/2020 11:24:17] "[37mGET /static/assets/images/breadcrumb-bg/breadcrumb-bg.jpg HTTP/1.1[0m" 200 -
+2020-09-19 11:24:26,366 - INFO - 127.0.0.1 - - [19/Sep/2020 11:24:26] "[37mGET /static/assets/fonts/font-awesome/fontawesome-webfont3e6e.woff2?v=4.7.0 HTTP/1.1[0m" 200 -
+2020-09-19 11:24:27,529 - INFO - 127.0.0.1 - - [19/Sep/2020 11:24:27] "[35m[1mPOST /sell/publish_listing HTTP/1.1[0m" 500 -
+2020-09-19 11:24:27,832 - INFO - 127.0.0.1 - - [19/Sep/2020 11:24:27] "[37mGET /sell/publish_listing?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1[0m" 200 -
+2020-09-19 11:24:27,870 - INFO - 127.0.0.1 - - [19/Sep/2020 11:24:27] "[37mGET /sell/publish_listing?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1[0m" 200 -
+2020-09-19 11:24:27,892 - INFO - 127.0.0.1 - - [19/Sep/2020 11:24:27] "[37mGET /sell/publish_listing?__debugger__=yes&cmd=resource&f=jquery.js HTTP/1.1[0m" 200 -
+2020-09-19 11:24:28,292 - INFO - 127.0.0.1 - - [19/Sep/2020 11:24:28] "[37mGET /sell/publish_listing?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 200 -
+2020-09-19 11:24:28,307 - INFO - 127.0.0.1 - - [19/Sep/2020 11:24:28] "[37mGET /sell/publish_listing?__debugger__=yes&cmd=resource&f=ubuntu.ttf HTTP/1.1[0m" 200 -
+2020-09-19 11:24:28,540 - INFO - 127.0.0.1 - - [19/Sep/2020 11:24:28] "[37mGET /sell/publish_listing?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 200 -
+2020-09-19 11:25:40,366 - INFO -  * Detected change in 'C:\\Users\\clone\\Documents\\SIT\\Tri 3\\3103\\Project\\ict3x03-ssd-p2\\main.py', reloading
+2020-09-19 11:25:40,417 - INFO -  * Restarting with stat
+2020-09-19 11:25:41,057 - WARNING -  * Debugger is active!
+2020-09-19 11:25:41,065 - INFO -  * Debugger PIN: 991-217-750
+2020-09-19 11:25:41,072 - INFO -  * Running on http://0.0.0.0:3389/ (Press CTRL+C to quit)
+2020-09-19 11:26:11,543 - INFO -  * Restarting with stat
+2020-09-19 11:26:12,012 - WARNING -  * Debugger is active!
+2020-09-19 11:26:12,018 - INFO -  * Debugger PIN: 991-217-750
+2020-09-19 11:26:12,025 - INFO -  * Running on http://0.0.0.0:3389/ (Press CTRL+C to quit)
+2020-09-19 11:26:21,112 - INFO - Somebody just published a listing of1
+2020-09-19 11:26:21,148 - INFO - 127.0.0.1 - - [19/Sep/2020 11:26:21] "[37mPOST /sell/publish_listing HTTP/1.1[0m" 200 -
+2020-09-19 11:27:28,625 - INFO - 127.0.0.1 - - [19/Sep/2020 11:27:28] "[37mGET /sell/dashboard HTTP/1.1[0m" 200 -
+2020-09-19 11:27:39,797 - INFO - Somebody just published a listing of1
+2020-09-19 11:27:39,798 - INFO - 127.0.0.1 - - [19/Sep/2020 11:27:39] "[37mPOST /sell/publish_listing HTTP/1.1[0m" 200 -
+2020-09-19 11:27:50,582 - INFO -  * Detected change in 'C:\\Users\\clone\\Documents\\SIT\\Tri 3\\3103\\Project\\ict3x03-ssd-p2\\main.py', reloading
+2020-09-19 11:27:50,626 - INFO -  * Restarting with stat
+2020-09-19 11:27:51,225 - WARNING -  * Debugger is active!
+2020-09-19 11:27:51,230 - INFO -  * Debugger PIN: 991-217-750
+2020-09-19 11:27:51,238 - INFO -  * Running on http://0.0.0.0:3389/ (Press CTRL+C to quit)
+2020-09-19 11:32:09,043 - INFO -  * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
+2020-09-19 11:32:26,522 - INFO -  * Detected change in 'C:\\Users\\clone\\Documents\\SIT\\Tri 3\\3103\\Project\\ict3x03-ssd-p2\\main.py', reloading
+2020-09-19 11:32:26,571 - INFO -  * Restarting with stat
+2020-09-19 11:32:27,285 - WARNING -  * Debugger is active!
+2020-09-19 11:32:27,292 - INFO -  * Debugger PIN: 991-217-750
+2020-09-19 11:32:27,303 - INFO -  * Running on http://0.0.0.0:3389/ (Press CTRL+C to quit)
+2020-09-19 11:33:43,210 - INFO -  * Detected change in 'C:\\Users\\clone\\Documents\\SIT\\Tri 3\\3103\\Project\\ict3x03-ssd-p2\\main.py', reloading
+2020-09-19 11:33:43,254 - INFO -  * Restarting with stat
+2020-09-19 11:33:43,805 - WARNING -  * Debugger is active!
+2020-09-19 11:33:43,810 - INFO -  * Debugger PIN: 991-217-750
+2020-09-19 11:33:43,820 - INFO -  * Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)
+2020-09-19 11:33:51,603 - INFO -  * Restarting with stat
+2020-09-19 11:33:52,068 - WARNING -  * Debugger is active!
+2020-09-19 11:33:52,073 - INFO -  * Debugger PIN: 991-217-750
+2020-09-19 11:33:52,080 - INFO -  * Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)
+2020-09-19 11:35:30,156 - INFO -  * Restarting with stat
+2020-09-19 11:35:30,645 - WARNING -  * Debugger is active!
+2020-09-19 11:35:30,649 - INFO -  * Debugger PIN: 991-217-750
+2020-09-19 11:35:30,658 - INFO -  * Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)
+2020-09-19 11:35:38,445 - INFO -  * Detected change in 'C:\\Users\\clone\\Documents\\SIT\\Tri 3\\3103\\Project\\ict3x03-ssd-p2\\main.py', reloading
+2020-09-19 11:35:38,484 - INFO -  * Restarting with stat
+2020-09-19 11:35:38,877 - INFO -  * Detected change in 'c:\\Users\\clone\\Documents\\SIT\\Tri 3\\3103\\Project\\ict3x03-ssd-p2\\main.py', reloading
+2020-09-19 11:35:38,917 - INFO -  * Restarting with stat
+2020-09-19 11:35:39,035 - WARNING -  * Debugger is active!
+2020-09-19 11:35:39,042 - INFO -  * Debugger PIN: 991-217-750
+2020-09-19 11:35:39,049 - INFO -  * Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)
+2020-09-19 11:35:39,415 - WARNING -  * Debugger is active!
+2020-09-19 11:35:39,421 - INFO -  * Debugger PIN: 991-217-750
+2020-09-19 11:35:39,428 - INFO -  * Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)
+2020-09-19 11:38:18,238 - INFO -  * Restarting with stat
+2020-09-19 11:38:18,668 - WARNING -  * Debugger is active!
+2020-09-19 11:38:18,673 - INFO -  * Debugger PIN: 991-217-750
+2020-09-19 11:38:18,684 - INFO -  * Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)
+2020-09-19 11:38:27,341 - INFO -  * Detected change in 'C:\\Users\\clone\\Documents\\SIT\\Tri 3\\3103\\Project\\ict3x03-ssd-p2\\main.py', reloading
+2020-09-19 11:38:27,380 - INFO -  * Restarting with stat
+2020-09-19 11:38:27,956 - WARNING -  * Debugger is active!
+2020-09-19 11:38:27,963 - INFO -  * Debugger PIN: 991-217-750
+2020-09-19 11:38:27,970 - INFO -  * Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)
+2020-09-19 11:38:34,140 - INFO -  * Detected change in 'C:\\Users\\clone\\Documents\\SIT\\Tri 3\\3103\\Project\\ict3x03-ssd-p2\\main.py', reloading
+2020-09-19 11:38:34,177 - INFO -  * Restarting with stat
+2020-09-19 11:38:34,722 - WARNING -  * Debugger is active!
+2020-09-19 11:38:34,729 - INFO -  * Debugger PIN: 991-217-750
+2020-09-19 11:38:34,739 - INFO -  * Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)
+2020-09-19 11:38:42,936 - INFO -  * Detected change in 'C:\\Users\\clone\\Documents\\SIT\\Tri 3\\3103\\Project\\ict3x03-ssd-p2\\main.py', reloading
+2020-09-19 11:38:42,970 - INFO -  * Restarting with stat
+2020-09-19 11:38:43,540 - WARNING -  * Debugger is active!
+2020-09-19 11:38:43,545 - INFO -  * Debugger PIN: 991-217-750
+2020-09-19 11:38:43,552 - INFO -  * Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)
+2020-09-19 11:39:17,102 - INFO - 127.0.0.1 - - [19/Sep/2020 11:39:17] "[35m[1mGET / HTTP/1.1[0m" 500 -
+2020-09-19 11:39:17,125 - INFO - 127.0.0.1 - - [19/Sep/2020 11:39:17] "[37mGET /?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1[0m" 200 -
+2020-09-19 11:39:17,141 - INFO - 127.0.0.1 - - [19/Sep/2020 11:39:17] "[37mGET /?__debugger__=yes&cmd=resource&f=jquery.js HTTP/1.1[0m" 200 -
+2020-09-19 11:39:17,144 - INFO - 127.0.0.1 - - [19/Sep/2020 11:39:17] "[37mGET /?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1[0m" 200 -
+2020-09-19 11:39:17,301 - INFO - 127.0.0.1 - - [19/Sep/2020 11:39:17] "[37mGET /?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 200 -
+2020-09-19 11:39:17,306 - INFO - 127.0.0.1 - - [19/Sep/2020 11:39:17] "[37mGET /?__debugger__=yes&cmd=resource&f=ubuntu.ttf HTTP/1.1[0m" 200 -

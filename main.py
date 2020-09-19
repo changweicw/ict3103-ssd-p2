@@ -3,6 +3,7 @@ from flask_login import LoginManager
 from flask_mysqldb import MySQL
 from flask_wtf import CSRFProtect,FlaskForm
 from wtforms import StringField,FileField,DecimalField
+import logging
 
 import re
 
@@ -21,6 +22,10 @@ app.config.from_object(DefaultConfig)
 mysql = MySQL(app)
 
 src = "http://127.0.0.1:8080/"
+
+logging.basicConfig(filename="system.log",
+                    format='%(asctime)s - %(levelname)s - %(message)s',
+                    level=logging.DEBUG)
 
 class publishForm(FlaskForm):
     title = StringField("title")
@@ -61,12 +66,13 @@ def publish():
     # files = request.form.getlist("files")
     files = request.files.getlist("files")
     print(files)
+    logging.debug("Somebody just published a listing of"+str(len(files)))
     return render_template('landing.html')
 
 @app.route('/sell/dashboard')
 def sell_dashboard():
     dashboard={}
-    
+    dashadsad = {}
     dashboard["lifetime_revenue"] = str.format("${:,.2f}",67876.90)
     dashboard["wallet_amt"] = str.format("${:,.2f}",273.00)
     dashboard["star_rating_avg"] = 4.7
@@ -98,4 +104,5 @@ def registration():
 
 if __name__ == '__main__':
     app.secret_key=b'_5#y2L"4Q8z178s/\\n\xec]/'
+    # app.run(host='0.0.0.0', port=3389, debug=True)
     app.run(host='0.0.0.0', port=5000, debug=True)
