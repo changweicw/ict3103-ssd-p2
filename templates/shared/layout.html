@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>{{session['title']}}</title>
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="/static/assets/images/favicon/favicon.png" />
+
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i,800&amp;display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="/static/assets/css/vendor/plugins.min.css">
+    <link rel="stylesheet" href="/static/assets/css/style.min.css">
+    <link rel="stylesheet" href="/static/assets/css/responsive.min.css">
+    <link rel="stylesheet" href="/static/assets/css/font-awesome.css">
+    <link rel="stylesheet" href="/static/assets/css/sellerpage.css">
+    <!-- <link rel="stylesheet" href="/static/assets/css/bootstrap.min.css"> -->
+    <!-- <link rel="stylesheet" href="/static/assets/bootstrap/css/bootstrap.min.css"> -->
+    <script src="/static/assets/js/vendor/jquery-3.5.1.min.js"></script>
+    {% block css %}{% endblock %}
+
+</head>
+
+<body>
+
+    <!--====== PRELOADER PART ENDS ======-->
+    <div id="main">
+        <!-- Header Start -->
+        {% include 'shared/header.html' %}
+        <!-- Header End -->
+        {% block content %} {% endblock %}
+        <!-- Footer Area start -->
+        {% include 'shared/footer.html' %}
+        <!--  Footer Area End -->
+    </div>
+
+    <!-- Scripts to be loaded  -->
+    <!-- JS -->
+    {% block js %} {% endblock %}
+    <!--====== Vendors js ======-->
+    
+    <script src="/static/assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="/static/assets/js/vendor/modernizr-3.7.1.min.js"></script>
+
+    <!--====== Plugins js ======-->
+    <!-- <script src="/static/assets/js/plugins/bootstrap.min.js"></script>
+        <script src="/static/assets/js/plugins/popper.min.js"></script>
+        <script src="/static/assets/js/plugins/meanmenu.js"></script>
+        <script src="/static/assets/js/plugins/owl-carousel.js"></script>
+        <script src="/static/assets/js/plugins/jquery.nice-select.js"></script>
+        <script src="/static/assets/js/plugins/countdown.js"></script>
+        <script src="/static/assets/js/plugins/elevateZoom.js"></script>
+        <script src="/static/assets/js/plugins/jquery-ui.min.js"></script>
+        <script src="/static/assets/js/plugins/slick.js"></script>
+        <script src="/static/assets/js/plugins/scrollup.js"></script>
+        <script src="/static/assets/js/plugins/range-script.js"></script> -->
+
+    <!--====== Use the minified version files listed below for better performance and remove the files listed above ======-->
+
+    <script src="/static/assets/js/plugins.min.js"></script>
+
+    <!-- Main Activation JS -->
+    <script src="/static/assets/js/main.js"></script>
+</body>
+
+
+</html>

@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<title>E-Commerce</title>
+<h1>I AM ALWAYS HERE</h1>
+{% with messages = get_flashed_messages() %} {% if messages %}
+<ul class="flashes">
+  {% for message in messages %}
+  <li>{{ message }}</li>
+  {% endfor %}
+</ul>
+{% endif %} {% endwith %} {% block body %}{% endblock %}
+<script src="{{src}}static/js/jquery/jquery-3.5.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+{% block javascript %} {% endblock %}

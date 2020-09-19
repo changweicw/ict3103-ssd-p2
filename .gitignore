@@ -1,3 +1,5 @@
 /.vscode
 .env
-project_env/
+project_env
+__pycache__
+env

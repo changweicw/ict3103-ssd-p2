@@ -1,0 +1,205 @@
+{% extends 'shared/layout.html' %}
+{% block content %}
+<!-- Breadcrumb Area start -->
+<section class="breadcrumb-area">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="breadcrumb-content">
+                    <h1 class="breadcrumb-hrading">Your Humble Stall</h1>
+                    <ul class="breadcrumb-links">
+                        <li><a href="/">Home</a></li>
+                        <li>My Stall</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Breadcrumb Area End -->
+<!-- login area start -->
+<div class="login-register-area mb-60px mt-53px">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-7 col-md-12 ml-auto mr-auto">
+                <div class="login-register-wrapper">
+                    <div class="login-register-tab-list nav">
+                        <a class="" data-toggle="tab" href="#lg1">
+                            <h4>Dashboard</h4>
+                        </a>
+                        <a class="active" data-toggle="tab" href="#lg2">
+                            <h4>Publish</h4>
+                        </a>
+                    </div>
+                    <div class="tab-content">
+                        <div id="lg1" class="tab-pane">
+                            <div id="seller-dashboard-contents" class="row">
+                                <div class = "column">
+                                    <div class="card">
+                                        {% if dashboard is defined and dashboard.lifetime_revenue is defined %}
+                                        <h3>{{ dashboard['lifetime_revenue'] }}</h3>
+                                        {% else %}
+                                        <h3>$0</h3>
+                                        {% endif %}
+                                        <p>Lifetime revenue</p>
+                                        <a class="stretched-link" href="#"></a>
+                                    </div>
+                                </div>
+
+                                <div class = "column">
+                                    <div class="card">
+                                        {% if dashboard is defined and dashboard.wallet_amt is defined %}
+                                        <h3>{{ dashboard.wallet_amt }}</h3>
+                                        {% else %}
+                                        <h3>$0</h3>
+                                        {% endif %}
+                                        <p>Wallet Amount</p>
+                                        <a class="stretched-link" href="#"></a>
+                                    </div>
+                                </div>
+
+                                <div class = "column">
+                                    <div class="card">
+                                        <h3>
+                                            {% if dashboard is defined and dashboard.star_rating_avg is defined %}
+                                            {{ dashboard.star_rating_avg }}
+                                            {% else %}
+                                            -
+                                            {% endif %}
+                                    </h3>
+                                        <p>Out of 5 stars</p>
+                                        <a class="stretched-link" href="#"></a>
+                                    </div>
+                                </div>
+
+                                <div class = "column">
+                                    <div class="card">
+                                        <h3>
+                                            {% if star_rating_avg is defined %}
+                                            {{ star_rating_avg }}
+                                            {% else %}
+                                            -
+                                            {% endif %}
+                                    </h3>
+                                        <p>Out of 5 stars</p>
+                                        <a class="stretched-link" href="#"></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="lg2" class="tab-pane active">
+                            <div class="login-form-container">
+                                <div class="login-register-form">
+                                    <form enctype="multipart/form-data" action="{{url_for('publish')}}" method="post">
+                                        <div class="form-group">
+                                            <label for="publish_desc">Title of Listing</label>
+                                            <input type="text" name="title" required="required" class="form-control"
+                                                id="publish_desc" placeholder="What should your listing be called?">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="publish_desc">Description</label>
+                                            <span role="textbox" aria-required="true" contenteditable type="text"
+                                                class="textarea" id="publish_desc"
+                                                placeholder="Talk about your item!"></span>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="publish_price">Price (SG$)</label>
+                                            <input type="number" name="price" required="required" class="form-control"
+                                                id="publish_price" placeholder="0">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="publish_image">Image input</label>
+                                            <!-- <input type="file" multiple accept=".jpg,.png" class="form-control-file" -->
+                                            <input type="file" required="required" multiple class="form-control-file"
+                                                id="publish_image" name="files" aria-describedby="fileHelp">
+                                            <small id="fileHelp" class="form-text text-muted">Only JPG and PNG are
+                                                accepted.</small>
+                                            <div id="images-container">
+
+                                            </div>
+                                        </div>
+                                        <div class="button-box">
+                                            <button type="submit"><span>Publish!</span></button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block js %}
+<script>
+    var fileList = [];
+    var err = "";
+    $(document).ready(function () {
+        readMultipleFiles();
+    })
+
+    function reader_loaded(e, files, i) {
+        var bin = e.target.result
+        if (!files[i].name.endsWith(".jpg") && !files[i].name.endsWith(".png")) {
+            $("#fileHelp").removeClass("text-muted")
+            if (i < files.length - 1) readAllFiles(files, i + 1)
+        } else {
+            var img = document.createElement("img");
+            img.setAttribute("style",
+                "min-height:250px;max-height:250px;border:1px solid black;margin:20px;inline-block")
+            img.src = bin
+            $("#images-container").prepend(img)
+            if (i < files.length - 1) readAllFiles(files, i + 1)
+
+        }
+    }
+
+    function readAllFiles(files, i) {
+        var file = files[i]
+        var reader = new FileReader()
+        reader.onload = function (e) {
+            reader_loaded(e, files, i)
+        }
+        reader.readAsDataURL(file)
+    }
+
+    function readMultipleFiles() {
+        $("#publish_image").change(function (e) {
+            $("#images-container").empty()
+            var files = e.originalEvent.srcElement.files
+            if (files.length > 0) readAllFiles(files, 0);
+        })
+    }
+
+    function readURL(input) {
+        $('#publish_image').change(function (e) {
+            for (var i = 0; i < e.originalEvent.srcElement.files.length; i++) {
+
+                var file = e.originalEvent.srcElement.files[i];
+                if (!file.name.endsWith(".jpg") && !file.name.endsWith(".png")) {
+                    $("#fileHelp").removeClass("text-muted")
+                    continue
+                } else {
+
+                    fileList.push(file)
+                }
+
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    var img = document.createElement("img");
+                    img.setAttribute("style",
+                        "min-height:250px;max-height:250px;border:1px solid black;margin:20px;inline-block"
+                    )
+                    img.src = reader.result;
+                    console.log("Reading data:" + file.name)
+                    $("#images-container").prepend(img);
+                }
+                reader.readAsDataURL(file);
+            }
+        })
+    }
+</script>
+<!-- login area end -->
+{% endblock %}
