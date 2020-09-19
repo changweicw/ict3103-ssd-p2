@@ -15,10 +15,17 @@ class User:
         self.removed=removed
         self.iduser=0
 
-class Product:
+class Product_listing:
     def __init__(self,name,category,price,iduser,removed=False):
         self.name = name
         self.category = category
         self.price = price
         self.iduser = iduser
         self.removed = removed
+
+class Password_History:
+    def __init(self,iduser,password,dateChanged):
+        self.iduser=iduser
+        self.password=password
+        self.dateChanged=dateChanged
+
