@@ -3,3 +3,5 @@
 project_env
 __pycache__
 env
+server.log
+sys.log
