@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "eastern-monitor-268903",
+  "private_key_id": "1f75a56eac4c2425fb6244ae33a8296df772cf9e",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDA9tv6pse5YLFD\nCLlD5BnXhHgVBlH65piTPVxhrJLfT0DtKKWq5JpRONNDRJR5/i6CP7sTfkcaPdIE\nNvi+FU1/izDfyZ2P+EngPh8jxemmixNEdzp+18THgfi0F7MJHiUW8D0bsg17Kfnz\ntnYk0sly3UGLHK6rATcHSKpdCZHjz3yX2NU/e3K+upRfQRElAuwym2nt4Ys/MROn\njmj4jVFK1tXw0aKAefxi5pSWLoTZ+f0WVnzQJ56Uj03/bUJYkOybCNVXEXz/VSrO\nZz2xSCyo5BPNnRCCfnAxkchtRM4W75zZYNMEczJPLjnNXNWmGHJ5rcuok61IAAxy\n/8WfNuW3AgMBAAECggEACG/HLowYnmBZPWwhbzhigtupV4lpayzK1xgKond4MChF\njjjqYDnAn316eNuoh6N73ctFGmwCetOX1LjqR1ptgzVqg2iVBOkxWR1XV+n8f26o\nx+0K3FQm3reb0Eta98Te/miJiSYY+Tju980TGNt9ApKSVK+CIqiZ3mSWJtQyf8pV\nfDrS/J61esyAYFZC0CQB31COrEB2uzELxKDBMbUnDsAGJuqByPCsV4/jFIJdhrI8\ndTHbJydNx2KBB1VhbVMwgFQ1XjTWRB0e4in9FpsXGumGy/zkziATuyjYj7vyGqkF\nkZJy/bIBSuEe7Yj7V0eEGpLfMMePHx0WMOCfrbvgXQKBgQDipA7jZTaFuw6XXXu8\nScGN0av140gWQVHaOTlLaKGxifXbpU5JZ6t8mfZVt/d2fgbm6kgh/01NV5PRKryL\nvEPpQb9vduGzI9aaqQHtfFj2zRHZM8+bt+0RPtkRLHN2+OzCGiIAvIoV09/xUppc\nAU0b2kNaz/c3kP9/Qi1CbJKxUwKBgQDZ9gHuRwovxAd/kiF01LlMQ6f/wLnaDoqm\n4uXQ8oscGIrsafIb89+VSgm4oGAWQrMO+S92rwPHUfpvnb1WpoHoL9NVIanLn4X6\nkq/FYnbdj9k/y06iCrhp9fto7i5axVVN23hIVb8R7IltJbguDIJJBzWLkl17U/qE\n6RipNpl5jQKBgCxebcO6psfbbOnZFUYxMkEvUPjcO9qPgxSzqzHGFBGLrqQHYqIg\nN4Q3J/B0CXAbEALYzrJJJrsDcB68vRimDK13f6C0p07Ir1SrzYLOmyQF1X6uE/Cq\nOzDrGtev2hLqfH8rWojGYEoRpn+56hok7xGK0zDOEdnA+yPQsseUNcudAoGAM5be\n7h8ycgvcGn3kHVscYMjCwu5DDzHR755U9xfxhTzp5PtOqv8WNKfJlUGgfKRc7XZd\nnaHfKxZkSHb1kcTniqWHR+cn4WJou95sbDPaHqclrMvaWNBgxfPLBhMaNbHvdvYz\niiuBhiSOgp8i8QNU8yQZsGd8aOx/p2XkyGh7+yECgYEAq8v+7QQ6ZTvXPfscY4fA\nUnNGxIOHV+SprMgX7MWa/Hv6cF8PpZJbGJaEu/amtwGfPf1RhvV1DaXLeA7GZofP\nnGSkRl5iEMSeBqFzOQH7V0mqwRS9WmV+h8rvKLAFNjPcRbbMJWaj3CAGiNmbRom1\nQwczSqkTQLu1HCKMSHetpqw=\n-----END PRIVATE KEY-----\n",
+  "client_email": "id-x03-bucket@eastern-monitor-268903.iam.gserviceaccount.com",
+  "client_id": "117607342860849277205",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/id-x03-bucket%40eastern-monitor-268903.iam.gserviceaccount.com"
+}

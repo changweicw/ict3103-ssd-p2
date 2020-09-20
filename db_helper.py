@@ -1,6 +1,7 @@
-from models import User
+from models import User,Product_listing
 import logging
 from flask_mysqldb import MySQL
+from google.cloud import storage
 
 
 logger = logging.getLogger(__name__)
@@ -52,4 +53,21 @@ class db_helper:
             return True
         except Exception as e:
             logger.warning("Register failed\n"+e)
+            return False
+
+    def publish_listing(self,listing):
+        lastid = 0
+        query_insert_product = "INSERT INTO product_listing (name,price,iduser,removed) VALUES (%s,%s,%s,%s)"
+        cur = self.mysql.connection.cursor()
+        query_insert_image = "INSERT INTO product_images VALUES (%s,%s)"
+        try:
+            cur.execute(query_insert_product,(listing.name,listing.price,listing.iduser,listing.removed))
+            lastid = cur.lastrowid
+            for x in listing.image_url:
+                cur.execute(query_insert_image,(lastid,x))
+            self.mysql.connection.commit()
+            logger.info("Publish successful")
+            return True
+        except Exception as e:
+            print(e)
             return False

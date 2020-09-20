@@ -5,3 +5,4 @@ __pycache__
 env
 server.log
 sys.log
+db.log
