@@ -76,6 +76,7 @@ class publishForm(FlaskForm):
 @app.route('/')
 def landing():
     session['title'] = "Collaboratory Mall"
+    # print(dbh.retrieve_all_products())
     return render_template('landing.html')
 
 

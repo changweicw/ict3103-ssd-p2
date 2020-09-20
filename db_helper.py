@@ -71,3 +71,30 @@ class db_helper:
         except Exception as e:
             print(e)
             return False
+
+    def retrieve_one_image(self,prod_id):
+        query_select = "SELECT * FROM product_images where idproduct = %s"
+        cur = self.mysql.connection.cursor()
+        try:
+            cur.execute(query_select,(prod_id,))
+            return cur.fetchone()["imageurl"]
+        except Exception as e:
+            logger.error(e)
+
+    def retrieve_all_products(self):
+        items=[]
+        query_select = "SELECT * FROM product_listing"
+        cur = self.mysql.connection.cursor()
+        try:
+            cur.execute(query_select)
+            result = cur.fetchall()
+            logger.info("Retrieved "+str(len(result))+" items")
+            print(len(result))
+            for r in result:
+                print(r["idproduct_listing"])
+                logging.info(r["idproduct_listing"])
+                r["image_url"]=self.retrieve_one_image(str(r["idproduct_listing"]))
+            return result
+        except Exception as e:
+            print(e)
+            logger.error("Error retrieving products\n"+e)

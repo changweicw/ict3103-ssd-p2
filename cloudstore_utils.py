@@ -27,9 +27,4 @@ class cloudstore_utils:
 
         #returns a public url
         return blob.public_url
-
-    def retrieve_from_bucket(self,url):
-        bucket = self.client.get_bucket(self.bucket_name)
-        blob = bucket.get_blob(url)
-        blob.download
-        return 
+ 
