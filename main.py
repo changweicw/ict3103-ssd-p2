@@ -77,7 +77,8 @@ class publishForm(FlaskForm):
 def landing():
     session['title'] = "Collaboratory Mall"
     # print(dbh.retrieve_all_products())
-    return render_template('landing.html')
+    products = dbh.retrieve_all_products()
+    return render_template('landing.html',products=products)
 
 
 @ app.route('/account', methods=['GET', 'POST'])
