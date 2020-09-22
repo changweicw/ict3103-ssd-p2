@@ -9,8 +9,8 @@ Do in order
 1. ` virtualenv --version ` To ensure you already installed it properly.
 Now go to your project folder and run
 1. ` virtualenv env `
-1. Ask for the .env from the people you know. If you dont know who to ask from, you are not supposed to run this project.
-1. Put the .env file in the root of this python app
+1. Ask for the bucket-key.json and .env from the people you know. If you dont know who to ask from, you are not supposed to run this project.
+1. Put the both files in the root of this python app
 1. ` pip install -r requirements.txt `
 1. ` python main.py `
 
