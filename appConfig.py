@@ -20,4 +20,6 @@ class DefaultConfig:
     os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="bucket_key.json"
     ALLOWED_EXTENSIONS = os.getenv('ALLOWED_EXTENSIONS').split(",")
     TEMP_UPLOAD_FOLDER_NAME = os.getenv('TEMP_UPLOAD_FOLDER_NAME')
+    GMAIL_ID = os.getenv('GMAIL_ID')
+    GMAIL_PW = os.getenv('GMAIL_PW')
 

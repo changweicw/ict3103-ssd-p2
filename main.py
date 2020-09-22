@@ -15,6 +15,7 @@ from google.cloud import storage
 import uuid
 from cloudstore_utils import cloudstore_utils as csutils
 
+
 app = Flask(__name__, template_folder="templates")
 
 app.jinja_env.trim_blocks = True
