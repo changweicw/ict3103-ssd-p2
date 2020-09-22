@@ -14,6 +14,7 @@ from wtform import *
 from google.cloud import storage
 import uuid
 from cloudstore_utils import cloudstore_utils as csutils
+from mailing import *
 
 
 app = Flask(__name__, template_folder="templates")
@@ -79,6 +80,7 @@ def landing():
     session['title'] = "Collaboratory Mall"
     # print(dbh.retrieve_all_products())
     products = dbh.retrieve_all_products()
+    sendLoginEmail("Raphael","raphaelisme@gmail.com")
     return render_template('landing.html',products=products)
 
 

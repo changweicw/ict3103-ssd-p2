@@ -89,9 +89,9 @@ class db_helper:
             cur.execute(query_select)
             result = cur.fetchall()
             logger.info("Retrieved "+str(len(result))+" items")
-            print(len(result))
+            # print(len(result))
             for r in result:
-                print(r["idproduct_listing"])
+                # print(r["idproduct_listing"])
                 logging.info(r["idproduct_listing"])
                 r["image_url"]=self.retrieve_one_image(str(r["idproduct_listing"]))
             return result

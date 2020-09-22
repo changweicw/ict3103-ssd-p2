@@ -1,0 +1,6 @@
+Dear ${PERSON_NAME}, 
+
+You just logged in. 
+Have a great weekend! 
+
+Yours Truly
