@@ -1,0 +1,7 @@
+Dear Shopper, 
+
+We have detected a new login from ${IP_ADDRESS} 
+If you are not the one initiating the login, please change your password right now.
+
+Thank you.
+This is a automatic message, please do not reply.

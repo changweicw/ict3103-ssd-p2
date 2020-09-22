@@ -9,7 +9,7 @@ import asyncio
 
 
 
-def sendLoginEmail(name,email_to):
+def sendLoginEmail(content,email_to):
     msg = MIMEMultipart()
     port = DefaultConfig.SMTP_PORTS
     server_name = DefaultConfig.SMTP_SERVER
@@ -24,7 +24,7 @@ def sendLoginEmail(name,email_to):
             server.starttls()
             server.login(username, password)
             msg_template = read_template(DefaultConfig.LOGIN_TEMPLATE_FILENAME)
-            message = msg_template.substitute(PERSON_NAME=name)
+            message = msg_template.substitute(IP_ADDRESS=content)
 
             msg['From']=username
             msg['To']=email_to
@@ -37,11 +37,7 @@ def sendLoginEmail(name,email_to):
         except Exception as e:
             print(e)
             return False
-        
-
-
-
-    return None
+    return True
 
 
 def read_template(filename):
