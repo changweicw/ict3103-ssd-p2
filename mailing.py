@@ -4,6 +4,7 @@ from string import Template
 from appConfig import DefaultConfig
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+import asyncio
 
 
 

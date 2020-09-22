@@ -15,6 +15,7 @@ from google.cloud import storage
 import uuid
 from cloudstore_utils import cloudstore_utils as csutils
 from mailing import *
+from log_helper import *
 
 
 app = Flask(__name__, template_folder="templates")
@@ -37,6 +38,7 @@ dbh = db_helper(mysql)
 #========================================
 csu = csutils()
 ALLOWED_EXTENSIONS = DefaultConfig.ALLOWED_EXTENSIONS
+
 #========================================
 #SERVER ENV
 #========================================
@@ -54,19 +56,15 @@ src = "http://"+ip+":"+port+"/"
 #========================================
 #LOGGER SETUPS
 #========================================
-logger = logging.getLogger(__name__)
-fh = logging.FileHandler('sys.log')
-sh = logging.StreamHandler()
-fh.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
-logger.addHandler(fh)
-logger.addHandler(sh)
-logger.setLevel(logging.INFO)
+logger = prepareLogger(__name__,'sys.log',logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
 
 # ROOT LEVEL LOG
-logging.basicConfig(filename="server.log",level=logging.INFO,
+logging.basicConfig(filename=DefaultConfig.LOGGING_FOLDER+"/server.log",level=logging.INFO,
                 format="%(asctime)s - %(levelname)s - %(message)s")
 
-
+#========================================
+#FLASK FORMS
+#========================================
 class publishForm(FlaskForm):
     title = StringField("title")
     desc = StringField("desc")
@@ -74,13 +72,12 @@ class publishForm(FlaskForm):
     files = FileField("files")
 
 
-
 @app.route('/')
 def landing():
     session['title'] = "Collaboratory Mall"
     # print(dbh.retrieve_all_products())
     products = dbh.retrieve_all_products()
-    sendLoginEmail("Raphael","raphaelisme@gmail.com")
+    # sendLoginEmail("Raphael","raphaelisme@gmail.com")
     return render_template('landing.html',products=products)
 
 

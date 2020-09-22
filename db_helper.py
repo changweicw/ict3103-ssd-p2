@@ -2,13 +2,17 @@ from models import User,Product_listing
 import logging
 from flask_mysqldb import MySQL
 from google.cloud import storage
+from log_helper import *
 
 
-logger = logging.getLogger(__name__)
-fh = logging.FileHandler('db.log')
-fh.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
-logger.addHandler(fh)
-logger.setLevel(logging.INFO)
+logger = prepareLogger(__name__,'db.log',logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
+
+
+# logger = logging.getLogger(__name__)
+# fh = logging.FileHandler('db.log')
+# fh.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
+# logger.addHandler(fh)
+# logger.setLevel(logging.INFO)
 
 class db_helper:
     
@@ -92,7 +96,7 @@ class db_helper:
             # print(len(result))
             for r in result:
                 # print(r["idproduct_listing"])
-                logging.info(r["idproduct_listing"])
+                logger.info(r["idproduct_listing"])
                 r["image_url"]=self.retrieve_one_image(str(r["idproduct_listing"]))
             return result
         except Exception as e:

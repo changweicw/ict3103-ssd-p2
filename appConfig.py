@@ -26,3 +26,4 @@ class DefaultConfig:
     LOGIN_EMAIL_TITLE = os.getenv('LOGIN_EMAIL_TITLE')
     SMTP_SERVER = os.getenv('SMTP_SERVER')
     SMTP_PORTS = os.getenv('SMTP_PORTS').split(',')
+    LOGGING_FOLDER = os.getenv('LOGGING_FOLDER')
