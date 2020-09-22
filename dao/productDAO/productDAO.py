@@ -15,17 +15,17 @@ class productDAO:
 
     def publish_listing(self,listing):
         lastid = 0
-        query_insert_product = "INSERT INTO product_listing (name,price,iduser,removed) VALUES (%s,%s,%s,%s)"
+        query_insert_product = "INSERT INTO product_listing (name,price,iduser,removed,description) VALUES (%s,%s,%s,%s,%s)"
         cur = self.mysql.connection.cursor()
         query_insert_image = "INSERT INTO product_images VALUES (%s,%s)"
         try:
-            cur.execute(query_insert_product,(listing.name,listing.price,listing.iduser,listing.removed))
+            cur.execute(query_insert_product,(listing.name,listing.price,listing.iduser,listing.removed,listing.description))
             lastid = cur.lastrowid
             for x in listing.image_url:
                 cur.execute(query_insert_image,(lastid,x))
             self.mysql.connection.commit()
             logger.info("Publish successful")
-            return True
+            return lastid
         except Exception as e:
             print(e)
             return False

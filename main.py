@@ -187,11 +187,13 @@ def publish():
         # tempSplit = str(public_url).split("/")
         urlList.append(public_url)
 
-    tempProd = Product_listing(title,urlList,price,0)
-    if loginDAO.publish_listing(tempProd):
-        print("Publish pass")
+    # tempProd = Product_listing(title,desc,urlList,price,0) eventually replace the last 0 with iduser
+    tempProd = Product_listing(title,desc,urlList,price,0)
+    idprod = productDAO.publish_listing(tempProd)
+    if idprod:
+        logger.info("Some user has just published a product with id: "+str(idprod))
     else : 
-        print("Publish failed")
+        print("Some user publish failed")
 
 
     # dbh.upload_to_bucket(files[0].filename)
