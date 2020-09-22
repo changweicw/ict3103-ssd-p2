@@ -47,6 +47,7 @@ CREATE TABLE `product_listing` (
   `price` double NOT NULL,
   `iduser` int(11) NOT NULL,
   `removed` tinyint(4) NOT NULL DEFAULT '0',
+  `stock_count` int(11) DEFAULT NULL,
   PRIMARY KEY (`idproduct_listing`)
 ) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8;
 
