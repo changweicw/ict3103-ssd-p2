@@ -77,7 +77,7 @@ def landing():
     session['title'] = "Collaboratory Mall"
     # print(dbh.retrieve_all_products())
     products = dbh.retrieve_all_products()
-    # sendLoginEmail("Raphael","raphaelisme@gmail.com")
+    sendLoginEmail("Raphael","raphaelisme@gmail.com")
     return render_template('landing.html',products=products)
 
 
