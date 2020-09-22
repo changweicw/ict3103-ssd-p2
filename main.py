@@ -9,13 +9,15 @@ from models import User, Product_listing
 import os
 import re
 from appConfig import DefaultConfig
-from db_helper import db_helper
+from dao.loginDAO.loginDAO import loginDAO
+from dao.productDAO.productDAO import productDAO
 from wtform import *
 from google.cloud import storage
 import uuid
 from cloudstore_utils import cloudstore_utils as csutils
 from mailing import *
 from log_helper import *
+import ipaddress
 
 
 app = Flask(__name__, template_folder="templates")
@@ -31,7 +33,8 @@ app.config.from_object(DefaultConfig)
 # login = LoginManager(app)
 # tesitng
 mysql = MySQL(app)
-dbh = db_helper(mysql)
+loginDAO = loginDAO(mysql)
+productDAO = productDAO(mysql)
 
 #========================================
 #GOOGLE BUCKET INIT
@@ -76,8 +79,10 @@ class publishForm(FlaskForm):
 def landing():
     session['title'] = "Collaboratory Mall"
     # print(dbh.retrieve_all_products())
-    products = dbh.retrieve_all_products()
-    sendLoginEmail("Raphael","raphaelisme@gmail.com")
+    print(str(ipaddress.IPv4Address(int(ipaddress.IPv4Address(request.remote_addr)))))
+    products = productDAO.retrieve_all_products()
+    
+    # sendLoginEmail("Raphael","raphaelisme@gmail.com")
     return render_template('landing.html',products=products)
 
 
@@ -89,13 +94,16 @@ def account():
 @ app.route('/login', methods=['GET', 'POST'])
 def login_landing():
     login_form = LoginForm()
+    ip_source = ipaddress.IPv4Address(request.remote_addr)
     registration_form = RegistrationForm()
     if login_form.validate_on_submit():
-        login_result = dbh.check_login(login_form.username.data,
+        login_result = loginDAO.check_login(login_form.username.data,
                                    login_form.password.data)
         if login_result:
             # Handle Redirect after login success
             print('TODO LOGIN')
+            if loginDAO.is_new_login(login_result['iduser'],int(ip_source)):
+                sendLoginEmail(ip_source,login_result['email'])
         else:
             flash('Your username or password is incorrect.', 'login')
 
@@ -139,7 +147,7 @@ def registration():
                 successFlag=False
                 flash('Password must contain minimum 8 characters, with 1 uppercase, 1 lowercase, 1 digit & 1 special char', 'register')
 
-        if dbh.email_exist(email):
+        if loginDAO.email_exist(email):
             successFlag=False
             flash('Email Already Exist','register')
             logger.info("Register failed because "+email+" already exist")
@@ -152,7 +160,7 @@ def registration():
         if successFlag:
             user = User(fname,lname,email,password)
             logger.info("Information sufficient to register.")
-            dbh.signup(user)
+            loginDAO.signup(user)
             tab="log"
     else:
         logger.info("Not validate on submit")
@@ -180,7 +188,7 @@ def publish():
         urlList.append(public_url)
 
     tempProd = Product_listing(title,urlList,price,0)
-    if dbh.publish_listing(tempProd):
+    if loginDAO.publish_listing(tempProd):
         print("Publish pass")
     else : 
         print("Publish failed")
