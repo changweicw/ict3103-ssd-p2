@@ -5,3 +5,7 @@ __pycache__
 env
 server.log
 sys.log
+db.log
+bucket_key.json
+logs/
+logs

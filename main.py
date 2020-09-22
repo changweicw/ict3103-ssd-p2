@@ -1,21 +1,31 @@
 from flask import Flask, render_template, redirect, url_for, flash, session, request
 from flask_login import LoginManager
 from flask_mysqldb import MySQL
-
 from flask_wtf import CSRFProtect,FlaskForm
 from wtforms import StringField,FileField,DecimalField
+from werkzeug.utils import secure_filename
 import logging
-from models import User
+from models import User, Product_listing
+import os
 import re
 from appConfig import DefaultConfig
 from db_helper import db_helper
 from wtform import *
+from google.cloud import storage
+import uuid
+from cloudstore_utils import cloudstore_utils as csutils
+from mailing import *
+from log_helper import *
+
 
 app = Flask(__name__, template_folder="templates")
 
 app.jinja_env.trim_blocks = True
 app.jinja_env.lstrip_blocks = True
 
+#========================================
+#DATABASE
+#========================================
 # csrf = CSRFProtect(app)
 app.config.from_object(DefaultConfig)
 # login = LoginManager(app)
@@ -23,6 +33,15 @@ app.config.from_object(DefaultConfig)
 mysql = MySQL(app)
 dbh = db_helper(mysql)
 
+#========================================
+#GOOGLE BUCKET INIT
+#========================================
+csu = csutils()
+ALLOWED_EXTENSIONS = DefaultConfig.ALLOWED_EXTENSIONS
+
+#========================================
+#SERVER ENV
+#========================================
 server = "dev"
 # server = "prod"
 if server=="dev":
@@ -34,19 +53,18 @@ if server=="prod":
     port="3389"
 src = "http://"+ip+":"+port+"/"
 
+#========================================
+#LOGGER SETUPS
+#========================================
+logger = prepareLogger(__name__,'sys.log',logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
 
-logger = logging.getLogger(__name__)
-fh = logging.FileHandler('sys.log')
-sh = logging.StreamHandler()
-fh.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
-logger.addHandler(fh)
-logger.addHandler(sh)
-logger.setLevel(logging.INFO)
-
-logging.basicConfig(filename="server.log",level=logging.INFO,
+# ROOT LEVEL LOG
+logging.basicConfig(filename=DefaultConfig.LOGGING_FOLDER+"/server.log",level=logging.INFO,
                 format="%(asctime)s - %(levelname)s - %(message)s")
 
-
+#========================================
+#FLASK FORMS
+#========================================
 class publishForm(FlaskForm):
     title = StringField("title")
     desc = StringField("desc")
@@ -54,11 +72,13 @@ class publishForm(FlaskForm):
     files = FileField("files")
 
 
-
 @app.route('/')
 def landing():
     session['title'] = "Collaboratory Mall"
-    return render_template('landing.html')
+    # print(dbh.retrieve_all_products())
+    products = dbh.retrieve_all_products()
+    sendLoginEmail("Raphael","raphaelisme@gmail.com")
+    return render_template('landing.html',products=products)
 
 
 @ app.route('/account', methods=['GET', 'POST'])
@@ -127,7 +147,7 @@ def registration():
         if not fname_matched or not lname_matched:
             successFlag=False
             logger.info("Firstname or lastname needs to be legitimate.")
-
+            flash('First Name or last name might not be legitimate.','register')
         
         if successFlag:
             user = User(fname,lname,email,password)
@@ -144,8 +164,29 @@ def publish():
     # need to check file type and probably do a file scan
     # files = request.form.getlist("files")
     files = request.files.getlist("files")
-    print(files)
+    title = request.form["title"]
+    desc = request.form["description"]
+    price = request.form["price"]
+    urlList = []
+    logger.info("Title:"+title+".Desc:"+desc+".Price:"+price)
     logger.info("Somebody just published a listing of "+str(len(files))+" pictures")
+    for f in files:
+        if '.' not in f.filename or f.filename.rsplit('.', 1)[1].lower() not in ALLOWED_EXTENSIONS:
+            return render_template('sell/sell_dashboard.html', tag="pub", err="Only JPG and PNG are accepted.")
+    for f in files:
+        csu.bucket_name=DefaultConfig.GOOGLE_BUCKET_ID
+        public_url =  csu.upload_to_bucket(f)
+        # tempSplit = str(public_url).split("/")
+        urlList.append(public_url)
+
+    tempProd = Product_listing(title,urlList,price,0)
+    if dbh.publish_listing(tempProd):
+        print("Publish pass")
+    else : 
+        print("Publish failed")
+
+
+    # dbh.upload_to_bucket(files[0].filename)
     return render_template('landing.html')
 
 
