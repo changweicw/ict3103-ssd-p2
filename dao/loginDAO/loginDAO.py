@@ -87,5 +87,7 @@ class loginDAO:
             cur = self.mysql.connection.cursor()
             cur.execute(query_insert,(iduser,ipaddress))
             self.mysql.connection.commit()
+            return True
         except Exception as e:
             logger.error(e)
+            return False
