@@ -204,8 +204,10 @@
                 data: JSON.stringify(object),
                 success: function (data) {
                     alert("Successfully uploaded!")
-                    // $('#uploadimageModal').modal('hide');
-                    // $('#uploaded_image').html(data);
+                    window.location.replace("/")
+                },
+                fail:function(data){
+                    alert("Failed. Please double check your information, or contact the administrator.")
                 }
             });
         })

@@ -18,7 +18,6 @@ from cloudstore_utils import cloudstore_utils as csutils
 from mailing import *
 from log_helper import *
 import ipaddress
-from io import BytesIO
 from base64 import b64decode
 from datetime import datetime,timedelta
 
@@ -34,8 +33,7 @@ login_manager.login_message="Please login first."
 
 app.jinja_env.trim_blocks = True
 app.jinja_env.lstrip_blocks = True
-# app.permanent_session_lifetime=timedelta(minutes=int(DefaultConfig.SESSION_TIMEOUT))
-app.permanent_session_lifetime=timedelta(minutes=1)
+app.permanent_session_lifetime=timedelta(minutes=int(DefaultConfig.SESSION_TIMEOUT))
 
 #========================================
 #DATABASE
@@ -230,9 +228,9 @@ def publish():
     tempProd = Product_listing(title,desc,urlList,price,current_user.iduser)
     idprod = productDAO.publish_listing(tempProd)
     if idprod:
-        logger.info(current_user.iduser+":"+current_user.fname+" has just published a product with id: "+str(idprod))
+        logger.info(str(current_user.iduser)+":"+current_user.fname+" has just published a product with id: "+str(idprod))
     else : 
-        print(current_user.iduser+" publish failed")
+        logger.warning(str(current_user.iduser)+" publish failed")
 
 
     # dbh.upload_to_bucket(files[0].filename)
