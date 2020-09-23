@@ -6,7 +6,7 @@
                 <!--Left Start-->
                 <div class="col-lg-4 col-md-4">
                     <div class="left-text">
-                        <p>Welcome {{full_name or 'to Collaboratory'}}!</p>
+                        <p>Welcome {{current_user.fname or 'to Collaboratory'}}!</p>
                     </div>
                 </div>
                 <!--Left End-->
@@ -22,7 +22,12 @@
                                 <ul class="dropdown-nav">
                                     <li><a href="/account">My Account</a></li>
                                     <li><a href="/products/checkout">Checkout</a></li>
+                                    {% if current_user is defined and not current_user.is_authenticated %}
                                     <li><a href="{{ url_for('login_landing')}}">Login</a></li>
+                                    {%endif%}
+                                    {% if current_user is defined and current_user.is_authenticated %}
+                                    <li><a href="{{ url_for('logout')}}">Logout</a></li>
+                                    {% endif %}
                                 </ul>
                             </li>
                         </ul>

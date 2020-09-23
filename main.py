@@ -1,5 +1,5 @@
 from flask import Flask, render_template, redirect, url_for, flash, session, request, jsonify
-from flask_login import LoginManager
+from flask_login import LoginManager, login_user,logout_user,login_required,current_user, UserMixin
 from flask_mysqldb import MySQL
 from flask_wtf import CSRFProtect,FlaskForm
 from wtforms import StringField,FileField,DecimalField
@@ -20,6 +20,7 @@ from log_helper import *
 import ipaddress
 from io import BytesIO
 from base64 import b64decode
+from datetime import datetime,timedelta
 
 
 
@@ -27,16 +28,20 @@ from base64 import b64decode
 
 app = Flask(__name__, template_folder="templates")
 
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_message="Please login first."
+
 app.jinja_env.trim_blocks = True
 app.jinja_env.lstrip_blocks = True
+# app.permanent_session_lifetime=timedelta(minutes=int(DefaultConfig.SESSION_TIMEOUT))
+app.permanent_session_lifetime=timedelta(minutes=1)
 
 #========================================
 #DATABASE
 #========================================
 # csrf = CSRFProtect(app)
 app.config.from_object(DefaultConfig)
-# login = LoginManager(app)
-# tesitng
 mysql = MySQL(app)
 loginDAO = loginDAO(mysql)
 productDAO = productDAO(mysql)
@@ -102,31 +107,41 @@ def landing():
     return render_template('landing.html',products=products)
 
 
-@ app.route('/account', methods=['GET', 'POST'])
+@app.route('/account', methods=['GET', 'POST'])
+@login_required
 def account():
     return render_template('account/my-account.html')
 
 
-@ app.route('/login', methods=['GET', 'POST'])
+@app.route('/login', methods=['GET', 'POST'])
 def login_landing():
+    if current_user.is_authenticated:
+        return redirect(url_for('landing'))
     login_form = LoginForm()
     ip_source = ipaddress.IPv4Address(request.remote_addr)
     registration_form = RegistrationForm()
+    if 'src' in request.args:
+        session['src'] = request.args["src"] 
     if login_form.validate_on_submit():
+        remember_me = True if 'remember_me' in request.form and request.form['remember_me']=='on' else False
         login_result = loginDAO.check_login(login_form.username.data,
                                    login_form.password.data)
         if login_result:
             # Handle Redirect after login success
             print('TODO LOGIN')
-            if loginDAO.is_new_login(login_result['iduser'],int(ip_source)):
-                sendLoginEmail(ip_source,login_result['email'])
+            login_user(login_result,remember=remember_me,duration=timedelta(days=int(app.config['REMEMBER_ME_TIMEOUT_DAYS'])))
+            if loginDAO.is_new_login(login_result.iduser,int(ip_source)):
+                sendLoginEmail(ip_source,login_result.email)
+
+                # Redirect to landing page
+            return redirect(session['src'] if 'src' in session else url_for('landing'))
         else:
             flash('Your username or password is incorrect.', 'login')
 
     return render_template('account/login.html', form=login_form, reg_form=registration_form, src=src)
 
 
-@ app.route("/register", methods=['GET', 'POST'])
+@app.route("/register", methods=['GET', 'POST'])
 def registration():
     login_form = LoginForm()
     registration_form = RegistrationForm()
@@ -183,7 +198,8 @@ def registration():
     return render_template('account/login.html', form=login_form, reg_form=registration_form, src=src, tab=tab)
 
 
-@ app.route("/sell/publish_listing", methods=['POST'])
+@app.route("/sell/publish_listing", methods=['POST'])
+@login_required
 def publish():
     # need to check file type and probably do a file scan
     # files = request.form.getlist("files")
@@ -198,7 +214,7 @@ def publish():
     logger.info("Title:"+title+".Desc:"+desc+".Price:"+price)
     logger.info("Somebody is going to pubilish a listing with "+str(len(files))+" pictures")
     for f in files:
-        if f.split(';')[0].split('/')[1] not in ALLOWED_EXTENSIONS or (len(f.split(',')[1]) - 814 )/1.37 / 1024 > 1024:
+        if f.split(';')[0].split('/')[1] not in app.config['ALLOWED_EXTENSIONS'] or (len(f.split(',')[1]) - 814 )/1.37 / 1024 > 1024:
             return jsonify(success=False)
     # for f in files:
     #     csu.bucket_name=DefaultConfig.GOOGLE_BUCKET_ID
@@ -211,19 +227,20 @@ def publish():
     urlList = csu.upload_to_bucket_b64List(fileList)
 
     # tempProd = Product_listing(title,desc,urlList,price,0) eventually replace the last 0 with iduser
-    tempProd = Product_listing(title,desc,urlList,price,0)
+    tempProd = Product_listing(title,desc,urlList,price,current_user.iduser)
     idprod = productDAO.publish_listing(tempProd)
     if idprod:
-        logger.info("Some user has just published a product with id: "+str(idprod))
+        logger.info(current_user.iduser+":"+current_user.fname+" has just published a product with id: "+str(idprod))
     else : 
-        print("Some user publish failed")
+        print(current_user.iduser+" publish failed")
 
 
     # dbh.upload_to_bucket(files[0].filename)
     return jsonify(success=True)
 
 
-@ app.route('/sell/dashboard')
+@app.route('/sell/dashboard')
+@login_required
 def sell_dashboard():
     dashboard={}
     
@@ -232,8 +249,8 @@ def sell_dashboard():
     dashboard["star_rating_avg"] = 4.7
     return render_template('sell/sell_dashboard.html',dashboard = dashboard)
 
-
-@ app.route('/products/checkout')
+@app.route('/products/checkout')
+@login_required
 def checkout():
     td = {}
     td["Product1"]={"name":"Chia Seeds", "price":28, "quantity":3}
@@ -244,6 +261,20 @@ def checkout():
         total +=(v["price"]*v["quantity"])
 
     return render_template('products/checkout.html',checkout_total = total,dict = td)
+
+@app.route('/logout')
+def logout():
+    logout_user()
+    return redirect(url_for('landing'))
+
+@login_manager.user_loader
+def load_user(iduser):
+    return loginDAO.getUser(iduser)
+
+@login_manager.unauthorized_handler
+def getout():
+    x = request
+    return redirect(url_for('login_landing',src=x.base_url))
 
 
 if __name__ == '__main__':
