@@ -120,6 +120,8 @@ def login_landing():
     login_form = LoginForm()
     ip_source = ipaddress.IPv4Address(request.remote_addr)
     registration_form = RegistrationForm()
+    if 'src' in request.args:
+        session['src'] = request.args["src"] 
     if login_form.validate_on_submit():
         remember_me = True if 'remember_me' in request.form and request.form['remember_me']=='on' else False
         login_result = loginDAO.check_login(login_form.username.data,
@@ -132,7 +134,7 @@ def login_landing():
                 sendLoginEmail(ip_source,login_result.email)
 
                 # Redirect to landing page
-            return redirect(url_for('landing'))
+            return redirect(session['src'] if 'src' in session else url_for('landing'))
         else:
             flash('Your username or password is incorrect.', 'login')
 
@@ -271,7 +273,8 @@ def load_user(iduser):
 
 @login_manager.unauthorized_handler
 def getout():
-    return redirect(url_for('login_landing'))
+    x = request
+    return redirect(url_for('login_landing',src=x.base_url))
 
 
 if __name__ == '__main__':
