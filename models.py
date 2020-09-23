@@ -1,19 +1,22 @@
 from datetime import datetime
+from flask_login import UserMixin
 
-class User:
-    def __init__(self,fname,lname,email,password,salt="salt",revenue=0.0,rating=0.0,passwordChangeDate=datetime.now(),incorrectLoginCount=0,userJoinDate=datetime.now(),removed=False):
+class User(UserMixin):
+    def __init__(self,fname,lname,email,password,total_revenue=0.0,rating=0.0,passwordChangeDate=datetime.now(),incorrectLoginCount=0,userJoinDate=datetime.now(),removed=False,iduser=-1):
         self.fname=fname
         self.lname=lname
         self.email=email
         self.password=password
-        self.salt=salt
-        self.revenue=revenue
+        self.total_revenue=total_revenue
         self.rating=rating
         self.passwordChangeDate=passwordChangeDate
         self.incorrectLoginCount=incorrectLoginCount
         self.userJoinDate=userJoinDate
         self.removed=removed
-        self.iduser=0
+        self.iduser=iduser
+    def get_id(self):
+        return self.iduser
+
 
 class Product_listing:
     def __init__(self,name,description,image_url,price,iduser,removed=False,idproduct=0,stock_count=100):

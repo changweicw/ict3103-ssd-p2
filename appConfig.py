@@ -27,3 +27,6 @@ class DefaultConfig:
     SMTP_SERVER = os.getenv('SMTP_SERVER')
     SMTP_PORTS = os.getenv('SMTP_PORTS').split(',')
     LOGGING_FOLDER = os.getenv('LOGGING_FOLDER')
+    SESSION_TIMEOUT = os.getenv('SESSION_TIMEOUT')
+    TESTING=os.getenv('TESTING')
+    LOGING_DISABLED=os.getenv('LOGIN_DISABLED')
