@@ -127,7 +127,7 @@ def login_landing():
         if login_result:
             # Handle Redirect after login success
             print('TODO LOGIN')
-            login_user(login_result,remember=remember_me,duration=timedelta(minutes=5))
+            login_user(login_result,remember=remember_me,duration=timedelta(days=int(app.config['REMEMBER_ME_TIMEOUT_DAYS'])))
             if loginDAO.is_new_login(login_result.iduser,int(ip_source)):
                 sendLoginEmail(ip_source,login_result.email)
 

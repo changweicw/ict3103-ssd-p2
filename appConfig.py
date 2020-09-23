@@ -30,3 +30,4 @@ class DefaultConfig:
     SESSION_TIMEOUT = os.getenv('SESSION_TIMEOUT')
     TESTING=os.getenv('TESTING')
     LOGING_DISABLED=os.getenv('LOGIN_DISABLED')
+    REMEMBER_ME_TIMEOUT_DAYS=os.getenv('REMEMBER_ME_TIMEOUT_DAYS')
