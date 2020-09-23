@@ -22,8 +22,12 @@
                                 <ul class="dropdown-nav">
                                     <li><a href="/account">My Account</a></li>
                                     <li><a href="/products/checkout">Checkout</a></li>
+                                    {% if current_user is defined and not current_user.is_authenticated %}
                                     <li><a href="{{ url_for('login_landing')}}">Login</a></li>
+                                    {%endif%}
+                                    {% if current_user is defined and current_user.is_authenticated %}
                                     <li><a href="{{ url_for('logout')}}">Logout</a></li>
+                                    {% endif %}
                                 </ul>
                             </li>
                         </ul>
