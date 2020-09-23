@@ -187,21 +187,28 @@ def registration():
 def publish():
     # need to check file type and probably do a file scan
     # files = request.form.getlist("files")
-    files = request.files.getlist("files")
-    title = request.form["title"]
-    desc = request.form["description"]
-    price = request.form["price"]
+    j = request.get_json()
+    files = j['imageList']
+    title = j["title"]
+    desc = j["desc"]
+    price = j["price"]
+    if not isinstance(title,str) or not isinstance(desc,str) or not isinstance(price,str):
+        return jsonify(success=False)
     urlList = []
     logger.info("Title:"+title+".Desc:"+desc+".Price:"+price)
-    logger.info("Somebody just published a listing of "+str(len(files))+" pictures")
+    logger.info("Somebody is going to pubilish a listing with "+str(len(files))+" pictures")
     for f in files:
-        if '.' not in f.filename or f.filename.rsplit('.', 1)[1].lower() not in ALLOWED_EXTENSIONS:
-            return render_template('sell/sell_dashboard.html', tag="pub", err="Only JPG and PNG are accepted.")
+        if f.split(';')[0].split('/')[1] not in ALLOWED_EXTENSIONS or (len(f.split(',')[1]) - 814 )/1.37 / 1024 > 1024:
+            return jsonify(success=False)
+    # for f in files:
+    #     csu.bucket_name=DefaultConfig.GOOGLE_BUCKET_ID
+    #     public_url =  csu.upload_to_bucket(f)
+    #     # tempSplit = str(public_url).split("/")
+    #     urlList.append(public_url)
+    fileList = []
     for f in files:
-        csu.bucket_name=DefaultConfig.GOOGLE_BUCKET_ID
-        public_url =  csu.upload_to_bucket(f)
-        # tempSplit = str(public_url).split("/")
-        urlList.append(public_url)
+        fileList.append({'b64':f.split(',')[1],'file_ext':f.split(';')[0].split('/')[1]})
+    urlList = csu.upload_to_bucket_b64List(fileList)
 
     # tempProd = Product_listing(title,desc,urlList,price,0) eventually replace the last 0 with iduser
     tempProd = Product_listing(title,desc,urlList,price,0)
@@ -213,7 +220,7 @@ def publish():
 
 
     # dbh.upload_to_bucket(files[0].filename)
-    return render_template('landing.html')
+    return jsonify(success=True)
 
 
 @ app.route('/sell/dashboard')

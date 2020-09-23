@@ -150,7 +150,8 @@
                                             </div>
                                         </div>
                                         <div class="button-box">
-                                            <button id="publish_submit_button" type="submit"><span>Publish!</span></button>
+                                            <button id="publish_submit_button"
+                                                type="submit"><span>Publish!</span></button>
                                         </div>
                                     </form>
                                 </div>
@@ -175,33 +176,34 @@
         prepareSubmitButton();
     })
 
-    function prepareSubmitButton(){
-        $('#publish_submit_button').on('click',function(e){
+    function prepareSubmitButton() {
+        $('#publish_submit_button').on('click', function (e) {
             e.preventDefault()
             var desc = $("#publish_desc").text()
             var title = $("#publish_title").val()
             var price = $("#publish_price").val()
-            if (!desc || !title || !price){
+            if (!desc || !title || !price) {
                 alert("Please fill up your shit")
-                
                 return
             }
             var object = {}
             var tempList = []
-            for (var i=0;i<fileList.length;i++){
-                tempList.push(fileList[i].split(',')[1])
+            for (var i = 0; i < fileList.length; i++) {
+                tempList.push(fileList[i])
+                // tempList.push(fileList[i].split(',')[1])
             }
-            object.imageList=tempList;
-            object.desc=desc
-            object.title=title
-            object.price=price
+            object.imageList = tempList
+            object.desc = desc
+            object.title = title
+            object.price = price
             $.ajax({
-                url: "/test",
+                url: "/sell/publish_listing",
                 type: "POST",
-                dataType:"json",
+                dataType: "json",
                 contentType: "application/json",
                 data: JSON.stringify(object),
                 success: function (data) {
+                    alert("Successfully uploaded!")
                     // $('#uploadimageModal').modal('hide');
                     // $('#uploaded_image').html(data);
                 }
@@ -221,6 +223,7 @@
             }
             reader.readAsDataURL(this.files[0]);
             $('#uploadimageModal').modal('show');
+            $('#publish_image').val('')
         });
     }
 
@@ -242,11 +245,12 @@
             $image_crop.croppie('result', {
                 type: 'base64',
                 size: 'viewport'
-                
+
             }).then(function (response) {
                 var img = document.createElement("img");
                 img.setAttribute("style",
-                    "min-height:150px;max-height:150px;border:1px solid black;margin:20px;inline-block")
+                    "min-height:150px;max-height:150px;border:1px solid black;margin:20px;inline-block"
+                    )
                 img.setAttribute("class", "product_images")
                 img.src = response
                 $("#images-container").prepend(img)
