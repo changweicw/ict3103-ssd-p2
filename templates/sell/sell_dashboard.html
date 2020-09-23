@@ -34,7 +34,7 @@
                     <div class="tab-content">
                         <div id="lg1" class="tab-pane {{'' if tag is defined and  tag=='pub' else 'active'}}">
                             <div id="seller-dashboard-contents" class="row">
-                                <div class = "column">
+                                <div class="column">
                                     <div class="card">
                                         {% if dashboard is defined and dashboard.lifetime_revenue is defined %}
                                         <h3>{{ dashboard['lifetime_revenue'] }}</h3>
@@ -46,7 +46,7 @@
                                     </div>
                                 </div>
 
-                                <div class = "column">
+                                <div class="column">
                                     <div class="card">
                                         {% if dashboard is defined and dashboard.wallet_amt is defined %}
                                         <h3>{{ dashboard.wallet_amt }}</h3>
@@ -58,7 +58,7 @@
                                     </div>
                                 </div>
 
-                                <div class = "column">
+                                <div class="column">
                                     <div class="card">
                                         <h3>
                                             {% if dashboard is defined and dashboard.star_rating_avg is defined %}
@@ -66,13 +66,13 @@
                                             {% else %}
                                             -
                                             {% endif %}
-                                    </h3>
+                                        </h3>
                                         <p>Out of 5 stars</p>
                                         <a class="stretched-link" href="#"></a>
                                     </div>
                                 </div>
 
-                                <div class = "column">
+                                <div class="column">
                                     <div class="card">
                                         <h3>
                                             {% if star_rating_avg is defined %}
@@ -80,9 +80,37 @@
                                             {% else %}
                                             -
                                             {% endif %}
-                                    </h3>
+                                        </h3>
                                         <p>Out of 5 stars</p>
                                         <a class="stretched-link" href="#"></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="uploadimageModal" class="modal" role="dialog">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                        <h4 style="position: absolute; float:left;" class="modal-title">Upload & Crop
+                                            Image</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="row">
+                                            <div class="col-md-8 text-center">
+                                                <div id="image_demo" style="width:350px; margin-top:30px"></div>
+                                            </div>
+                                            <div class="col-md-4" style="padding-top:30px;">
+                                                <br />
+                                                <br />
+                                                <br />
+                                                <button class="btn btn-success crop_image">Crop & Upload Image</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-default"
+                                            data-dismiss="modal">Close</button>
                                     </div>
                                 </div>
                             </div>
@@ -90,7 +118,8 @@
                         <div id="lg2" class="tab-pane {{'active' if tag is defined and tag=='pub' else ''}}">
                             <div class="login-form-container">
                                 <div class="login-register-form">
-                                    <form onsubmit="includeDesc()" enctype="multipart/form-data" action="{{url_for('publish')}}" method="post">
+                                    <form onsubmit="includeDesc()" enctype="multipart/form-data"
+                                        action="{{url_for('publish')}}" method="post">
                                         <div class="form-group">
                                             <label for="publish_desc">Title of Listing</label>
                                             <input type="text" name="title" required="required" class="form-control"
@@ -98,8 +127,8 @@
                                         </div>
                                         <div class="form-group">
                                             <label for="publish_desc">Description</label>
-                                            <span onkeyup="includeDesc()" role="textbox" aria-required="true" contenteditable type="text"
-                                                class="textarea" id="publish_desc"
+                                            <span onkeyup="includeDesc()" role="textbox" aria-required="true"
+                                                contenteditable type="text" class="textarea" id="publish_desc"
                                                 placeholder="Talk about your item!"></span>
                                             <input type="hidden" id="publish_desc_hidden" name="description">
                                         </div>
@@ -111,16 +140,18 @@
                                         <div class="form-group">
                                             <label for="publish_image">Image input</label>
                                             <!-- <input type="file" required="required" multiple class="form-control-file" -->
-                                            <input type="file" multiple accept=".jpg,.png" class="form-control-file"
+                                            <input type="file" accept=".jpg,.png" class="form-control-file"
                                                 id="publish_image" name="files" aria-describedby="fileHelp">
-                                            <small id="fileHelp" class="form-text {{'' if err is defined else 'text-muted'}}">{{err if err is defined else 'Only JPG and PNG are
+                                            <small id="fileHelp"
+                                                class="form-text {{'' if err is defined else 'text-muted'}}">{{err if err is defined else 'Only JPG and PNG are
                                                 accepted.'}}</small>
                                             <div id="images-container">
 
                                             </div>
                                         </div>
                                         <div class="button-box">
-                                            <button type="submit"><span>Publish!</span></button>
+                                            <button id="publish_submit_button"
+                                                type="submit"><span>Publish!</span></button>
                                         </div>
                                     </form>
                                 </div>
@@ -137,11 +168,111 @@
 <script>
     var fileList = [];
     var err = "";
+
     $(document).ready(function () {
-        readMultipleFiles();
+        //readMultipleFiles();
+        prepareFileListener();
+        prepareCroppie();
+        prepareSubmitButton();
     })
 
-    function includeDesc(){
+    function prepareSubmitButton() {
+        $('#publish_submit_button').on('click', function (e) {
+            e.preventDefault()
+            var desc = $("#publish_desc").text()
+            var title = $("#publish_title").val()
+            var price = $("#publish_price").val()
+            if (!desc || !title || !price) {
+                alert("Please fill up your shit")
+                return
+            }
+            var object = {}
+            var tempList = []
+            for (var i = 0; i < fileList.length; i++) {
+                tempList.push(fileList[i])
+                // tempList.push(fileList[i].split(',')[1])
+            }
+            object.imageList = tempList
+            object.desc = desc
+            object.title = title
+            object.price = price
+            $.ajax({
+                url: "/sell/publish_listing",
+                type: "POST",
+                dataType: "json",
+                contentType: "application/json",
+                data: JSON.stringify(object),
+                success: function (data) {
+                    alert("Successfully uploaded!")
+                    // $('#uploadimageModal').modal('hide');
+                    // $('#uploaded_image').html(data);
+                }
+            });
+        })
+    }
+
+    function prepareFileListener() {
+        $('#publish_image').on('change', function () {
+            var reader = new FileReader();
+            reader.onload = function (event) {
+                $image_crop.croppie('bind', {
+                    url: event.target.result
+                }).then(function () {
+                    console.log('jQuery bind complete');
+                });
+            }
+            reader.readAsDataURL(this.files[0]);
+            $('#uploadimageModal').modal('show');
+            $('#publish_image').val('')
+        });
+    }
+
+    function prepareCroppie() {
+        $image_crop = $('#image_demo').croppie({
+            enableExif: true,
+            viewport: {
+                width: 200,
+                height: 200,
+                type: 'square' //circle
+            },
+            boundary: {
+                width: 300,
+                height: 300
+            }
+        });
+
+        $('.crop_image').click(function (event) {
+            $image_crop.croppie('result', {
+                type: 'base64',
+                size: 'viewport'
+
+            }).then(function (response) {
+                var img = document.createElement("img");
+                img.setAttribute("style",
+                    "min-height:150px;max-height:150px;border:1px solid black;margin:20px;inline-block"
+                    )
+                img.setAttribute("class", "product_images")
+                img.src = response
+                $("#images-container").prepend(img)
+                $('#uploadimageModal').modal('hide');
+                fileList.push(response)
+                // $.ajax({
+                //     url: "upload.php",
+                //     type: "POST",
+                //     data: {
+                //         "image": response
+                //     },
+                //     success: function (data) {
+                //         $('#uploadimageModal').modal('hide');
+                //         $('#uploaded_image').html(data);
+                //     }
+                // });
+            })
+        });
+
+    }
+
+    function includeDesc() {
         a = $("#publish_desc").text()
         $("#publish_desc_hidden").val($("#publish_desc").text())
         b = $("#publish_desc_hidden").val()
@@ -156,6 +287,7 @@
             var img = document.createElement("img");
             img.setAttribute("style",
                 "min-height:250px;max-height:250px;border:1px solid black;margin:20px;inline-block")
+            img.setAttribute("class", "product_images")
             img.src = bin
             $("#images-container").prepend(img)
             if (i < files.length - 1) readAllFiles(files, i + 1)
@@ -173,9 +305,16 @@
     }
 
     function readMultipleFiles() {
+
         $("#publish_image").change(function (e) {
             $("#images-container").empty()
             var files = e.originalEvent.srcElement.files
+            for (var i = 0; i < files.length; i++) {
+                if (!files[0].name.endsWith('jpg') && !files[0].name.endsWith('png')) {
+                    $("#fileHelp").removeClass("text-muted")
+                    return
+                }
+            }
             if (files.length > 0) readAllFiles(files, 0);
         })
     }

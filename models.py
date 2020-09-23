@@ -16,7 +16,7 @@ class User:
         self.iduser=0
 
 class Product_listing:
-    def __init__(self,name,description,image_url,price,iduser,removed=False,idproduct=0):
+    def __init__(self,name,description,image_url,price,iduser,removed=False,idproduct=0,stock_count=100):
         self.name = name
         self.image_url = image_url
         self.description = description
@@ -24,6 +24,7 @@ class Product_listing:
         self.iduser = iduser
         self.removed = removed
         self.idproduct = idproduct
+        self.stock_count = stock_count
 
 class Password_History:
     def __init(self,iduser,password,dateChanged):

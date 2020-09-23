@@ -27,6 +27,13 @@ CREATE TABLE `cart` (
   CONSTRAINT `fk_cart_iduser` FOREIGN KEY (`iduser`) REFERENCES `user` (`iduser`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+CREATE TABLE `login_origin_history` (
+  `iduser` int(11) NOT NULL,
+  `ip_address` int(11) NOT NULL,
+  PRIMARY KEY (`iduser`,`ip_address`),
+  CONSTRAINT `fk_login_origin_history_iduser` FOREIGN KEY (`iduser`) REFERENCES `user` (`iduser`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 CREATE TABLE `product_images` (
   `idproduct` int(11) NOT NULL,
   `imageurl` varchar(255) NOT NULL,
@@ -40,8 +47,9 @@ CREATE TABLE `product_listing` (
   `price` double NOT NULL,
   `iduser` int(11) NOT NULL,
   `removed` tinyint(4) NOT NULL DEFAULT '0',
+  `stock_count` int(11) DEFAULT NULL,
   PRIMARY KEY (`idproduct_listing`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8;
 
 CREATE TABLE `pw_history` (
   `fk_iduser` int(11) NOT NULL,
@@ -78,4 +86,4 @@ CREATE TABLE `user` (
   `user_join_date` datetime(6) NOT NULL,
   `removed` tinyint(4) NOT NULL DEFAULT '0',
   PRIMARY KEY (`iduser`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;

@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for, flash, session, request
+from flask import Flask, render_template, redirect, url_for, flash, session, request, jsonify
 from flask_login import LoginManager
 from flask_mysqldb import MySQL
 from flask_wtf import CSRFProtect,FlaskForm
@@ -18,6 +18,11 @@ from cloudstore_utils import cloudstore_utils as csutils
 from mailing import *
 from log_helper import *
 import ipaddress
+from io import BytesIO
+from base64 import b64decode
+
+
+
 
 
 app = Flask(__name__, template_folder="templates")
@@ -74,6 +79,17 @@ class publishForm(FlaskForm):
     price = DecimalField("price")
     files = FileField("files")
 
+
+@app.route('/test',methods=['GET', 'POST'])
+def testing():
+    csu.upload_to_bucket_b64List(request.get_json()['imageList'])
+    # images = request.get_json()['imageList']
+    # for image in images:
+    #     decodedImage = b64decode(image)
+    #     filename = 'uploads_temp/some_image.png' 
+    #     with open(filename, 'wb') as f:
+    #         f.write(decodedImage)
+    return jsonify(success=True)
 
 @app.route('/')
 def landing():
@@ -171,21 +187,28 @@ def registration():
 def publish():
     # need to check file type and probably do a file scan
     # files = request.form.getlist("files")
-    files = request.files.getlist("files")
-    title = request.form["title"]
-    desc = request.form["description"]
-    price = request.form["price"]
+    j = request.get_json()
+    files = j['imageList']
+    title = j["title"]
+    desc = j["desc"]
+    price = j["price"]
+    if not isinstance(title,str) or not isinstance(desc,str) or not isinstance(price,str):
+        return jsonify(success=False)
     urlList = []
     logger.info("Title:"+title+".Desc:"+desc+".Price:"+price)
-    logger.info("Somebody just published a listing of "+str(len(files))+" pictures")
+    logger.info("Somebody is going to pubilish a listing with "+str(len(files))+" pictures")
     for f in files:
-        if '.' not in f.filename or f.filename.rsplit('.', 1)[1].lower() not in ALLOWED_EXTENSIONS:
-            return render_template('sell/sell_dashboard.html', tag="pub", err="Only JPG and PNG are accepted.")
+        if f.split(';')[0].split('/')[1] not in ALLOWED_EXTENSIONS or (len(f.split(',')[1]) - 814 )/1.37 / 1024 > 1024:
+            return jsonify(success=False)
+    # for f in files:
+    #     csu.bucket_name=DefaultConfig.GOOGLE_BUCKET_ID
+    #     public_url =  csu.upload_to_bucket(f)
+    #     # tempSplit = str(public_url).split("/")
+    #     urlList.append(public_url)
+    fileList = []
     for f in files:
-        csu.bucket_name=DefaultConfig.GOOGLE_BUCKET_ID
-        public_url =  csu.upload_to_bucket(f)
-        # tempSplit = str(public_url).split("/")
-        urlList.append(public_url)
+        fileList.append({'b64':f.split(',')[1],'file_ext':f.split(';')[0].split('/')[1]})
+    urlList = csu.upload_to_bucket_b64List(fileList)
 
     # tempProd = Product_listing(title,desc,urlList,price,0) eventually replace the last 0 with iduser
     tempProd = Product_listing(title,desc,urlList,price,0)
@@ -197,7 +220,7 @@ def publish():
 
 
     # dbh.upload_to_bucket(files[0].filename)
-    return render_template('landing.html')
+    return jsonify(success=True)
 
 
 @ app.route('/sell/dashboard')
