@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for, flash, session, request
+from flask import Flask, render_template, redirect, url_for, flash, session, request, jsonify
 from flask_login import LoginManager
 from flask_mysqldb import MySQL
 from flask_wtf import CSRFProtect,FlaskForm
@@ -18,6 +18,11 @@ from cloudstore_utils import cloudstore_utils as csutils
 from mailing import *
 from log_helper import *
 import ipaddress
+from io import BytesIO
+from base64 import b64decode
+
+
+
 
 
 app = Flask(__name__, template_folder="templates")
@@ -74,6 +79,17 @@ class publishForm(FlaskForm):
     price = DecimalField("price")
     files = FileField("files")
 
+
+@app.route('/test',methods=['GET', 'POST'])
+def testing():
+    csu.upload_to_bucket_b64List(request.get_json()['imageList'])
+    # images = request.get_json()['imageList']
+    # for image in images:
+    #     decodedImage = b64decode(image)
+    #     filename = 'uploads_temp/some_image.png' 
+    #     with open(filename, 'wb') as f:
+    #         f.write(decodedImage)
+    return jsonify(success=True)
 
 @app.route('/')
 def landing():
