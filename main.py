@@ -34,7 +34,8 @@ login_manager.login_message="Please login first."
 
 app.jinja_env.trim_blocks = True
 app.jinja_env.lstrip_blocks = True
-app.permanent_session_lifetime=timedelta(minutes=int(DefaultConfig.SESSION_TIMEOUT))
+# app.permanent_session_lifetime=timedelta(minutes=int(DefaultConfig.SESSION_TIMEOUT))
+app.permanent_session_lifetime=timedelta(minutes=1)
 
 #========================================
 #DATABASE
@@ -115,18 +116,18 @@ def account():
 @app.route('/login', methods=['GET', 'POST'])
 def login_landing():
     if current_user.is_authenticated:
-        return render_template('/',products = productDAO.retrieve_all_products())
-
+        return redirect(url_for('landing'))
     login_form = LoginForm()
     ip_source = ipaddress.IPv4Address(request.remote_addr)
     registration_form = RegistrationForm()
     if login_form.validate_on_submit():
+        remember_me = True if 'remember_me' in request.form and request.form['remember_me']=='on' else False
         login_result = loginDAO.check_login(login_form.username.data,
                                    login_form.password.data)
         if login_result:
             # Handle Redirect after login success
             print('TODO LOGIN')
-            login_user(login_result)
+            login_user(login_result,remember=remember_me,duration=timedelta(minutes=5))
             if loginDAO.is_new_login(login_result.iduser,int(ip_source)):
                 sendLoginEmail(ip_source,login_result.email)
 
