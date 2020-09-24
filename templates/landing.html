@@ -113,49 +113,51 @@
                 <div class="best-sell-slider owl-carousel owl-nav-style">
                     <!-- Single Item -->
                     {% if products|length>0 %}
-                        {% for product in products %}
-                        {% set discounted_price = product.price %}
-                        {% set discount_rate = 20 %}
-                        {% set original_price = product.price * (100/(100-discount_rate)) %}
-                        <article class="list-product">
-                            <div class="img-block">
-                                <a href="single-product.html" class="thumbnail">
-                                    <img class="first-img" src="{{product.image_url}}"
-                                        alt="" />
-                                </a>
+                    {% for product in products %}
+                    {% set discounted_price = product.price %}
+                    {% set discount_rate = 20 %}
+                    {% set original_price = product.price * (100/(100-discount_rate)) %}
+                    <article class="list-product">
+                        <div class="img-block">
+                            <a href="single-product.html" class="thumbnail">
+                                <img class="first-img" src="{{product.image_url}}" alt="" />
+                            </a>
+                        </div>
+                        <ul class="product-flag">
+                            <li class="new">New</li>
+                        </ul>
+                        <div class="product-decs">
+                            <h2><a href="single-product.html"
+                                    class="product-link">{{product.name|truncate(21,false,'..')}}</a>
+                            </h2>
+                            <div class="rating-product">
+                                <i class="ion-android-star"></i>
+                                <i class="ion-android-star"></i>
+                                <i class="ion-android-star"></i>
+                                <i class="ion-android-star"></i>
+                                <i class="ion-android-star"></i>
                             </div>
-                            <ul class="product-flag">
-                                <li class="new">New</li>
-                            </ul>
-                            <div class="product-decs">
-                                <h2><a href="single-product.html" class="product-link">{{product.name|truncate(21,false,'..')}}</a>
-                                </h2>
-                                <div class="rating-product">
-                                    <i class="ion-android-star"></i>
-                                    <i class="ion-android-star"></i>
-                                    <i class="ion-android-star"></i>
-                                    <i class="ion-android-star"></i>
-                                    <i class="ion-android-star"></i>
-                                </div>
-                                <div class="pricing-meta">
-                                    <ul>
-                                        <li class="old-price">SG${{'%0.2f' % original_price}}</li>
-                                        <li class="current-price">SG${{'%0.2f' % discounted_price}}</li>
-                                        <li class="discount-price">-{{discount_rate}}%</li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="add-to-link">
+                            <div class="pricing-meta">
                                 <ul>
-                                    <li class="cart"><a class="cart-btn" href="#">ADD TO CART </a></li>
+                                    <li class="old-price">SG${{'%0.2f' % original_price}}</li>
+                                    <li class="current-price">SG${{'%0.2f' % discounted_price}}</li>
+                                    <li class="discount-price">-{{discount_rate}}%</li>
                                 </ul>
                             </div>
-                        </article>
-                        {% endfor %}
+                        </div>
+                        <div class="add-to-link">
+                            <ul>
+                                <li class="cart"><a class="cart-btn" href="#">ADD TO CART </a></li>
+                                <div class="product_id" style="display:none">{{product.idproduct_listing}}</div>
+
+                            </ul>
+                        </div>
+                    </article>
+                    {% endfor %}
                     {% else %}
-                        <h2>Products are coming!!</h2>
+                    <h2>Products are coming!!</h2>
                     {% endif %}
-                    
+
                 </div>
                 <!-- Best Sells Carousel End -->
             </div>
@@ -190,4 +192,39 @@
             </div>
         </div>
         <!-- Brand area end -->
+        {% endblock %}
+        {% block js %}
+        <script>
+            $(document).ready(function () {
+                //readMultipleFiles();
+                prepareSendToCart();
+            })
+
+            function prepareSendToCart() {
+                var object = {}
+                $(".cart").on("click",function(){
+                    object.idproduct = $(this).siblings()[0].innerHTML
+                    object.qty = 1
+
+                    $.ajax({
+                    url: "/cart/addToCart",
+                    type: "POST",
+                    dataType: "json",
+                    contentType: "application/json",
+                    data: JSON.stringify(object),
+                    success: function (data) {
+                        alert(data.msg)
+                        window.location.replace("/")
+                    },
+                    error: function (data) {
+                        // console.log(data.responseJSON.msg)
+                        alert(data.responseJSON.msg)
+                    }
+                });
+                })
+
+               
+
+            }
+        </script>
         {% endblock %}
