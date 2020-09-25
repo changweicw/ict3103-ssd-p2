@@ -203,7 +203,7 @@ def addtocart():
     userid = current_user.iduser if current_user.is_authenticated else -1
 
     if userid == -1:
-        retdata = {'msg': 'user not authenticated'}
+        retdata = {'msg': 'You need to be logged in.'}
         return retdata,400
     
     if cartDAO.add_to_cart(userid,productid,quantity) >0:
@@ -214,27 +214,32 @@ def addtocart():
         retdata = {'msg':'Not added to cart.'}
         return retdata,400
 
-@app.route('/cart/updateCartQty',methods=['POST'])
-def updatecartqty():
-    j = request.get_json()
-    if 'idproduct' not in j or 'qty' not in j:
-        return jsonify(success=False)
+# @app.route('/cart/updateCartQty',methods=['POST'])
+# def updatecartqty():
+#     j = request.get_json()
+#     if 'idproduct' not in j or 'qty' not in j:
+#         retdata = {'msg':'Not added to cart.'}
+#         return retdata,400
 
-    if not str(j['idproduct']).isnumeric() or not str(j['qty']).isnumeric():
-        return jsonify(success=False)
+#     if not str(j['idproduct']).isnumeric() or not str(j['qty']).isnumeric():
+#         retdata = {'msg':'Not added to cart.'}
+#         return retdata,400
     
-    productid = j['idproduct']
-    quantity = j['qty'] if j['qty']>=0 else 0
-    userid = current_user.iduser if current_user.is_authenticated else -1
+#     productid = j['idproduct']
+#     quantity = j['qty'] if j['qty']>=0 else 0
+#     userid = current_user.iduser if current_user.is_authenticated else -1
 
-    if userid == -1:
-        return jsonify(success=False)    
+#     if userid == -1:
+#         retdata = {'msg':'You need to be logged in.'}
+#         return retdata,400    
 
-    if cartDAO.update_cart_qty(userid,productid,quantity)>0:
-        return jsonify(success=True)
-    else:
-        logger.warning("Attempted to add to cart but 0 rows updated.")
-        return jsonify(success=False)
+#     if cartDAO.update_cart_qty(userid,productid,quantity)>0:
+#         retdata = {'msg':'Updated cart!'}
+#         return retdata,200
+#     else:
+#         logger.warning("Attempted to add to cart but 0 rows updated.")
+#         retdata = {'msg':'Not added to cart.'}
+#         return retdata,400
 
 @app.route("/sell/publish_listing", methods=['POST'])
 @login_required

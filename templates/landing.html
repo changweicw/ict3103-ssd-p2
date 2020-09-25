@@ -149,7 +149,6 @@
                             <ul>
                                 <li class="cart"><a class="cart-btn" href="#">ADD TO CART </a></li>
                                 <div class="product_id" style="display:none">{{product.idproduct_listing}}</div>
-
                             </ul>
                         </div>
                     </article>
@@ -202,28 +201,42 @@
 
             function prepareSendToCart() {
                 var object = {}
-                $(".cart").on("click",function(){
+                $(".cart").on("click", function (e) {
+                    e.preventDefault()
                     object.idproduct = $(this).siblings()[0].innerHTML
                     object.qty = 1
-
+                    object.name = $(this).parent().parent().parent().find('a.product-link')[0].text
                     $.ajax({
-                    url: "/cart/addToCart",
-                    type: "POST",
-                    dataType: "json",
-                    contentType: "application/json",
-                    data: JSON.stringify(object),
-                    success: function (data) {
-                        alert(data.msg)
-                        window.location.replace("/")
-                    },
-                    error: function (data) {
-                        // console.log(data.responseJSON.msg)
-                        alert(data.responseJSON.msg)
-                    }
-                });
+                        url: "/cart/addToCart",
+                        type: "POST",
+                        dataType: "json",
+                        contentType: "application/json",
+                        data: JSON.stringify(object),
+                        success: function (data) {
+                            // alert(data.msg)
+                            iziToast.show({
+                                title:'Added '+object.name+' to your cart!',
+                                theme:'light',
+                                color:'green',
+                                position:'topRight',
+                                overlayClose: true,
+                                progressBarColor: 'rgb(0,0,0)',
+                            })
+                        },
+                        error: function (data) {
+                            iziToast.show({
+                                title:data.responseJSON.msg,
+                                theme:'light',
+                                color:'red',
+                                position:'topRight',
+                                overlayClose: true,
+                                progressBarColor: 'rgb(0,0,0)',
+                            })
+                        }
+                    });
                 })
 
-               
+
 
             }
         </script>
