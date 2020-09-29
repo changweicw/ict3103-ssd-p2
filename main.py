@@ -92,8 +92,13 @@ def landing():
     print(str(ipaddress.IPv4Address(int(ipaddress.IPv4Address(request.remote_addr)))))
     products = productDAO.retrieve_all_products()
     
+    if current_user.is_authenticated:
+        cartItems = cartDAO.retrieve_cart_items(current_user.iduser)
+    else:
+        cartItems = []
+    
     # sendLoginEmail("Raphael","raphaelisme@gmail.com")
-    return render_template('landing.html',products=products)
+    return render_template('landing.html',products=products,cartItems=cartItems)
 
 
 @app.route('/account', methods=['GET', 'POST'])

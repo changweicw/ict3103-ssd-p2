@@ -322,34 +322,24 @@
 
                                 <div class="mini-cart-content">
                                     <ul>
+                                        {% if cartItems is defined and cartItems|length > 0 %}
+                                        {% for item in cartItems %}
                                         <li class="single-shopping-cart">
                                             <div class="shopping-cart-img">
                                                 <a href="single-product.html"><img alt=""
-                                                        src="/static/assets/images/product-image/mini-cart/1.jpg" /></a>
-                                                <span class="product-quantity">1x</span>
+                                                        src="{{item.image_url}}" /></a>
+                                                <span class="product-quantity">{{item.qty}}x</span>
                                             </div>
                                             <div class="shopping-cart-title">
-                                                <h4><a href="single-product.html">Juicy Couture...</a></h4>
-                                                <span>$9.00</span>
+                                                <h4><a href="single-product.html">{{item.name}}</a></h4>
+                                                <span>${{'%0.2f' % item.price}}</span>
                                                 <div class="shopping-cart-delete">
                                                     <a href="#"><i class="ion-android-cancel"></i></a>
                                                 </div>
                                             </div>
                                         </li>
-                                        <li class="single-shopping-cart">
-                                            <div class="shopping-cart-img">
-                                                <a href="single-product.html"><img alt=""
-                                                        src="/static/assets/images/product-image/mini-cart/2.jpg" /></a>
-                                                <span class="product-quantity">1x</span>
-                                            </div>
-                                            <div class="shopping-cart-title">
-                                                <h4><a href="single-product.html">Water and Wind...</a></h4>
-                                                <span>$11.00</span>
-                                                <div class="shopping-cart-delete">
-                                                    <a href="#"><i class="ion-android-cancel"></i></a>
-                                                </div>
-                                            </div>
-                                        </li>
+                                        {% endfor %}
+                                        {% endif %}
                                     </ul>
                                     <div class="shopping-cart-total">
                                         <h4>Subtotal : <span>$20.00</span></h4>
