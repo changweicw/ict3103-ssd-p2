@@ -91,14 +91,15 @@ def landing():
     # print(dbh.retrieve_all_products())
     print(str(ipaddress.IPv4Address(int(ipaddress.IPv4Address(request.remote_addr)))))
     products = productDAO.retrieve_all_products()
-    
+    cartItems = []
+    cartTotal = 0.0
     if current_user.is_authenticated:
         cartItems = cartDAO.retrieve_cart_items(current_user.iduser)
-    else:
-        cartItems = []
+        for item in cartItems:
+            cartTotal = cartTotal + (item['price'] * item['qty'])
     
     # sendLoginEmail("Raphael","raphaelisme@gmail.com")
-    return render_template('landing.html',products=products,cartItems=cartItems)
+    return render_template('landing.html',products=products,cartItems=cartItems,cartTotal=cartTotal)
 
 
 @app.route('/account', methods=['GET', 'POST'])
