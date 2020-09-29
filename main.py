@@ -125,7 +125,7 @@ def login_landing():
                 # Redirect to landing page
             return redirect(session['src'] if 'src' in session else url_for('landing'))
         else:
-            flash('Your username or password is incorrect.', 'login')
+            flash('Your username or password is incorrect or you do not have an account with us.', 'login')
 
     return render_template('account/login.html', form=login_form, reg_form=registration_form, src=src)
 
@@ -141,6 +141,7 @@ def registration():
     passwordConfirm = registration_form.confirmPassword.data
     successFlag = True
     tab = "reg"
+    iziMsg="Not successful"
     if registration_form.validate_on_submit():
         nameRegex = "(^[\w\s]{1,}[\w\s]{1,}$)"
         namePat = re.compile(nameRegex)
@@ -182,9 +183,10 @@ def registration():
             logger.info("Information sufficient to register.")
             loginDAO.signup(user)
             tab="log"
+            iziMsg = "Account Successfully created!"
     else:
         logger.info("Not validate on submit")
-    return render_template('account/login.html', form=login_form, reg_form=registration_form, src=src, tab=tab)
+    return render_template('account/login.html', form=login_form, reg_form=registration_form, src=src, tab=tab,iziMsg=iziMsg)
 
 @app.route('/cart/addToCart',methods=['POST'])
 def addtocart():

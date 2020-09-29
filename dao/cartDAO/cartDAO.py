@@ -57,6 +57,8 @@ class cartDAO:
     def update_cart_qty(self,iduser,idproduct,qty):
         query_update = "update cart set qty = %s where iduser = %s and idproduct = %s"
         cur = self.mysql.connection.cursor()
+        if qty<=0:
+            return self.delete_from_cart(iduser,idproduct)
         try:
             affected_rows = cur.execute(query_update,(qty,iduser,idproduct))
             self.mysql.connection.commit()
@@ -70,5 +72,6 @@ class cartDAO:
         cur = self.mysql.connection.cursor()
         try:
             cur.execute(query,(iduser,idproduct))
+            self.mysql.connection.commit()
         except Exception as e:
             logger.error("Error in deleting from cart:"+__name__+" \n "+str(e))
