@@ -272,7 +272,7 @@ def publish():
     urlList = csu.upload_to_bucket_b64List(fileList)
 
     # tempProd = Product_listing(title,desc,urlList,price,0) eventually replace the last 0 with iduser
-    tempProd = Product_listing(title,desc,urlList,price,current_user.iduser)
+    tempProd = Product_listing(title,desc,urlList,price,current_user.iduser,False,100)
     idprod = productDAO.publish_listing(tempProd)
     if idprod:
         logger.info(str(current_user.iduser)+":"+current_user.fname+" has just published a product with id: "+str(idprod))
