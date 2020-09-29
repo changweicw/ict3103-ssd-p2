@@ -38,16 +38,8 @@
                   {% with messages =
                   get_flashed_messages(category_filter=["login"]) %} {% if
                   messages %} {% for message in messages %}
-                  <div
-                    class="alert alert-warning alert-dismissible"
-                    role="alert"
-                  >
-                    <button
-                      type="button"
-                      class="close"
-                      data-dismiss="alert"
-                      aria-label="Close"
-                    >
+                  <div class="alert alert-warning alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                       <span aria-hidden="true">×</span>
                     </button>
                     {{message}}
@@ -60,9 +52,7 @@
                     <div class="button-box">
                       <div class="login-toggle-btn">
                         <input name="remember_me" type="checkbox" />
-                        <a class="flote-none" href="javascript:void(0)"
-                          >Remember me</a
-                        >
+                        <a class="flote-none" href="javascript:void(0)">Remember me</a>
                         <a href="#">Forgot Password?</a>
                       </div>
                       <button type="submit"><span>Login</span></button>
@@ -78,16 +68,8 @@
                   get_flashed_messages(category_filter=["register"]) %} {% if
                   messages %} {% for message in messages %}
 
-                  <div
-                    class="alert alert-warning alert-dismissible"
-                    role="alert"
-                  >
-                    <button
-                      type="button"
-                      class="close"
-                      data-dismiss="alert"
-                      aria-label="Close"
-                    >
+                  <div class="alert alert-warning alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                       <span aria-hidden="true">×</span>
                     </button>
                     {{message}}
@@ -114,4 +96,25 @@
   </div>
 </div>
 <!-- login area end -->
+{% endblock %}
+{% block js %}
+<script type="text/javascript">
+  $(document).ready(function () {
+    displayToast()
+  })
+
+  function displayToast() {
+    var x = "{{iziMsg}}"
+    if (x.includes("Account Successfully created!")) {
+      iziToast.show({
+        title: x,
+        theme: 'light',
+        color: 'green',
+        position: 'topRight',
+        overlayClose: true,
+        progressBarColor: 'rgb(0,0,0)',
+      })
+    }
+  }
+</script>
 {% endblock %}

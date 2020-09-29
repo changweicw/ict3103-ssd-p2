@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for, flash, session, request, jsonify
+from flask import Flask, render_template, redirect, url_for, flash, session, request, jsonify, Response
 from flask_login import LoginManager, login_user,logout_user,login_required,current_user, UserMixin
 from flask_mysqldb import MySQL
 from flask_wtf import CSRFProtect,FlaskForm
@@ -11,6 +11,7 @@ import re
 from appConfig import DefaultConfig
 from dao.loginDAO.loginDAO import loginDAO
 from dao.productDAO.productDAO import productDAO
+from dao.cartDAO.cartDAO import cartDAO
 from wtform import *
 from google.cloud import storage
 import uuid
@@ -43,6 +44,7 @@ app.config.from_object(DefaultConfig)
 mysql = MySQL(app)
 loginDAO = loginDAO(mysql)
 productDAO = productDAO(mysql)
+cartDAO = cartDAO(mysql)
 
 #========================================
 #GOOGLE BUCKET INIT
@@ -82,17 +84,6 @@ class publishForm(FlaskForm):
     price = DecimalField("price")
     files = FileField("files")
 
-
-@app.route('/test',methods=['GET', 'POST'])
-def testing():
-    csu.upload_to_bucket_b64List(request.get_json()['imageList'])
-    # images = request.get_json()['imageList']
-    # for image in images:
-    #     decodedImage = b64decode(image)
-    #     filename = 'uploads_temp/some_image.png' 
-    #     with open(filename, 'wb') as f:
-    #         f.write(decodedImage)
-    return jsonify(success=True)
 
 @app.route('/')
 def landing():
@@ -134,7 +125,7 @@ def login_landing():
                 # Redirect to landing page
             return redirect(session['src'] if 'src' in session else url_for('landing'))
         else:
-            flash('Your username or password is incorrect.', 'login')
+            flash('Your username or password is incorrect or you do not have an account with us.', 'login')
 
     return render_template('account/login.html', form=login_form, reg_form=registration_form, src=src)
 
@@ -150,6 +141,7 @@ def registration():
     passwordConfirm = registration_form.confirmPassword.data
     successFlag = True
     tab = "reg"
+    iziMsg="Not successful"
     if registration_form.validate_on_submit():
         nameRegex = "(^[\w\s]{1,}[\w\s]{1,}$)"
         namePat = re.compile(nameRegex)
@@ -191,10 +183,65 @@ def registration():
             logger.info("Information sufficient to register.")
             loginDAO.signup(user)
             tab="log"
+            iziMsg = "Account Successfully created!"
     else:
         logger.info("Not validate on submit")
-    return render_template('account/login.html', form=login_form, reg_form=registration_form, src=src, tab=tab)
+    return render_template('account/login.html', form=login_form, reg_form=registration_form, src=src, tab=tab,iziMsg=iziMsg)
 
+@app.route('/cart/addToCart',methods=['POST'])
+def addtocart():
+    j = request.get_json()
+    if 'idproduct' not in j or 'qty' not in j:
+        retdata = {'msg': 'Incorrect fields'}
+        return retdata,400
+        # return Response("Not found",status=200)
+
+    if not str(j['idproduct']).isnumeric() or not str(j['qty']).isnumeric():
+        retdata = {'msg': 'Incorrect fields'}
+        return retdata,400
+
+    productid = j['idproduct']
+    quantity = j['qty']
+    userid = current_user.iduser if current_user.is_authenticated else -1
+
+    if userid == -1:
+        retdata = {'msg': 'You need to be logged in.'}
+        return retdata,400
+    
+    if cartDAO.add_to_cart(userid,productid,quantity) >0:
+        retdata = {'msg':'Successfully added to cart.'}
+        return retdata,200
+    else:
+        logger.warning("Attempted to add to cart but 0 rows updated.")
+        retdata = {'msg':'Not added to cart.'}
+        return retdata,400
+
+# @app.route('/cart/updateCartQty',methods=['POST'])
+# def updatecartqty():
+#     j = request.get_json()
+#     if 'idproduct' not in j or 'qty' not in j:
+#         retdata = {'msg':'Not added to cart.'}
+#         return retdata,400
+
+#     if not str(j['idproduct']).isnumeric() or not str(j['qty']).isnumeric():
+#         retdata = {'msg':'Not added to cart.'}
+#         return retdata,400
+    
+#     productid = j['idproduct']
+#     quantity = j['qty'] if j['qty']>=0 else 0
+#     userid = current_user.iduser if current_user.is_authenticated else -1
+
+#     if userid == -1:
+#         retdata = {'msg':'You need to be logged in.'}
+#         return retdata,400    
+
+#     if cartDAO.update_cart_qty(userid,productid,quantity)>0:
+#         retdata = {'msg':'Updated cart!'}
+#         return retdata,200
+#     else:
+#         logger.warning("Attempted to add to cart but 0 rows updated.")
+#         retdata = {'msg':'Not added to cart.'}
+#         return retdata,400
 
 @app.route("/sell/publish_listing", methods=['POST'])
 @login_required

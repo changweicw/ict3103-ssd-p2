@@ -35,10 +35,12 @@ class loginDAO:
         try:
             cur.execute(query, (email,))
             result = cur.fetchone()
-            u = models.User(result['fname'],result['lname'],result['email'], 
-            result['password'],result['total_revenue'],result['rating_avg'],result['password_change_date'],result['incorrect_login_count'],result['user_join_date'],result['removed'],result['iduser'])
             if not result:
                 return None
+
+            u = models.User(result['fname'],result['lname'],result['email'], 
+            result['password'],result['total_revenue'],result['rating_avg'],result['password_change_date'],result['incorrect_login_count'],result['user_join_date'],result['removed'],result['iduser'])
+            
 
             if password_validator(password, result['password']):
                 logger.info(email + " just logged in")
@@ -72,7 +74,7 @@ class loginDAO:
         try:
             enPass = encrypt_password(user.password)
             print("Password Checker: " + enPass)
-            cur.execute(query_insert, (user.fname, user.lname, user.email, enPass, user.revenue,
+            cur.execute(query_insert, (user.fname, user.lname, user.email, enPass, user.total_revenue,
                                        user.rating, user.passwordChangeDate, user.incorrectLoginCount, user.userJoinDate, user.removed))
             self.mysql.connection.commit()
             logger.info("Register successful for "+user.fname)
