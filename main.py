@@ -97,9 +97,8 @@ def landing():
         cartItems = cartDAO.retrieve_cart_items(current_user.iduser)
         for item in cartItems:
             cartTotal = cartTotal + (item['price'] * item['qty'])
-    
     # sendLoginEmail("Raphael","raphaelisme@gmail.com")
-    return render_template('landing.html',products=products,cartItems=cartItems,cartTotal=cartTotal)
+    return render_template('landing.html',products=products)
 
 
 @app.route('/account', methods=['GET', 'POST'])

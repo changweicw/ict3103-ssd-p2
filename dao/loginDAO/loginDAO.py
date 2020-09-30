@@ -7,6 +7,7 @@ from google.cloud import storage
 from log_helper import *
 from flask import Flask,current_app
 import models
+from dao.cartDAO.cartDAO import cartDAO
 
 
 logger = prepareLogger(__name__,'db.log',logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
@@ -15,11 +16,11 @@ class loginDAO:
 
     def __init__(self,mysql):
         self.mysql = mysql
-
+        self.cartDAO = cartDAO(mysql)
     def getUser(self,iduser):
         query = "SELECT * FROM user WHERE iduser = %s"
-        cur = self.mysql.connection.cursor()
         try:
+            cur = self.mysql.connection.cursor()
             cur.execute(query, (iduser,))
             result = cur.fetchone()
             result['addr_info'] = self.getAddr(iduser)
@@ -34,7 +35,9 @@ class loginDAO:
                             result['user_join_date'],
                             result['removed'],
                             result['iduser'],
-                            self.getAddr(iduser))
+                            self.getAddr(iduser),
+                            self.cartDAO.retrieve_cart_items(iduser))
+                            
             if not result:
                 return None
             return u
@@ -44,8 +47,8 @@ class loginDAO:
 
     def getAddr(self,iduser):
         query="Select * from address where iduser = %s"
-        cur = self.mysql.connection.cursor()
         try:
+            cur = self.mysql.connection.cursor()
             cur.execute(query, (iduser,))
             result = cur.fetchone()
             return result or None
@@ -55,8 +58,8 @@ class loginDAO:
 
     def check_login(self, email, password):
         query = "SELECT * FROM user WHERE email = %s"
-        cur = self.mysql.connection.cursor()
         try:
+            cur = self.mysql.connection.cursor()
             cur.execute(query, (email,))
             result = cur.fetchone()
             if not result:
@@ -71,16 +74,28 @@ class loginDAO:
                 return u
             else:
                 logger.info(email + " failed to login")
+                self.increase_fail_login_count(u.iduser)
                 return None
         except Exception as e:
             logger.error("User "+str(email)+ " encountered an error while checking for valid login in "+__name__+":" +str(e))
             return None
-       
+
+    def increase_fail_login_count(self,iduser):
+        query = "update user set incorrect_login_count = incorrect_login_count+1 where iduser = %s"
+        try:
+            cur = self.mysql.connection.cursor()
+            result = cur.execute(query,(iduser,))
+            self.mysql.connection.commit()
+            print(result)
+            return True
+        except Exception as e:
+            logger.warning("User "+str(iduser)+ " encountered an error while increasing fail login count in "+__name__+":" +str(e))
+            return None
 
     def email_exist(self, email):
         query_checkemail = "SELECT * from user where email = %s"
-        cur = self.mysql.connection.cursor()
         try:
+            cur = self.mysql.connection.cursor()
             cur.execute(query_checkemail, (email,))
             result = cur.fetchone()
             if result is not None:
@@ -94,8 +109,8 @@ class loginDAO:
     def signup(self, user):
         query_insert = "INSERT INTO user (fname,lname,email,password,total_revenue,rating_avg,password_change_date,incorrect_login_count,user_join_date,removed) "
         query_insert = query_insert + "VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-        cur = self.mysql.connection.cursor()
         try:
+            cur = self.mysql.connection.cursor()
             enPass = encrypt_password(user.password)
             print("Password Checker: " + enPass)
             cur.execute(query_insert, (user.fname, user.lname, user.email, enPass, user.total_revenue,
