@@ -1,3 +1,4 @@
+from datetime import datetime
 from models import User,Product_listing
 import logging
 from bcrypt_hashing import encrypt_password, password_validator
@@ -169,13 +170,54 @@ class loginDAO:
             user = cur.fetchone()
             if not password_validator(currentpw,user['password']):
                 logger.warning("User "+str(iduser)+" tried to change their password with a wrong current password")
-                return None
+                return None,"wrong current password"
+
+            pw_hist = self.retrieve_pw_history(iduser)
+            if len(pw_hist)>5:
+                self.delete_one_earliest_pw_history(iduser)
+                pw_hist = self.retrieve_pw_history(iduser)
+                
+            for x in pw_hist:
+                if password_validator(newpw,x['password']):
+                    logger.warning("User "+str(iduser)+" tried to change their password to a history password")
+                    return None,"new password is one of your previous 5 passwords"
             cur.execute(query_update,(encrypt_password(newpw),iduser))
             self.mysql.connection.commit()
+            self.insert_pw_history(iduser,newpw)
             logger.info("User "+str(iduser)+" updated their password")
-            return True
+            return True,"Successfully updated"
         except Exception as e:
             logger.error("User "+str(iduser)+ " encountered an error while updating password in "+__name__+":" +str(e))
+            return None,"system error"
+        
+    def retrieve_pw_history(self,iduser):
+        query = "select * from pw_history where fK_iduser = %s order by date_changed desc"
+        try:
+            cur = self.mysql.connection.cursor()
+            cur.execute(query,(iduser,))
+            return cur.fetchall()
+        except Exception as e:
+            logger.warning("User "+str(iduser)+ " encountered an error while checking password history in "+__name__+":" +str(e))
             return None
-        
-        
+
+    def insert_pw_history(self,iduser,pw):
+        query = "insert into pw_history (fk_iduser,password,date_changed) values (%s,%s,%s)"
+        try:
+            cur = self.mysql.connection.cursor()
+            result = cur.execute(query,(iduser,encrypt_password(pw),datetime.now()))
+            self.mysql.connection.commit()
+            return True if result else None
+        except Exception as e:
+            logger.warning("User "+str(iduser)+ " encountered an error while inserting password history in "+__name__+":" +str(e))
+            return None
+
+    def delete_one_earliest_pw_history(self,iduser):
+        query_delete = "delete from pw_history where fk_iduser = %s order by date_changed asc limit 1"
+        try:
+            cur = self.mysql.connection.cursor()
+            cur.execute(query_delete,(iduser,))
+            self.mysql.connection.commit()
+            return True
+        except Exception as e:
+            logger.warning("User "+str(iduser)+ " encountered an error while deleting password history in "+__name__+":" +str(e))
+            return None

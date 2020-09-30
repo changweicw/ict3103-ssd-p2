@@ -131,8 +131,8 @@ def account_update():
         if not pw_match:
             retString = "Password must contain minimum 8 characters, with 1 uppercase, 1 lowercase, 1 digit & 1 special char"
         else:
-            ret_pw = loginDAO.update_pw(current_user.iduser,j['currentpw'],j['newpw'])
-            retString = retString + "Error changing password" if not ret_pw else ""
+            ret_pw_status,msg = loginDAO.update_pw(current_user.iduser,j['currentpw'],j['newpw'])
+            retString = retString + msg if not ret_pw_status else ""
     return {'msg':retString},200 if retString == "" else 400
 
 
