@@ -1,166 +1,174 @@
+{% extends 'shared/layout.html' %} {% block content %}
+<!-- Breadcrumb Area start -->
+<section class="breadcrumb-area">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="breadcrumb-content">
+                    <h1 class="breadcrumb-hrading">Account Page</h1>
+                    <ul class="breadcrumb-links">
+                        <li><a href="index.html">Home</a></li>
+                        <li>My Account</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Breadcrumb Area End -->
+<!-- account area start -->
+<div class="checkout-area mtb-60px">
+    <div class="container">
+        <div class="row">
+            <div class="ml-auto mr-auto col-lg-9">
+                <div class="checkout-wrapper">
+                    <div id="faq" class="panel-group">
+                        <div class="panel panel-default single-my-account">
+                            <div class="panel-heading my-account-title">
+                                <h3 class="panel-title"><span>1 .</span> <a data-toggle="collapse" data-parent="#faq"
+                                        href="#my-account-1">Edit your account information </a></h3>
+                            </div>
+                            <div id="my-account-1" class="panel-collapse collapse show">
+                                <div class="panel-body">
+                                    <div class="myaccount-info-wrapper">
+                                        <div class="account-info-wrapper">
+                                            <h4>My Account Information</h4>
+                                            <h5>Your Personal Details</h5>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-6 col-md-6">
+                                                <div class="billing-info">
+                                                    <label>First Name</label>
+                                                    <fieldset disabled>
+                                                        <input type="text" value="{{current_user.fname}}"
+                                                            style="background-color:rgb(10,10,10,0.1)" />
+                                                    </fieldset>
 
-           {% extends 'shared/layout.html' %} {% block content %}
-           <!-- Breadcrumb Area start -->
-            <section class="breadcrumb-area">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="breadcrumb-content">
-                                <h1 class="breadcrumb-hrading">Account Page</h1>
-                                <ul class="breadcrumb-links">
-                                    <li><a href="index.html">Home</a></li>
-                                    <li>My Account</li>
-                                </ul>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-6 col-md-6">
+                                                <div class="billing-info">
+                                                    <label>Last Name</label>
+                                                    <fieldset disabled>
+                                                        <input type="text" style="background-color:rgb(10,10,10,0.1)"
+                                                            value="{{current_user.lname}}" />
+                                                    </fieldset>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-12 col-md-12">
+                                                <div class="billing-info">
+                                                    <label>Email Address</label>
+                                                    <input type="email" id="input_email"
+                                                        value="{{current_user.email}}" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="billing-back-btn">
+                                            <div class="billing-back">
+                                                <a href="#"><i class="fa fa-arrow-up"></i> back</a>
+                                            </div>
+                                            <div class="billing-btn">
+                                                <button type="submit" id="section1-update-button">Continue</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </section>
-            <!-- Breadcrumb Area End -->
-            <!-- account area start -->
-            <div class="checkout-area mtb-60px">
-                <div class="container">
-                    <div class="row">
-                        <div class="ml-auto mr-auto col-lg-9">
-                            <div class="checkout-wrapper">
-                                <div id="faq" class="panel-group">
-                                    <div class="panel panel-default single-my-account">
-                                        <div class="panel-heading my-account-title">
-                                            <h3 class="panel-title"><span>1 .</span> <a data-toggle="collapse" data-parent="#faq" href="#my-account-1">Edit your account information </a></h3>
+                        <div class="panel panel-default single-my-account">
+                            <div class="panel-heading my-account-title">
+                                <h3 class="panel-title"><span>2 .</span> <a data-toggle="collapse" data-parent="#faq"
+                                        href="#my-account-2">Change your Address</a></h3>
+                            </div>
+                            <div id="my-account-2" class="panel-collapse collapse">
+                                <div class="panel-body">
+                                    <div class="myaccount-info-wrapper">
+                                        <div class="account-info-wrapper">
+                                            <h4>My Account Information</h4>
+                                            <h5>Your Personal Details</h5>
                                         </div>
-                                        <div id="my-account-1" class="panel-collapse collapse show">
-                                            <div class="panel-body">
-                                                <div class="myaccount-info-wrapper">
-                                                    <div class="account-info-wrapper">
-                                                        <h4>My Account Information</h4>
-                                                        <h5>Your Personal Details</h5>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-lg-6 col-md-6">
-                                                            <div class="billing-info">
-                                                                <label>First Name</label>
-                                                                <input type="text" />
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-lg-6 col-md-6">
-                                                            <div class="billing-info">
-                                                                <label>Last Name</label>
-                                                                <input type="text" />
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-lg-12 col-md-12">
-                                                            <div class="billing-info">
-                                                                <label>Email Address</label>
-                                                                <input type="email" />
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-lg-6 col-md-6">
-                                                            <div class="billing-info">
-                                                                <label>Telephone</label>
-                                                                <input type="text" />
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-lg-6 col-md-6">
-                                                            <div class="billing-info">
-                                                                <label>Fax</label>
-                                                                <input type="text" />
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="billing-back-btn">
-                                                        <div class="billing-back">
-                                                            <a href="#"><i class="fa fa-arrow-up"></i> back</a>
-                                                        </div>
-                                                        <div class="billing-btn">
-                                                            <button type="submit">Continue</button>
-                                                        </div>
-                                                    </div>
+                                        <div class="row">
+                                            <div class="col-lg-12 col-md-12">
+                                                <div class="billing-info">
+                                                    <label>Address</label>
+                                                    <input type="email" id="input_address"
+                                                        value="{{current_user.address_details.address_line}}" />
                                                 </div>
+                                            </div>
+                                            <div class="col-lg-6 col-md-6">
+                                                <div class="billing-info">
+                                                    <label>Zip Code</label>
+                                                    <input type="text" id="input_zipcode"
+                                                        value="{{current_user.address_details.zipcode}}" />
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-6 col-md-6">
+                                                <div class="billing-info">
+                                                    <label>Unit-no (without #)</label>
+                                                    <input type="text" id="input_unitno"
+                                                        value="{{current_user.address_details.unit_no}}" />
+                                                </div>
+                                            </div>
+
+
+                                        </div>
+                                        <div class="billing-back-btn">
+                                            <div class="billing-back">
+                                                <a href="#"><i class="fa fa-arrow-up"></i> back</a>
+                                            </div>
+                                            <div class="billing-btn">
+                                                <button id="section2-update-button" type="submit">Continue</button>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="panel panel-default single-my-account">
-                                        <div class="panel-heading my-account-title">
-                                            <h3 class="panel-title"><span>2 .</span> <a data-toggle="collapse" data-parent="#faq" href="#my-account-2">Change your password </a></h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel panel-default single-my-account">
+                            <div class="panel-heading my-account-title">
+                                <h3 class="panel-title"><span>3 .</span> <a data-toggle="collapse" data-parent="#faq"
+                                        href="#my-account-3">Reset Password</a></h3>
+                            </div>
+                            <div id="my-account-3" class="panel-collapse collapse">
+                                <div class="panel-body">
+                                    <div class="myaccount-info-wrapper">
+                                        <div class="account-info-wrapper">
+                                            <h4>Change Password</h4>
+                                            <h5>Your Password</h5>
                                         </div>
-                                        <div id="my-account-2" class="panel-collapse collapse">
-                                            <div class="panel-body">
-                                                <div class="myaccount-info-wrapper">
-                                                    <div class="account-info-wrapper">
-                                                        <h4>Change Password</h4>
-                                                        <h5>Your Password</h5>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-lg-12 col-md-12">
-                                                            <div class="billing-info">
-                                                                <label>Password</label>
-                                                                <input type="password" />
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-lg-12 col-md-12">
-                                                            <div class="billing-info">
-                                                                <label>Password Confirm</label>
-                                                                <input type="password" />
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="billing-back-btn">
-                                                        <div class="billing-back">
-                                                            <a href="#"><i class="fa fa-arrow-up"></i> back</a>
-                                                        </div>
-                                                        <div class="billing-btn">
-                                                            <button type="submit">Continue</button>
-                                                        </div>
-                                                    </div>
+                                        <div id="alert-wrong-pw" class="alert alert-danger" role="alert">
+                                            Wrong current password
+                                        </div>
+                                        <div id="alert-pw-no-match" class="alert alert-warning" role="alert">
+                                            Passwords do not match
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-12 col-md-12">
+                                                <div class="billing-info">
+                                                    <label>Current Password</label>
+                                                    <input id="input_currentpw" type="password" />
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-12 col-md-12">
+                                                <div class="billing-info">
+                                                    <label>New Password</label>
+                                                    <input id="input_newpw" type="password" />
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-12 col-md-12">
+                                                <div class="billing-info">
+                                                    <label>Password Confirm</label>
+                                                    <input id="input_newpwconfirm" type="password" />
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="panel panel-default single-my-account">
-                                        <div class="panel-heading my-account-title">
-                                            <h3 class="panel-title"><span>3 .</span> <a data-toggle="collapse" data-parent="#faq" href="#my-account-3">Modify your address book entries </a></h3>
-                                        </div>
-                                        <div id="my-account-3" class="panel-collapse collapse">
-                                            <div class="panel-body">
-                                                <div class="myaccount-info-wrapper">
-                                                    <div class="account-info-wrapper">
-                                                        <h4>Address Book Entries</h4>
-                                                    </div>
-                                                    <div class="entries-wrapper">
-                                                        <div class="row">
-                                                            <div class="col-lg-6 col-md-6 d-flex align-items-center justify-content-center">
-                                                                <div class="entries-info text-center">
-                                                                    <p>Jone Deo</p>
-                                                                    <p>hastech</p>
-                                                                    <p>28 Green Tower,</p>
-                                                                    <p>Street Name.</p>
-                                                                    <p>New York City,</p>
-                                                                    <p>USA</p>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-lg-6 col-md-6 d-flex align-items-center justify-content-center">
-                                                                <div class="entries-edit-delete text-center">
-                                                                    <a class="edit" href="#">Edit</a>
-                                                                    <a href="#">Delete</a>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="billing-back-btn">
-                                                        <div class="billing-back">
-                                                            <a href="#"><i class="fa fa-arrow-up"></i> back</a>
-                                                        </div>
-                                                        <div class="billing-btn">
-                                                            <button type="submit">Continue</button>
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                        <div class="billing-back-btn">
+                                            <div class="billing-back">
+                                                <a href="#"><i class="fa fa-arrow-up"></i> back</a>
                                             </div>
-                                        </div>
-                                    </div>
-                                    <div class="panel panel-default single-my-account">
-                                        <div class="panel-heading my-account-title">
-                                            <h3 class="panel-title"><span>4 .</span> <a href="wishlist.html">Modify your wish list </a></h3>
+                                            <div class="billing-btn">
+                                                <button id="section3-update-button" type="submit">Continue</button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -169,5 +177,166 @@
                     </div>
                 </div>
             </div>
-            <!-- account area end -->
-          {% endblock %}
+        </div>
+    </div>
+</div>
+<!-- account area end -->
+{% endblock %}
+{% block js %}
+<script>
+    $(document).ready(function () {
+        prepareFirstButton()
+        prepareSecondButton()
+        prepareThirdButton()
+        hidePwNoMatch()
+        hideWrongPw()
+    })
+
+    function showPwNoMatch(){
+        $("#alert-pw-no-match").show()
+        
+    }
+
+    function hidePwNoMatch(){
+        $("#alert-pw-no-match").hide()
+        
+    }
+
+    function showWrongPw(){
+        $("#alert-wrong-pw").show()
+        
+    }
+
+    function hideWrongPw(){
+        $("#alert-wrong-pw").hide()
+        
+    }
+
+    function prepareFirstButton() {
+        $("#section1-update-button").on("click", function (e) {
+            e.preventDefault()
+            email = $("#input_email").val()
+            obj = {}
+            obj.email = email
+            $.ajax({
+                url: "/account/update",
+                type: "POST",
+                dataType: "json",
+                contentType: "application/json",
+                data: JSON.stringify(obj),
+                success: function (data) {
+                    // alert(data.msg)
+                    iziToast.show({
+                        title: 'Email address updated',
+                        theme: 'light',
+                        color: 'green',
+                        position: 'topRight',
+                        overlayClose: true,
+                        progressBarColor: 'rgb(0,0,0)',
+                        overlayColor: 'rgba(0, 0, 0, 0.6)'
+                    })
+                },
+                error: function (data) {
+                    iziToast.show({
+                        title: data.responseJSON.msg,
+                        theme: 'light',
+                        color: 'red',
+                        position: 'topRight',
+                        overlayClose: true,
+                        progressBarColor: 'rgb(0,0,0)'
+                    })
+                }
+            });
+        })
+    }
+
+    function prepareSecondButton() {
+        $("#section2-update-button").on("click", function (e) {
+            address = {}
+            address.line = $("#input_address").val()
+            address.unitno = $("#input_unitno").val()
+            address.zipcode = $("#input_zipcode").val()
+            obj = {}
+            obj.address = address
+            $.ajax({
+                url: "/account/update",
+                type: "POST",
+                dataType: "json",
+                contentType: "application/json",
+                data: JSON.stringify(obj),
+                success: function (data) {
+                    // alert(data.msg)
+                    iziToast.show({
+                        title: 'Address updated!',
+                        theme: 'light',
+                        color: 'green',
+                        position: 'topRight',
+                        overlayClose: true,
+                        progressBarColor: 'rgb(0,0,0)',
+                        overlayColor: 'rgba(0, 0, 0, 0.6)',
+                    })
+                },
+                error: function (data) {
+                    iziToast.show({
+                        title: data.responseJSON.msg,
+                        theme: 'light',
+                        color: 'red',
+                        position: 'topRight',
+                        overlayClose: true,
+                        progressBarColor: 'rgb(0,0,0)',
+                        overlayColor: 'rgba(0, 0, 0, 0.6)',
+                    })
+                }
+            });
+        })
+    }
+    
+    function prepareThirdButton(){
+        $("#section3-update-button").on('click',function(e){
+            currentpw = $("#input_currentpw").val()
+            newpw = $("#input_newpw").val()
+            newpwconfirm = $("#input_newpwconfirm").val()
+
+            if (newpwconfirm != newpw){
+                showPwNoMatch()
+                return
+            }
+
+            obj = {}
+            obj.currentpw = currentpw
+            obj.newpw = newpw
+            $.ajax({
+                url: "/account/update",
+                type: "POST",
+                dataType: "json",
+                contentType: "application/json",
+                data: JSON.stringify(obj),
+                success: function (data) {
+                    // alert(data.msg)
+                    iziToast.show({
+                        title: 'Password updated!',
+                        theme: 'light',
+                        color: 'green',
+                        position: 'topRight',
+                        overlayClose: true,
+                        progressBarColor: 'rgb(0,0,0)',
+                        overlayColor: 'rgba(0, 0, 0, 0.6)',
+                    })
+                },
+                error: function (data) {
+                    iziToast.show({
+                        title: data.responseJSON.msg,
+                        theme: 'light',
+                        color: 'red',
+                        position: 'topRight',
+                        overlayClose: true,
+                        progressBarColor: 'rgb(0,0,0)',
+                        overlayColor: 'rgba(0, 0, 0, 0.6)',
+                    })
+                }
+            });
+
+        })
+    }
+</script>
+{% endblock %}

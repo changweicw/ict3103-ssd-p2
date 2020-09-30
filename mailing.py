@@ -5,8 +5,9 @@ from appConfig import DefaultConfig
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import asyncio
+from log_helper import *
 
-
+logger = prepareLogger(__name__,'mailing.log',logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
 
 
 def sendLoginEmail(content,email_to):
@@ -17,8 +18,8 @@ def sendLoginEmail(content,email_to):
     username = DefaultConfig.GMAIL_ID
     password = DefaultConfig.GMAIL_PW
 
-    with smtplib.SMTP(server_name, port[0]) as server:
-        try:
+    try:
+        with smtplib.SMTP(server_name, port[0]) as server:
             # server.connect(server_name,port[2])
             server.ehlo()
             server.starttls()
@@ -34,9 +35,9 @@ def sendLoginEmail(content,email_to):
             server.send_message(msg)
             # server.sendmail(username,email_to,msg)
             del msg
-        except Exception as e:
-            print(e)
-            return False
+    except Exception as e:
+        logger.error(e)
+        return False
     return True
 
 
@@ -44,3 +45,23 @@ def read_template(filename):
     with open(filename, 'r', encoding='utf-8') as template_file:
         template_file_content = template_file.read()
     return Template(template_file_content)
+
+
+# def sendGridTest(content,email_to):
+#     username = DefaultConfig.GMAIL_ID
+#     password = DefaultConfig.GMAIL_PW
+#     message = Mail(
+#     from_email=username,
+#     to_emails=email_to,
+#     subject='Sending with Twilio SendGrid is Fun',
+#     html_content='<strong>and easy to do anywhere, even with Python</strong>'+str(content))
+#     try:
+#         sg = SendGridAPIClient(DefaultConfig.SENDGRID_API_KEY)
+#         response = sg.send(message)
+#         print("This is email response:")
+#         print(response.status_code)
+#         print(response.body)
+#         print(response.headers)
+#         print("This is email response end:")
+#     except Exception as e:
+#         print(e)

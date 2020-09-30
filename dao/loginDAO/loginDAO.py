@@ -38,6 +38,7 @@ class loginDAO:
                 return None
             return u
         except Exception as e:
+            logger.error("User "+str(iduser)+ " encountered an error while retrieving user in "+__name__+":" +str(e))
             return None
 
     def getAddr(self,iduser):
@@ -48,6 +49,7 @@ class loginDAO:
             result = cur.fetchone()
             return result or None
         except Exception as e:
+            logger.error("User "+str(iduser)+ " encountered an error while retrieving address in "+__name__+":" +str(e))
             return None
 
     def check_login(self, email, password):
@@ -70,7 +72,7 @@ class loginDAO:
                 logger.info(email + " failed to login")
                 return None
         except Exception as e:
-            logger.error(e)
+            logger.error("User "+str(email)+ " encountered an error while checking for valid login in "+__name__+":" +str(e))
             return None
        
 
@@ -84,7 +86,7 @@ class loginDAO:
                 logger.info(email+" already exist")
                 return True
         except Exception as e:
-            logger.error(e)
+            logger.error("encountered an error while checking if email exist in "+__name__+":" +str(e))
         
         return None
 
@@ -102,7 +104,7 @@ class loginDAO:
 
             return True
         except Exception as e:
-            logger.error(e)
+            logger.error("User "+str(user.iduser)+ " encountered an error while sign-ing up in "+__name__+":" +str(e))
             return None
 
     
@@ -119,6 +121,7 @@ class loginDAO:
                 return True
             return False
         except Exception as e:
+            logger.error("User "+str(iduser)+ " encountered an error while checking if is new login in "+__name__+":" +str(e))
             return None
     
     def insert_login_history(self,iduser,ipaddress):
@@ -129,5 +132,50 @@ class loginDAO:
             self.mysql.connection.commit()
             return True
         except Exception as e:
-            logger.error(e)
+            logger.error("User "+str(iduser)+ " encountered an error while inserting login history in "+__name__+":" +str(e))
             return False
+
+
+    def update_email(self,iduser,email):
+        query_insert = "update user set email = %s where iduser = %s"
+        try:
+            cur = self.mysql.connection.cursor()
+            cur.execute(query_insert,(email,iduser))
+            self.mysql.connection.commit()
+            logger.info("User "+str(iduser)+" updated their email")
+            return True
+        except Exception as e:
+            logger.error("User "+str(iduser)+ " encountered an error while updating email in "+__name__+":" +str(e))
+            return False
+
+    def update_address(self,iduser,address):
+        query = "update address set address_line = %s, unit_no=%s, zipcode=%s where iduser = %s"
+        try:
+            cur = self.mysql.connection.cursor()
+            cur.execute(query,(address['line'],address['unitno'],address['zipcode'],iduser))
+            self.mysql.connection.commit()
+            logger.info("User "+str(iduser)+" updated their address")
+            return True
+        except Exception as e:
+            logger.error("User "+str(iduser)+ " encountered an error while updating address in "+__name__+":" +str(e))
+            return False
+
+    def update_pw(self,iduser,currentpw,newpw):
+        query_select = "select * from user where iduser = %s"
+        query_update = "update user set password = %s where iduser = %s"
+        try:
+            cur = self.mysql.connection.cursor()
+            cur.execute(query_select,(iduser,))
+            user = cur.fetchone()
+            if not password_validator(currentpw,user['password']):
+                logger.warning("User "+str(iduser)+" tried to change their password with a wrong current password")
+                return None
+            cur.execute(query_update,(encrypt_password(newpw),iduser))
+            self.mysql.connection.commit()
+            logger.info("User "+str(iduser)+" updated their password")
+            return True
+        except Exception as e:
+            logger.error("User "+str(iduser)+ " encountered an error while updating password in "+__name__+":" +str(e))
+            return None
+        
+        

@@ -105,10 +105,35 @@ def landing():
 @app.route('/account', methods=['GET', 'POST'])
 @login_required
 def account():
-    iduser = current_user.iduser
-    userObj = loginDAO.getUser(iduser)
-    print(userObj.address_details or None)
     return render_template('account/my-account.html')
+
+@app.route('/account/update',methods=['POST'])
+def account_update():
+    j = request.get_json()
+    ret_email = False
+    ret_add = False
+    retString = ""
+    if not current_user.is_authenticated:
+        return {'msg':"You need to be logged in first"},400
+
+    if 'email' in j:
+        ret_email = loginDAO.update_email(current_user.iduser,j['email'])
+        retString = retString + "Error saving email" if not ret_email else ""
+    
+    if 'address' in j:
+        ret_add = loginDAO.update_address(current_user.iduser,j['address'])
+        retString = retString + "Error saving address" if not ret_add else ""
+
+    if 'currentpw' in j and 'newpw' in j:
+        passwordRegex = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-_]).{8,}$"
+        passwordPat = re.compile(passwordRegex)
+        pw_match = re.search(passwordPat,j['newpw'])
+        if not pw_match:
+            retString = "Password must contain minimum 8 characters, with 1 uppercase, 1 lowercase, 1 digit & 1 special char"
+        else:
+            ret_pw = loginDAO.update_pw(current_user.iduser,j['currentpw'],j['newpw'])
+            retString = retString + "Error changing password" if not ret_pw else ""
+    return {'msg':retString},200 if retString == "" else 400
 
 
 @app.route('/login', methods=['GET', 'POST'])
