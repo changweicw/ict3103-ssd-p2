@@ -21,11 +21,32 @@ class loginDAO:
         try:
             cur.execute(query, (iduser,))
             result = cur.fetchone()
-            u = models.User(result['fname'],result['lname'],result['email'], 
-            result['password'],result['total_revenue'],result['rating_avg'],result['password_change_date'],result['incorrect_login_count'],result['user_join_date'],result['removed'],result['iduser'])
+            result['addr_info'] = self.getAddr(iduser)
+            u = models.User(result['fname'],
+                            result['lname'],
+                            result['email'], 
+                            result['password'],
+                            result['total_revenue'],
+                            result['rating_avg'],
+                            result['password_change_date'],
+                            result['incorrect_login_count'],
+                            result['user_join_date'],
+                            result['removed'],
+                            result['iduser'],
+                            self.getAddr(iduser))
             if not result:
                 return None
             return u
+        except Exception as e:
+            return None
+
+    def getAddr(self,iduser):
+        query="Select * from address where iduser = %s"
+        cur = self.mysql.connection.cursor()
+        try:
+            cur.execute(query, (iduser,))
+            result = cur.fetchone()
+            return result or None
         except Exception as e:
             return None
 

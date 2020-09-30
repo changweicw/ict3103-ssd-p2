@@ -307,7 +307,7 @@
                             <div class="mini-cart-warp">
                                 <a href="#" class="count-cart">
                                     <span>$
-                                    {{'%0.2f'%(cartTotal+7) or '0.00'}}
+                                    {{'%0.2f'%(cartTotal+7) if cartTotal is defined and cartTotal>0 else '0.00'}}
                                     </span>
                                     {% if cart_num_items is defined and cart_num_items>0 %}
                                     <div id="cart_number"
@@ -337,6 +337,9 @@
                                         {% endfor %}
                                         {% endif %}
                                     </ul>
+                                    {% if cartItems|length ==0 %}
+                                    <h3 class="shopping-cart-total">No items in cart.</h3>
+                                    {% else %}
                                     <div class="shopping-cart-total">
                                         <h4>Subtotal : <span>${{'%0.2f' % cartTotal or '0.00'}}</span></h4>
                                         <h4>Shipping : <span>$7.00</span></h4>
@@ -346,6 +349,7 @@
                                     <div class="shopping-cart-btn text-center">
                                         <a class="default-btn" href="/products/checkout">checkout</a>
                                     </div>
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>

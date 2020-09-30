@@ -105,6 +105,9 @@ def landing():
 @app.route('/account', methods=['GET', 'POST'])
 @login_required
 def account():
+    iduser = current_user.iduser
+    userObj = loginDAO.getUser(iduser)
+    print(userObj.address_details or None)
     return render_template('account/my-account.html')
 
 
