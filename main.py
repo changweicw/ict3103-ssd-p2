@@ -91,14 +91,23 @@ def landing():
     # print(dbh.retrieve_all_products())
     print(str(ipaddress.IPv4Address(int(ipaddress.IPv4Address(request.remote_addr)))))
     products = productDAO.retrieve_all_products()
+    cartItems = []
+    cartTotal = 0.0
+    if current_user.is_authenticated:
+        cartItems = cartDAO.retrieve_cart_items(current_user.iduser)
+        for item in cartItems:
+            cartTotal = cartTotal + (item['price'] * item['qty'])
     
     # sendLoginEmail("Raphael","raphaelisme@gmail.com")
-    return render_template('landing.html',products=products)
+    return render_template('landing.html',products=products,cartItems=cartItems,cartTotal=cartTotal)
 
 
 @app.route('/account', methods=['GET', 'POST'])
 @login_required
 def account():
+    iduser = current_user.iduser
+    userObj = loginDAO.getUser(iduser)
+    print(userObj.address_details or None)
     return render_template('account/my-account.html')
 
 
@@ -272,7 +281,7 @@ def publish():
     urlList = csu.upload_to_bucket_b64List(fileList)
 
     # tempProd = Product_listing(title,desc,urlList,price,0) eventually replace the last 0 with iduser
-    tempProd = Product_listing(title,desc,urlList,price,current_user.iduser)
+    tempProd = Product_listing(title,desc,urlList,price,current_user.iduser,False,100)
     idprod = productDAO.publish_listing(tempProd)
     if idprod:
         logger.info(str(current_user.iduser)+":"+current_user.fname+" has just published a product with id: "+str(idprod))

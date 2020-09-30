@@ -209,7 +209,7 @@
                                         <span class="order-price">
                                             ${{ dict[x].price or '0.00'}}
                                         </span></li>
-                                    
+
                                     {% endfor %}
                                     {% endif %}
                                 </ul>
@@ -285,6 +285,7 @@
                     </div>
                     <div class="Place-order mt-25">
                         <a class="btn-hover" href="#">Place Order</a>
+                        <div id="paypal-button"></div>
                     </div>
                 </div>
             </div>
@@ -292,4 +293,51 @@
     </div>
 </div>
 <!-- checkout area end -->
+{% endblock %}
+
+{% block js %}
+<script src="https://www.paypalobjects.com/api/checkout.js"></script>
+<script>
+    paypal.Button.render({
+        env: 'sandbox', // Or 'sandbox'
+        client: {
+            sandbox: 'AejadqWiITtTFQdn2pMUuEWdTPc0Gg0T0QjxPSlwjnNi9aPFhWF6EujPH72EmhU4AGWVin-FvqVIwKSR',
+            production: ''
+        },
+        commit: true, // Show a 'Pay Now' button
+        payment: function (data, actions) {
+            
+            return actions.payment.create({
+                payment: {
+                    transactions: [{
+                        amount: {
+                            total: 222,
+                            currency: 'SGD'
+                        }
+                    }]
+                }
+            });
+        },
+        onAuthorize: function (data, actions) {
+            // Get the payment details
+            return actions.payment.get()
+                .then(function (paymentDetails) {
+                    // Show a confirmation using the details from paymentDetails
+                    // Then listen for a click on your confirm button
+                    //document.querySelector('#confirm-button')
+                    //.addEventListener('click', function () {
+                    // Execute the payment
+                    return actions.payment.execute()
+                        .then(function () {
+                            alert('success!');
+                            console.log(paymentDetails)
+                        });
+                });
+            //});
+        },
+        onCancel: function (data, actions) {
+            alert('Payment was cancelled');
+        }
+    }, '#paypal-button');
+</script>
 {% endblock %}

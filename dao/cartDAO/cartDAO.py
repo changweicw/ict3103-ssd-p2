@@ -5,6 +5,7 @@ from flask_mysqldb import MySQL
 from google.cloud import storage
 from log_helper import *
 from flask import Flask,current_app
+from dao.productDAO.productDAO import productDAO
 import models
 
 logger = prepareLogger(__name__,'db.log',logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
@@ -12,6 +13,7 @@ logger = prepareLogger(__name__,'db.log',logging.Formatter('%(asctime)s - %(leve
 class cartDAO:
     def __init__(self, mysql):
         self.mysql = mysql
+        self.productDAO = productDAO(mysql)
 
     def get_cart_single(self,iduser,idproduct):
         query_select = "select * from product_listing p inner join cart c ON p.idproduct_listing = c.idproduct where c.iduser =  %s and c.idproduct = %s"
@@ -26,13 +28,15 @@ class cartDAO:
             print(e)
             logger.error("Error retrieving cart\n"+str(e))
 
-    def get_cart_items(self,iduser):
+    def retrieve_cart_items(self,iduser):
         query_select = "select * from product_listing p inner join cart c ON p.idproduct_listing = c.idproduct where c.iduser =  %s"
         cur = self.mysql.connection.cursor()
         try:
             cur.execute(query_select,(iduser,))
             result = cur.fetchall()
             logger.info("User "+str(iduser)+" Retrieved "+str(len(result))+" cart items")
+            for r in result:
+                r["image_url"]=self.productDAO.retrieve_one_image(str(r["idproduct_listing"]))
             return result
         except Exception as e:
             print(e)
