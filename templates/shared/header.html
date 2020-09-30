@@ -303,11 +303,19 @@
                         <!--Seach Area End -->
 
                         <!--Cart info Start -->
+                        {% if current_user.is_authenticated %}
+                            {% set cart = current_user.cart %}
+                            {% set cartTotal = namespace(value=0.0) %}
+                            {% for item in cart %}
+                                {% set cartTotal.value = cartTotal.value + (item.price * item.qty) %}
+                                <!-- {{(item.qty * item.price) + 0}} -->
+                            {% endfor %}
+                        {% endif %}
                         <div class="cart-info d-flex">
                             <div class="mini-cart-warp">
                                 <a href="#" class="count-cart">
                                     <span>$
-                                    {{'%0.2f'%(cartTotal+7) if cartTotal is defined and cartTotal>0 else '0.00'}}
+                                    {{'%0.2f'%(cartTotal.value +7) if cartTotal is defined and cartTotal.value >0.0 else '0.00'}}
                                     </span>
                                     {% if cart_num_items is defined and cart_num_items>0 %}
                                     <div id="cart_number"
@@ -318,8 +326,8 @@
 
                                 <div class="mini-cart-content">
                                     <ul>
-                                        {% if cartItems is defined and cartItems|length > 0 %}
-                                        {% for item in cartItems %}
+                                        {% if cart is defined and cart|length > 0 %}
+                                        {% for item in cart %}
                                         <li class="single-shopping-cart">
                                             <div class="shopping-cart-img">
                                                 <a href="single-product.html"><img alt=""
@@ -337,14 +345,14 @@
                                         {% endfor %}
                                         {% endif %}
                                     </ul>
-                                    {% if cartItems|length ==0 %}
+                                    {% if cart|length == 0 %}
                                     <h3 class="shopping-cart-total">No items in cart.</h3>
                                     {% else %}
                                     <div class="shopping-cart-total">
-                                        <h4>Subtotal : <span>${{'%0.2f' % cartTotal or '0.00'}}</span></h4>
+                                        <h4>Subtotal : <span>${{'%0.2f' % cartTotal.value or '0.00'}}</span></h4>
                                         <h4>Shipping : <span>$7.00</span></h4>
                                         <h4>Taxes : <span>$0.00</span></h4>
-                                        <h4 class="shop-total">Total : <span>${{'%0.2f' % (cartTotal+7) or '0.00'}}</span></h4>
+                                        <h4 class="shop-total">Total : <span>${{'%0.2f' % (cartTotal.value +7) or '0.00'}}</span></h4>
                                     </div>
                                     <div class="shopping-cart-btn text-center">
                                         <a class="default-btn" href="/products/checkout">checkout</a>
