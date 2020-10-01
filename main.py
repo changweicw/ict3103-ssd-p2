@@ -4,24 +4,21 @@ from flask_mysqldb import MySQL
 from flask_wtf import CSRFProtect,FlaskForm
 from wtforms import StringField,FileField,DecimalField
 from werkzeug.utils import secure_filename
-import logging
 from models import User, Product_listing
-import os
-import re
 from appConfig import DefaultConfig
 from dao.loginDAO.loginDAO import loginDAO
 from dao.productDAO.productDAO import productDAO
 from dao.cartDAO.cartDAO import cartDAO
+from dao.uniqueDAO.uniqueDAO import uniqueDAO
 from wtform import *
 from google.cloud import storage
-import uuid
 from cloudstore_utils import cloudstore_utils as csutils
 from mailing import *
 from log_helper import *
-import ipaddress
 from base64 import b64decode
 from datetime import datetime,timedelta
 
+import string,random,logging,os,re,uuid,ipaddress
 
 
 
@@ -45,6 +42,7 @@ mysql = MySQL(app)
 loginDAO = loginDAO(mysql)
 productDAO = productDAO(mysql)
 cartDAO = cartDAO(mysql)
+unikDAO = uniqueDAO(mysql)
 
 #========================================
 #GOOGLE BUCKET INIT
@@ -221,6 +219,16 @@ def registration():
         logger.info("Not validate on submit")
     return render_template('account/login.html', form=login_form, reg_form=registration_form, src=src, tab=tab,iziMsg=iziMsg)
 
+@app.route('/reset/password/<unik>')
+def reset_pw_link(unik):
+    ret = unikDAO.search_unik(unik)
+    if ret:
+        retMsg = ret['idunique_link']
+        return render_template('account/reset_password_landing.html')
+    else:
+        retMsg = "No unique link found"
+    return {'msg':retMsg},200
+
 @app.route('/cart/addToCart',methods=['POST'])
 def addtocart():
     j = request.get_json()
@@ -353,6 +361,12 @@ def load_user(iduser):
 def getout():
     x = request
     return redirect(url_for('login_landing',src=x.base_url))
+
+def get_random_string(length):
+    letters = string.ascii_lowercase
+    result_str = ''.join(random.choice(letters) for i in range(length))
+    print("Random string of length", length, "is:", result_str)
+
 
 
 if __name__ == '__main__':
