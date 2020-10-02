@@ -23,7 +23,9 @@ class DefaultConfig:
     GMAIL_ID = os.getenv('GMAIL_ID')
     GMAIL_PW = os.getenv('GMAIL_PW')
     LOGIN_TEMPLATE_FILENAME = os.getenv('LOGIN_TEMPLATE_FILENAME')
+    RESET_TEMPLATE_FILENAME = os.getenv('RESET_TEMPLATE_FILENAME')
     LOGIN_EMAIL_TITLE = os.getenv('LOGIN_EMAIL_TITLE')
+    RESET_EMAIL_TITLE = os.getenv('RESET_EMAIL_TITLE')
     SMTP_SERVER = os.getenv('SMTP_SERVER')
     SMTP_PORTS = os.getenv('SMTP_PORTS').split(',')
     LOGGING_FOLDER = os.getenv('LOGGING_FOLDER')
@@ -32,3 +34,6 @@ class DefaultConfig:
     LOGING_DISABLED=os.getenv('LOGIN_DISABLED')
     REMEMBER_ME_TIMEOUT_DAYS=os.getenv('REMEMBER_ME_TIMEOUT_DAYS')
     SENDGRID_API_KEY=os.getenv('SENDGRID_API_KEY')
+
+    SERVER_IP = os.getenv('SERVER_IP')
+    SERVER_PORT = os.getenv('SERVER_PORT')

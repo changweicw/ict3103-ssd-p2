@@ -25,7 +25,7 @@ class uniqueDAO:
             return None
 
     def insert_unik(self,iduser,unique,category):
-        query = "insert into unqiue_link (fk_iduser,idunique_link,category) values (%s,%s,%s)"
+        query = "insert into unique_link (fk_iduser,idunique_link,category) values (%s,%s,%s)"
         try:
             cur = self.mysql.connection.cursor()
             cur.execute(query, (iduser,unique,category))

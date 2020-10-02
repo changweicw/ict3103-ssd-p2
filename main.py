@@ -156,6 +156,7 @@ def login_landing():
                 # Redirect to landing page
             return redirect(session['src'] if 'src' in session else url_for('landing'))
         else:
+            
             flash('Your username or password is incorrect or you do not have an account with us.', 'login')
 
     return render_template('account/login.html', form=login_form, reg_form=registration_form, src=src)
@@ -224,10 +225,15 @@ def reset_pw_link(unik):
     ret = unikDAO.search_unik(unik)
     if ret:
         retMsg = ret['idunique_link']
-        return render_template('account/reset_password_landing.html')
+        return render_template('account/reset_password_landing.html',unik=unik)
     else:
         retMsg = "No unique link found"
     return {'msg':retMsg},200
+
+@app.route('/reset/password')
+def reset_pw():
+    unik=request.form['unik']
+    return {'msg':unik},200
 
 @app.route('/cart/addToCart',methods=['POST'])
 def addtocart():

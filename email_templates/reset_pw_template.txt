@@ -1,0 +1,5 @@
+Here is the link to reset your password:
+${reset_link}
+
+If you have not initiated the password reset request,
+please do not click on the link.

@@ -29,7 +29,7 @@ def sendLoginEmail(content,email_to):
 
             msg['From']=username
             msg['To']=email_to
-            msg['Subject']=DefaultConfig.LOGIN_EMAIL_TITLE
+            msg['Subject']=DefaultConfig.RESET_EMAIL_TITLE
 
             msg.attach(MIMEText(message,'plain'))
             server.send_message(msg)
@@ -39,6 +39,36 @@ def sendLoginEmail(content,email_to):
         logger.error(e)
         return False
     return True
+
+def send_reset_pw_email(content,email_to):
+    msg = MIMEMultipart()
+    port = DefaultConfig.SMTP_PORTS
+    server_name = DefaultConfig.SMTP_SERVER
+    username = DefaultConfig.GMAIL_ID
+    password = DefaultConfig.GMAIL_PW
+
+    try:
+        with smtplib.SMTP(server_name, port[0]) as server:
+            # server.connect(server_name,port[2])
+            server.ehlo()
+            server.starttls()
+            server.login(username, password)
+            msg_template = read_template(DefaultConfig.RESET_TEMPLATE_FILENAME)
+            message = msg_template.substitute(reset_link=content)
+
+            msg['From']=username
+            msg['To']=email_to
+            msg['Subject']=DefaultConfig.RESET_EMAIL_TITLE
+
+            msg.attach(MIMEText(message,'plain'))
+            server.send_message(msg)
+            # server.sendmail(username,email_to,msg)
+            del msg
+    except Exception as e:
+        logger.error(e)
+        return False
+    return True
+
 
 
 def read_template(filename):
