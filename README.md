@@ -16,6 +16,11 @@ Now go to your project folder and run
 
 
 ## Docker Building instructions
+**PRE-REQUISITE**
+1. Check your .Dockerignore file and ensure **/.env file is not inside there.
+1. Ensure that server is = prod in main.py file before building the docker.
+1. Lastly ensure that your .env email_templates folder is using a forward slash because linux.
+
 **On your host:**
 1. docker build -t <docker_username>/<anyName>:<Tag/Branch>
 1. docker push <docker_username>/<anyName>:<Tag/Branch>
