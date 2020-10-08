@@ -49,10 +49,6 @@ def read_template(filename):
     return Template(template_file_content)
 
 
-<< << << < HEAD
-== == == =
-
-
 # def sendGridTest(content,email_to):
 #     username = DefaultConfig.GMAIL_ID
 #     password = DefaultConfig.GMAIL_PW
@@ -71,4 +67,3 @@ def read_template(filename):
 #         print("This is email response end:")
 #     except Exception as e:
 #         print(e)
->>>>>> > 16d2a578cc58f169a7aa75282833531e177c1dc5
