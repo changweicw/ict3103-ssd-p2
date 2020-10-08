@@ -22,7 +22,6 @@ class cartDAO:
             cur.execute(query_select,(iduser,idproduct))
             result = cur.fetchone()
             logger.info("User "+str(iduser)+" attempted to retrieve a cart item")
-            print(result)
             return result
         except Exception as e:
             print(e)

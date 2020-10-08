@@ -2,7 +2,7 @@ from datetime import datetime
 from flask_login import UserMixin
 
 class User(UserMixin):
-    def __init__(self,fname,lname,email,password,total_revenue=0.0,rating=0.0,passwordChangeDate=datetime.now(),incorrectLoginCount=0,userJoinDate=datetime.now(),removed=False,iduser=-1,addr={}):
+    def __init__(self,fname,lname,email,password,total_revenue=0.0,rating=0.0,passwordChangeDate=datetime.now(),incorrectLoginCount=0,userJoinDate=datetime.now(),removed=False,iduser=-1,addr={},cart=()):
         self.fname=fname
         self.lname=lname
         self.email=email
@@ -15,6 +15,7 @@ class User(UserMixin):
         self.removed=removed
         self.iduser=iduser
         self.address_details = addr
+        self.cart=cart
 
     def get_id(self):
         return self.iduser
