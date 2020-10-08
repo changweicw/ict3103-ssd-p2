@@ -7,17 +7,14 @@ from email.mime.text import MIMEText
 import asyncio
 
 
-
-
-def sendLoginEmail(content,email_to):
+def sendLoginEmail(content, email_to):
     msg = MIMEMultipart()
     port = DefaultConfig.SMTP_PORTS
     server_name = DefaultConfig.SMTP_SERVER
     context = ssl.SSLContext(ssl.PROTOCOL_TLS)
     username = DefaultConfig.GMAIL_ID
     password = DefaultConfig.GMAIL_PW
-
-    with smtplib.SMTP(server_name, port[0]) as server:
+    with smtplib.SMTP(server_name, port[1]) as server:
         try:
             # server.connect(server_name,port[2])
             server.ehlo()
@@ -26,11 +23,11 @@ def sendLoginEmail(content,email_to):
             msg_template = read_template(DefaultConfig.LOGIN_TEMPLATE_FILENAME)
             message = msg_template.substitute(IP_ADDRESS=content)
 
-            msg['From']=username
-            msg['To']=email_to
-            msg['Subject']=DefaultConfig.LOGIN_EMAIL_TITLE
+            msg['From'] = username
+            msg['To'] = email_to
+            msg['Subject'] = DefaultConfig.LOGIN_EMAIL_TITLE
 
-            msg.attach(MIMEText(message,'plain'))
+            msg.attach(MIMEText(message, 'plain'))
             server.send_message(msg)
             # server.sendmail(username,email_to,msg)
             del msg
