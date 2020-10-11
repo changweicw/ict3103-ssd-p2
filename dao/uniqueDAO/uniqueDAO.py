@@ -31,4 +31,24 @@ class uniqueDAO:
             cur.execute(query, (iduser,unique,category))
             self.mysql.connection.commit()
         except Exception as e:
-            logger.error("User "+str(iduser)+ " encountered an error while inserting unik link in "+__name__+":" +str(e))
+            logger.error("User "+str(iduser)+ " encountered an error while inserting unique link in "+__name__+":" +str(e))
+    
+    def delete_unik_by_iduser(self,iduser):
+        query = "delete from unique_link where fk_iduser = %s"
+        try:
+            cur = self.mysql.connection.cursor()
+            cur.execute(query, (iduser,))
+            self.mysql.connection.commit()
+        except Exception as e:
+            logger.error("User "+str(iduser)+ " encountered an error while deleting unque link by user id in "+__name__+":" +str(e))
+            
+
+    def delete_unik_by_string(self,string):
+        query = "delete from unique_link where idunique_link = %s"
+        try:
+            cur = self.mysql.connection.cursor()
+            cur.execute(query, (string,))
+            self.mysql.connection.commit()
+        except Exception as e:
+            logger.error("unique string: "+string+" encountered an error while deleting unique link by string in "+__name__+":" +str(e))
+            

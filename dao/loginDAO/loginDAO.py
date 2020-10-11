@@ -102,17 +102,23 @@ class loginDAO:
             u = models.User(result['fname'],result['lname'],result['email'], 
             result['password'],result['total_revenue'],result['rating_avg'],result['password_change_date'],result['incorrect_login_count'],result['user_join_date'],result['removed'],result['iduser'])
             
+            if u.incorrectLoginCount>=5:
+                return "Your account has been locked. Please check your email for a reset link."
 
             if password_validator(password, result['password']):
                 logger.info(email + " just logged in")
+                self.increase_fail_login_count(u.iduser,0)
+                self.unikDAO.delete_unik_by_iduser(u.iduser)
                 return u
             else:
                 logger.info(email + " failed to login")
                 self.increase_fail_login_count(u.iduser)
                 if u.incorrectLoginCount>=4:
                     unik=self.get_random_string(45)
+                    self.unikDAO.delete_unik_by_iduser(u.iduser)
                     self.unikDAO.insert_unik(u.iduser,unik,"password")
                     send_reset_pw_email("http://"+str(DefaultConfig.SERVER_IP)+":"+str(DefaultConfig.SERVER_PORT)+"/reset/password/"+unik,u.email)
+                    return "Your account has been locked. Please check your email for a reset link."
                 return None
         except Exception as e:
             logger.error("User "+str(email)+ " encountered an error while checking for valid login in "+__name__+":" +str(e))
@@ -120,11 +126,17 @@ class loginDAO:
 
     
 
-    def increase_fail_login_count(self,iduser):
-        query = "update user set incorrect_login_count = incorrect_login_count+1 where iduser = %s"
+    def increase_fail_login_count(self,iduser,count_to_set=-1):
+        if count_to_set==-1:
+            query = "update user set incorrect_login_count = incorrect_login_count+1 where iduser = %s"
+            var_tuple = (iduser,)
+        elif count_to_set>=0:
+            query = "update user set incorrect_login_count = %s where iduser = %s"
+            var_tuple = (count_to_set,iduser)
+
         try:
             cur = self.mysql.connection.cursor()
-            result = cur.execute(query,(iduser,))
+            result = cur.execute(query,var_tuple)
             self.mysql.connection.commit()
             print(result)
             return True
@@ -228,6 +240,7 @@ class loginDAO:
                 return None,"wrong current password"
 
             pw_hist = self.retrieve_pw_history(iduser)
+
             if len(pw_hist)>5:
                 self.delete_one_earliest_pw_history(iduser)
                 pw_hist = self.retrieve_pw_history(iduser)
@@ -239,21 +252,24 @@ class loginDAO:
             cur.execute(query_update,(encrypt_password(newpw),iduser))
             self.mysql.connection.commit()
             self.insert_pw_history(iduser,newpw)
+            
             logger.info("User "+str(iduser)+" updated their password")
             return True,"Successfully updated"
         except Exception as e:
             logger.error("User "+str(iduser)+ " encountered an error while updating password in "+__name__+":" +str(e))
             return None,"system error"
 
+    
 
     def update_pw_from_unik(self,uniqueString,newPassword):
-        query = "update user set password = %s \
+        query = "update user set password = %s ,incorrect_login_count=0\
             where iduser in (select fk_iduser from unique_link where idunique_link = %s)"
         query_delete = "delete from unique_link where idunique_link =  %s"
         try:
             cur = self.mysql.connection.cursor()
             result = cur.execute(query,(encrypt_password(newPassword),uniqueString))
             result = cur.execute(query_delete,(uniqueString,))
+            self.unikDAO.delete_unik_by_string(uniqueString)
             self.mysql.connection.commit()
             return True if result else None
         except Exception as e:

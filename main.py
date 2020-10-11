@@ -146,7 +146,9 @@ def login_landing():
         remember_me = True if 'remember_me' in request.form and request.form['remember_me']=='on' else False
         login_result = loginDAO.check_login(login_form.username.data,
                                    login_form.password.data)
-        if login_result:
+        if isinstance(login_result,str):
+             flash(login_result, 'login')
+        elif login_result:
             # Handle Redirect after login success
             print('TODO LOGIN')
             login_user(login_result,remember=remember_me,duration=timedelta(days=int(app.config['REMEMBER_ME_TIMEOUT_DAYS'])))
@@ -236,9 +238,20 @@ def reset_pw():
     j = request.get_json()
     uniqueString = j['unik']
     newPassword = j['newpw']
-    result=loginDAO.update_pw_from_unik(uniqueString,newPassword)
-    msg ="Password updated!" if result else "Link expired or system error!"
-    return {'msg':msg},200
+    passwordRegex = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-_]).{8,}$"
+    passwordPat = re.compile(passwordRegex)
+    pw_match = re.search(passwordPat,newPassword)
+    if pw_match:
+        result=loginDAO.update_pw_from_unik(uniqueString,newPassword)
+        if result:
+            msg ="Password updated!" 
+            return {'msg':msg},200
+    else:
+        msg="Please ensure your password is a minimum of 8 characters, contain 1 upper case, 1 lower case, and a special character."
+        return {'msg':msg},400
+    msg="Link expired or system error!"
+    return {'msg':msg},400
+    
 
 @app.route('/cart/addToCart',methods=['POST'])
 def addtocart():
