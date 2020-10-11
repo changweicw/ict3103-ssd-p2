@@ -57,7 +57,7 @@ server = "dev"
 # server = "prod"
 if server=="dev":
     ip = "127.0.0.1"
-    port = "8080"
+    port = "8000"
 
 if server=="prod":
     ip="0.0.0.0"
@@ -230,10 +230,15 @@ def reset_pw_link(unik):
         retMsg = "No unique link found"
     return {'msg':retMsg},200
 
-@app.route('/reset/password')
+@app.route('/account/update_password_reset',methods=['POST'])
 def reset_pw():
-    unik=request.form['unik']
-    return {'msg':unik},200
+    # unik=request.form['unik']
+    j = request.get_json()
+    uniqueString = j['unik']
+    newPassword = j['newpw']
+    result=loginDAO.update_pw_from_unik(uniqueString,newPassword)
+    msg ="Password updated!" if result else "Link expired or system error!"
+    return {'msg':msg},200
 
 @app.route('/cart/addToCart',methods=['POST'])
 def addtocart():

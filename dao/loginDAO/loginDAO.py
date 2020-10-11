@@ -244,7 +244,22 @@ class loginDAO:
         except Exception as e:
             logger.error("User "+str(iduser)+ " encountered an error while updating password in "+__name__+":" +str(e))
             return None,"system error"
-        
+
+
+    def update_pw_from_unik(self,uniqueString,newPassword):
+        query = "update user set password = %s \
+            where iduser in (select fk_iduser from unique_link where idunique_link = %s)"
+        query_delete = "delete from unique_link where idunique_link =  %s"
+        try:
+            cur = self.mysql.connection.cursor()
+            result = cur.execute(query,(encrypt_password(newPassword),uniqueString))
+            result = cur.execute(query_delete,(uniqueString,))
+            self.mysql.connection.commit()
+            return True if result else None
+        except Exception as e:
+            logger.warning("encountered an error while updating password from unique string in "+__name__+":" +str(e))
+            return None
+
     def retrieve_pw_history(self,iduser):
         query = "select * from pw_history where fK_iduser = %s order by date_changed desc"
         try:
