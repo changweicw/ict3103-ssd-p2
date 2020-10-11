@@ -7,10 +7,12 @@ from email.mime.text import MIMEText
 import asyncio
 from log_helper import *
 
-logger = prepareLogger(__name__,'mailing.log',logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
+
+logger = prepareLogger(__name__, 'mailing.log', logging.Formatter(
+    '%(asctime)s - %(levelname)s - %(message)s'))
 
 
-def sendLoginEmail(content,email_to):
+def sendLoginEmail(content, email_to):
     msg = MIMEMultipart()
     port = DefaultConfig.SMTP_PORTS
     server_name = DefaultConfig.SMTP_SERVER
@@ -27,11 +29,11 @@ def sendLoginEmail(content,email_to):
             msg_template = read_template(DefaultConfig.LOGIN_TEMPLATE_FILENAME)
             message = msg_template.substitute(IP_ADDRESS=content)
 
-            msg['From']=username
-            msg['To']=email_to
-            msg['Subject']=DefaultConfig.RESET_EMAIL_TITLE
+            msg['From'] = username
+            msg['To'] = email_to
+            msg['Subject'] = DefaultConfig.LOGIN_EMAIL_TITLE
 
-            msg.attach(MIMEText(message,'plain'))
+            msg.attach(MIMEText(message, 'plain'))
             server.send_message(msg)
             # server.sendmail(username,email_to,msg)
             del msg
