@@ -4,23 +4,27 @@ from flask_mysqldb import MySQL
 from flask_wtf import CSRFProtect, FlaskForm
 from wtforms import StringField, FileField, DecimalField
 from werkzeug.utils import secure_filename
-import logging
 from models import User, Product_listing
-import os
-import re
 from appConfig import DefaultConfig
 from dao.loginDAO.loginDAO import loginDAO
 from dao.productDAO.productDAO import productDAO
 from dao.cartDAO.cartDAO import cartDAO
+from dao.uniqueDAO.uniqueDAO import uniqueDAO
 from wtform import *
 from google.cloud import storage
-import uuid
 from cloudstore_utils import cloudstore_utils as csutils
 from mailing import *
 from log_helper import *
-import ipaddress
 from base64 import b64decode
 from datetime import datetime, timedelta
+
+import string
+import random
+import logging
+import os
+import re
+import uuid
+import ipaddress
 
 
 app = Flask(__name__, template_folder="templates")
@@ -43,6 +47,7 @@ mysql = MySQL(app)
 loginDAO = loginDAO(mysql)
 productDAO = productDAO(mysql)
 cartDAO = cartDAO(mysql)
+unikDAO = uniqueDAO(mysql)
 
 # ========================================
 # GOOGLE BUCKET INIT
@@ -57,7 +62,7 @@ server = "dev"
 # server = "prod"
 if server == "dev":
     ip = "127.0.0.1"
-    port = "8080"
+    port = "8000"
 
 if server == "prod":
     ip = "0.0.0.0"
@@ -155,7 +160,9 @@ def login_landing():
             'remember_me'] == 'on' else False
         login_result = loginDAO.check_login(login_form.username.data,
                                             login_form.password.data)
-        if login_result:
+        if isinstance(login_result, str):
+            flash(login_result, 'login')
+        elif login_result:
             # Handle Redirect after login success
             login_user(login_result, remember=remember_me, duration=timedelta(
                 days=int(app.config['REMEMBER_ME_TIMEOUT_DAYS'])))
@@ -228,6 +235,38 @@ def registration():
     else:
         logger.info("Not validate on submit")
     return render_template('account/login.html', form=login_form, reg_form=registration_form, src=src, tab=tab, iziMsg=iziMsg)
+
+
+@app.route('/reset/password/<unik>')
+def reset_pw_link(unik):
+    ret = unikDAO.search_unik(unik)
+    if ret:
+        retMsg = ret['idunique_link']
+        return render_template('account/reset_password_landing.html', unik=unik)
+    else:
+        retMsg = "No unique link found"
+    return {'msg': retMsg}, 200
+
+
+@app.route('/account/update_password_reset', methods=['POST'])
+def reset_pw():
+    # unik=request.form['unik']
+    j = request.get_json()
+    uniqueString = j['unik']
+    newPassword = j['newpw']
+    passwordRegex = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-_]).{8,}$"
+    passwordPat = re.compile(passwordRegex)
+    pw_match = re.search(passwordPat, newPassword)
+    if pw_match:
+        result = loginDAO.update_pw_from_unik(uniqueString, newPassword)
+        if result:
+            msg = "Password updated!"
+            return {'msg': msg}, 200
+    else:
+        msg = "Please ensure your password is a minimum of 8 characters, contain 1 upper case, 1 lower case, and a special character."
+        return {'msg': msg}, 400
+    msg = "Link expired or system error!"
+    return {'msg': msg}, 400
 
 
 @app.route('/cart/addToCart', methods=['POST'])
@@ -370,6 +409,12 @@ def load_user(iduser):
 def getout():
     x = request
     return redirect(url_for('login_landing', src=x.base_url))
+
+
+def get_random_string(length):
+    letters = string.ascii_lowercase
+    result_str = ''.join(random.choice(letters) for i in range(length))
+    print("Random string of length", length, "is:", result_str)
 
 
 if __name__ == '__main__':

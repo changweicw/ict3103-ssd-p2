@@ -20,6 +20,7 @@ Now go to your project folder and run
 1. Check your .Dockerignore file and ensure **/.env file is not inside there.
 1. Ensure that server is = prod in main.py file before building the docker.
 1. Lastly ensure that your .env email_templates folder is using a forward slash because linux.
+1. Check your .env folder serverip and serverport are correct. (collaboratory.sitict.net,3389)
 
 **On your host:**
 1. docker build -t <docker_username>/<anyName>:<Tag/Branch>
