@@ -105,7 +105,7 @@ def landing():
             cartTotal = cartTotal + (item['price'] * item['qty'])
 
     # sendLoginEmail("Raphael","raphaelisme@gmail.com")
-    return render_template('landing.html', products=products, cartItems=cartItems, cartTotal=cartTotal)
+    return render_template('landing.html', products=products, cartItems=cartItems)
     # sendLoginEmail("Raphael","raphaelisme@gmail.com")
     # return render_template('landing.html',products=products)
 
@@ -416,6 +416,10 @@ def get_random_string(length):
     result_str = ''.join(random.choice(letters) for i in range(length))
     print("Random string of length", length, "is:", result_str)
 
+def checkPassword(password):
+    f = open(app.config['PASSWORD_COMMON_FILENAME'], "r")
+    for x in f:
+        print(x)
 
 if __name__ == '__main__':
     app.secret_key = b'_5#y2L"4Q8z178s/\\n\xec]/'
