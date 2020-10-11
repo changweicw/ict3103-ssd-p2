@@ -1,5 +1,10 @@
 import logging
 from appConfig import DefaultConfig
+import platform
+import socket
+
+
+
 
 def prepareLogger(name_origin,filename,formatter):
     logger = logging.getLogger(name_origin)

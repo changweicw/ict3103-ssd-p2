@@ -25,6 +25,8 @@ import os
 import re
 import uuid
 import ipaddress
+import platform
+
 
 
 app = Flask(__name__, template_folder="templates")
@@ -73,7 +75,7 @@ src = "http://"+ip+":"+port+"/"
 # LOGGER SETUPS
 # ========================================
 logger = prepareLogger(__name__, 'sys.log', logging.Formatter(
-    '%(asctime)s - %(levelname)s - %(message)s'))
+    '%(ip)s - %(asctime)s - %(levelname)s - %(message)s'))
 
 # ROOT LEVEL LOG
 logging.basicConfig(filename=DefaultConfig.LOGGING_FOLDER+"/server.log", level=logging.INFO,
@@ -95,6 +97,7 @@ class publishForm(FlaskForm):
 def landing():
     session['title'] = "Collaboratory Mall"
     # print(dbh.retrieve_all_products())
+    
     print(str(ipaddress.IPv4Address(int(ipaddress.IPv4Address(request.remote_addr)))))
     products = productDAO.retrieve_all_products()
     cartItems = []
@@ -162,6 +165,7 @@ def login_landing():
                                             login_form.password.data)
         if isinstance(login_result, str):
             flash(login_result, 'login')
+            logger.warning(login_form.username.data+" Tried to login with wrong password",extra={'ip': request.remote_addr})
         elif login_result:
             # Handle Redirect after login success
             login_user(login_result, remember=remember_me, duration=timedelta(
@@ -170,8 +174,10 @@ def login_landing():
                 sendLoginEmail(ip_source, login_result.email)
 
                 # Redirect to landing page
+            logger.info(login_form.username.data+" Successfully logged in.",extra={'ip': request.remote_addr})
             return redirect(session['src'] if 'src' in session else url_for('landing'))
         else:
+            logger.warning(login_form.username.data+" Tried to login with wrong password",extra={'ip': request.remote_addr})
             flash(
                 'Your username or password is incorrect or you do not have an account with us.', 'login')
 
@@ -191,6 +197,10 @@ def registration():
     tab = "reg"
     iziMsg = "Not successful"
     if registration_form.validate_on_submit():
+        if isCommonPassword(password):
+            flash('This is a common password. Please use a new one.','register')
+            successFlag=False
+            logger.warning(email+" tried to register with a common password.",extra={'ip': request.remote_addr})
         nameRegex = "(^[\w\s]{1,}[\w\s]{1,}$)"
         namePat = re.compile(nameRegex)
         emailRegex = "^(([^<>()\[\]\\.,;:\s@\"]+(\.[^<>()\[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$"
@@ -205,35 +215,35 @@ def registration():
         if not email_matched:
             flash('Please enter a valid email', 'register')
             successFlag = False
-            logger.warning("email failed regex")
+            logger.warning("email failed regex",extra={'ip': request.remote_addr})
         if password != passwordConfirm:
             flash('Please enter the same password for both fields', 'register')
-            logger.warning("password don't match")
+            logger.warning("password don't match",extra={'ip': request.remote_addr})
             successFlag = False
         else:
             if not password_matched:
-                logger.warning("Password doesn't satisfy criteria")
+                logger.warning("Password doesn't satisfy criteria",extra={'ip': request.remote_addr})
                 successFlag = False
                 flash('Password must contain minimum 8 characters, with 1 uppercase, 1 lowercase, 1 digit & 1 special char', 'register')
 
         if loginDAO.email_exist(email):
             successFlag = False
             flash('Email Already Exist', 'register')
-            logger.info("Register failed because "+email+" already exist")
+            logger.info("Register failed because "+email+" already exist",extra={'ip': request.remote_addr})
 
         if not fname_matched or not lname_matched:
             successFlag = False
-            logger.info("Firstname or lastname needs to be legitimate.")
+            logger.info("Firstname or lastname needs to be legitimate.",extra={'ip': request.remote_addr})
             flash('First Name or last name might not be legitimate.', 'register')
 
         if successFlag:
             user = User(fname, lname, email, password)
-            logger.info("Information sufficient to register.")
+            logger.info("Information sufficient to register.",extra={'ip': request.remote_addr})
             loginDAO.signup(user)
             tab = "log"
             iziMsg = "Account Successfully created!"
     else:
-        logger.info("Not validate on submit")
+        logger.info("Not validate on submit",extra={'ip': request.remote_addr})
     return render_template('account/login.html', form=login_form, reg_form=registration_form, src=src, tab=tab, iziMsg=iziMsg)
 
 
@@ -293,7 +303,7 @@ def addtocart():
         retdata = {'msg': 'Successfully added to cart.'}
         return retdata, 200
     else:
-        logger.warning("Attempted to add to cart but 0 rows updated.")
+        logger.warning("Attempted to add to cart but 0 rows updated.",extra={'ip': request.remote_addr})
         retdata = {'msg': 'Not added to cart.'}
         return retdata, 400
 
@@ -338,9 +348,9 @@ def publish():
     if not isinstance(title, str) or not isinstance(desc, str) or not isinstance(price, str):
         return jsonify(success=False)
     urlList = []
-    logger.info("Title:"+title+".Desc:"+desc+".Price:"+price)
+    logger.info("Title:"+title+".Desc:"+desc+".Price:"+price,extra={'ip': request.remote_addr})
     logger.info("Somebody is going to pubilish a listing with " +
-                str(len(files))+" pictures")
+                str(len(files))+" pictures",extra={'ip': request.remote_addr})
     for f in files:
         if f.split(';')[0].split('/')[1] not in app.config['ALLOWED_EXTENSIONS'] or (len(f.split(',')[1]) - 814)/1.37 / 1024 > 1024:
             return jsonify(success=False)
@@ -361,9 +371,9 @@ def publish():
     idprod = productDAO.publish_listing(tempProd)
     if idprod:
         logger.info(str(current_user.iduser)+":"+current_user.fname +
-                    " has just published a product with id: "+str(idprod))
+                    " has just published a product with id: "+str(idprod),extra={'ip': request.remote_addr})
     else:
-        logger.warning(str(current_user.iduser)+" publish failed")
+        logger.warning(str(current_user.iduser)+" publish failed",extra={'ip': request.remote_addr})
 
     # dbh.upload_to_bucket(files[0].filename)
     return jsonify(success=True)
@@ -416,10 +426,13 @@ def get_random_string(length):
     result_str = ''.join(random.choice(letters) for i in range(length))
     print("Random string of length", length, "is:", result_str)
 
-def checkPassword(password):
+def isCommonPassword(password):
     f = open(app.config['PASSWORD_COMMON_FILENAME'], "r")
     for x in f:
-        print(x)
+        if password in x:
+            return True
+    return False
+        
 
 if __name__ == '__main__':
     app.secret_key = b'_5#y2L"4Q8z178s/\\n\xec]/'
