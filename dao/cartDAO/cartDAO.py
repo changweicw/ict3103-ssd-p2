@@ -33,6 +33,8 @@ class cartDAO:
         try:
             cur.execute(query_select,(iduser,))
             result = cur.fetchall()
+            for x in result:
+                x['price'] = float(x['price'])
             logger.info("User "+str(iduser)+" Retrieved "+str(len(result))+" cart items")
             for r in result:
                 r["image_url"]=self.productDAO.retrieve_one_image(str(r["idproduct_listing"]))
@@ -45,7 +47,6 @@ class cartDAO:
         query_insert = "insert into cart (iduser,idproduct,qty) values(%s,%s,%s)"
         singleItem = self.get_cart_single(iduser,idproduct)
         if singleItem:
-            print("why")
             return self.update_cart_qty(iduser,idproduct,singleItem['qty']+qty)
         
         cur = self.mysql.connection.cursor()
@@ -78,3 +79,5 @@ class cartDAO:
             self.mysql.connection.commit()
         except Exception as e:
             logger.error("Error in deleting from cart:"+__name__+" \n "+str(e))
+
+    

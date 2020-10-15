@@ -46,6 +46,8 @@ class productDAO:
         try:
             cur.execute(query_select)
             result = cur.fetchall()
+            for x in result:
+                x['price'] = float(x['price'])
             logger.info("Retrieved "+str(len(result))+" items")
             for r in result:
                 r["image_url"]=self.retrieve_one_image(str(r["idproduct_listing"]))
