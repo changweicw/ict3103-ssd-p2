@@ -10,6 +10,7 @@ from dao.loginDAO.loginDAO import loginDAO
 from dao.productDAO.productDAO import productDAO
 from dao.cartDAO.cartDAO import cartDAO
 from dao.uniqueDAO.uniqueDAO import uniqueDAO
+from dao.transactionDAO.transactionDAO import transactionDAO
 from wtform import *
 from google.cloud import storage
 from cloudstore_utils import cloudstore_utils as csutils
@@ -50,6 +51,7 @@ loginDAO = loginDAO(mysql)
 productDAO = productDAO(mysql)
 cartDAO = cartDAO(mysql)
 unikDAO = uniqueDAO(mysql)
+transactionDAO = transactionDAO(mysql)
 
 # ========================================
 # GOOGLE BUCKET INIT
@@ -60,15 +62,15 @@ ALLOWED_EXTENSIONS = DefaultConfig.ALLOWED_EXTENSIONS
 # ========================================
 # SERVER ENV
 # ========================================
-server = "dev"
+# server = "dev"
 # server = "prod"
-if server == "dev":
-    ip = "127.0.0.1"
-    port = "8000"
+# if server == "dev":
+ip = "0.0.0.0"
+port = app.config['SERVER_PORT']
 
-if server == "prod":
-    ip = "0.0.0.0"
-    port = "3389"
+# if server == "prod":
+#     ip = "0.0.0.0"
+#     port = "3389"
 src = "http://"+ip+":"+port+"/"
 
 # ========================================
@@ -98,7 +100,7 @@ def landing():
     session['title'] = "Collaboratory Mall"
     # print(dbh.retrieve_all_products())
     
-    print(str(ipaddress.IPv4Address(int(ipaddress.IPv4Address(request.remote_addr)))))
+    # print(str(ipaddress.IPv4Address(int(ipaddress.IPv4Address(request.remote_addr)))))
     products = productDAO.retrieve_all_products()
     cartItems = []
     cartTotal = 0.0
@@ -106,7 +108,7 @@ def landing():
         cartItems = cartDAO.retrieve_cart_items(current_user.iduser)
         for item in cartItems:
             cartTotal = cartTotal + (item['price'] * item['qty'])
-
+    # transactionDAO.insert_transaction(2)
     # sendLoginEmail("Raphael","raphaelisme@gmail.com")
     return render_template('landing.html', products=products, cartItems=cartItems)
     # sendLoginEmail("Raphael","raphaelisme@gmail.com")
@@ -393,16 +395,28 @@ def sell_dashboard():
 @app.route('/products/checkout')
 @login_required
 def checkout():
-    td = {}
-    td["Product1"] = {"name": "Chia Seeds", "price": 28, "quantity": 3}
-    td["Product2"] = {"name": "Apple", "price": 28.2, "quantity": 4}
+    ship_fee = 7
+    cart = []
+    # td["Product1"] = {"name": "Chia Seeds", "price": 28, "quantity": 3}
+    # td["Product2"] = {"name": "Apple", "price": 28.2, "quantity": 4}
+    cartItems = cartDAO.retrieve_cart_items(current_user.iduser)
+    total = round(sum([x['price']*x['qty'] for x in cartItems]) + ship_fee,2) #calculating total price
+    for x in cartItems:
+        cart.append({"name": x['name'], "price": x['price'], "quantity": x['qty']})
 
-    total = 0.0
-    for v in td.values():
-        total += (v["price"]*v["quantity"])
+    return render_template('products/checkout.html', checkout_total=total, cartItems = cart,shipping = ship_fee)
 
-    return render_template('products/checkout.html', checkout_total=total, dict=td)
-
+@app.route('/products/<randomString>/after_pay')
+@login_required
+def after_pay(randomString):
+    print(randomString)
+    res = transactionDAO.insert_transaction(current_user.iduser,randomString)
+    retmsg = "Thank you for purchasing!"
+    if not res :
+        logger.error("User {} attempted inserting transaction after paying, but not recorded ".format(current_user.iduser))
+    else:
+        print(res)
+    return redirect('/')
 
 @app.route('/logout')
 def logout():

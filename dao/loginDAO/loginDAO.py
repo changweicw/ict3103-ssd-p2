@@ -216,6 +216,19 @@ class loginDAO:
             logger.error("User "+str(iduser)+ " encountered an error while updating email in "+__name__+":" +str(e))
             return False
 
+    def get_address_by_id(self,iduser):
+        query = "select * from address where iduser = %s"
+        try:
+            cur = self.mysql.connection.cursor()
+            cur.execute(query,(iduser,))
+            result = cur.fetchone()
+            logger.info("User "+str(iduser)+" retrieved their address")
+            return result if result else None
+        except Exception as e:
+            logger.error("User "+str(iduser)+ " encountered an error while getting address in "+__name__+":" +str(e))
+            return None
+
+
     def update_address(self,iduser,address):
         query = "update address set address_line = %s, unit_no=%s, zipcode=%s where iduser = %s"
         try:

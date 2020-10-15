@@ -115,6 +115,17 @@
         progressBarColor: 'rgb(0,0,0)',
       })
     }
+
+    if (x.includes("Thank you for purchasing!")) {
+      iziToast.show({
+        title: x,
+        theme: 'light',
+        color: 'green',
+        position: 'topRight',
+        overlayClose: true,
+        progressBarColor: 'rgb(0,0,0)',
+      })
+    }
   }
 </script>
 {% endblock %}

@@ -203,11 +203,11 @@
                             </div>
                             <div class="your-order-middle">
                                 <ul>
-                                    {% if dict is defined %}
-                                    {% for x in dict %}
-                                    <li><span class="order-middle-left">{{dict[x].name}} X {{dict[x].quantity}}</span>
+                                    {% if cartItems is defined and cartItems|length > 0 %}
+                                    {% for x in cartItems %}
+                                    <li><span class="order-middle-left">{{x.name}} X {{x.quantity}}</span>
                                         <span class="order-price">
-                                            ${{ dict[x].price or '0.00'}}
+                                            ${{ x.price or '0.00'}}
                                         </span></li>
 
                                     {% endfor %}
@@ -217,69 +217,21 @@
                             <div class="your-order-bottom">
                                 <ul>
                                     <li class="your-order-shipping">Shipping</li>
-                                    <li>Free shipping</li>
+                                    <li>${{'%.2f'%shipping or 'Free Shipping'}}</li>
                                 </ul>
                             </div>
                             <div class="your-order-total">
                                 <ul>
                                     <li class="order-total">Total</li>
                                     <li>
-                                        ${{ checkout_total or '0.00'}}
+                                        ${{ '%.2f' % checkout_total or '0.00'}}
                                     </li>
                                 </ul>
                             </div>
                         </div>
                         <div class="payment-method">
                             <div class="payment-accordion element-mrg">
-                                <div class="panel-group" id="accordion">
-                                    <div class="panel payment-accordion">
-                                        <div class="panel-heading" id="method-one">
-                                            <h4 class="panel-title">
-                                                <a data-toggle="collapse" data-parent="#accordion" href="#method1">
-                                                    Direct bank transfer
-                                                </a>
-                                            </h4>
-                                        </div>
-                                        <div id="method1" class="panel-collapse collapse show">
-                                            <div class="panel-body">
-                                                <p>Please send a check to Store Name, Store Street, Store Town, Store
-                                                    State / County, Store Postcode.</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="panel payment-accordion">
-                                        <div class="panel-heading" id="method-two">
-                                            <h4 class="panel-title">
-                                                <a class="collapsed" data-toggle="collapse" data-parent="#accordion"
-                                                    href="#method2">
-                                                    Check payments
-                                                </a>
-                                            </h4>
-                                        </div>
-                                        <div id="method2" class="panel-collapse collapse">
-                                            <div class="panel-body">
-                                                <p>Please send a check to Store Name, Store Street, Store Town, Store
-                                                    State / County, Store Postcode.</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="panel payment-accordion">
-                                        <div class="panel-heading" id="method-three">
-                                            <h4 class="panel-title">
-                                                <a class="collapsed" data-toggle="collapse" data-parent="#accordion"
-                                                    href="#method3">
-                                                    Cash on delivery
-                                                </a>
-                                            </h4>
-                                        </div>
-                                        <div id="method3" class="panel-collapse collapse">
-                                            <div class="panel-body">
-                                                <p>Please send a check to Store Name, Store Street, Store Town, Store
-                                                    State / County, Store Postcode.</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                               
                             </div>
                         </div>
                     </div>
@@ -297,7 +249,8 @@
 
 {% block js %}
 <script src="https://www.paypalobjects.com/api/checkout.js"></script>
-<script>
+<script>var checkoutTotal = "{{'%.2f'%checkout_total}}"</script>
+<script  >
     paypal.Button.render({
         env: 'sandbox', // Or 'sandbox'
         client: {
@@ -311,7 +264,7 @@
                 payment: {
                     transactions: [{
                         amount: {
-                            total: 222,
+                            total: checkoutTotal,
                             currency: 'SGD'
                         }
                     }]
@@ -329,8 +282,9 @@
                     // Execute the payment
                     return actions.payment.execute()
                         .then(function () {
-                            alert('success!');
-                            console.log(paymentDetails)
+                            alert("Thank you for purchasing!");
+                            // console.log(paymentDetails.id)
+                            window.location.replace("/products/"+paymentDetails.id+"/after_pay")
                         });
                 });
             //});
