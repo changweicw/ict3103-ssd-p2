@@ -80,4 +80,13 @@ class cartDAO:
         except Exception as e:
             logger.error("Error in deleting from cart:"+__name__+" \n "+str(e))
 
+    def empty_cart(self,iduser):
+        query = "delete from cart where iduser = %s"
+        cur = self.mysql.connection.cursor()
+        try:
+            cur.execute(query,(iduser,))
+            self.mysql.connection.commit()
+        except Exception as e:
+            logger.error("Error in deleting entire cart:"+__name__+" \n "+str(e))
+
     

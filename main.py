@@ -400,6 +400,8 @@ def checkout():
     # td["Product1"] = {"name": "Chia Seeds", "price": 28, "quantity": 3}
     # td["Product2"] = {"name": "Apple", "price": 28.2, "quantity": 4}
     cartItems = cartDAO.retrieve_cart_items(current_user.iduser)
+    if len(cartItems)<=0:
+        return redirect('/')
     total = round(sum([x['price']*x['qty'] for x in cartItems]) + ship_fee,2) #calculating total price
     for x in cartItems:
         cart.append({"name": x['name'], "price": x['price'], "quantity": x['qty']})
@@ -411,6 +413,7 @@ def checkout():
 def after_pay(randomString):
     print(randomString)
     res = transactionDAO.insert_transaction(current_user.iduser,randomString)
+    del_res = cartDAO.empty_cart(current_user.iduser)
     retmsg = "Thank you for purchasing!"
     if not res :
         logger.error("User {} attempted inserting transaction after paying, but not recorded ".format(current_user.iduser))
