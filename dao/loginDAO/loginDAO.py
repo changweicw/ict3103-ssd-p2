@@ -205,7 +205,7 @@ class loginDAO:
             cur = self.mysql.connection.cursor()
             cur.execute(query,(datetime.now(),iduser))
             self.mysql.connection.commit()
-            logger.info("User {} recorded a last login attempt.".format(iduser))
+            logger.info("User {} recorded a lockout timer start.".format(iduser))
             return True
         except Exception as e:
             logger.error("User {} encountered error when inserting last login attempt in {}".format(iduser,__name__))
