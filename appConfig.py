@@ -38,4 +38,6 @@ class DefaultConfig:
     SERVER_IP = os.getenv('SERVER_IP')
     SERVER_PORT = os.getenv('SERVER_PORT')
 
+    ACCOUNT_LOCOKOUT_MINUTES = int(os.getenv('ACCOUNT_LOCKOUT_MINUTES'))
+
     PASSWORD_COMMON_FILENAME= os.getenv('PASSWORD_COMMON_FILENAME')

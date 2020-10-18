@@ -167,6 +167,7 @@
                                                 <a href="#"><i class="fa fa-arrow-up"></i> back</a>
                                             </div>
                                             <div class="billing-btn">
+                                                <button id="section3-update-button-reset" type="submit">Reset Password</button>
                                                 <button id="section3-update-button" type="submit">Continue</button>
                                             </div>
                                         </div>
@@ -292,6 +293,40 @@
     }
     
     function prepareThirdButton(){
+        $("#section3-update-button-reset").on('click',function(e){
+            obj={}
+            $.ajax({
+                url: "/reset/sendEmail",
+                type: "POST",
+                dataType: "json",
+                contentType: "application/json",
+                data: JSON.stringify(obj),
+                success: function (data) {
+                    // alert(data.msg)
+                    iziToast.show({
+                        title: data.msg,
+                        theme: 'light',
+                        color: 'green',
+                        position: 'topRight',
+                        overlayClose: true,
+                        progressBarColor: 'rgb(0,0,0)',
+                        overlayColor: 'rgba(0, 0, 0, 0.6)',
+                    })
+                },
+                error: function (data) {
+                    iziToast.show({
+                        title: data.responseJSON.msg,
+                        theme: 'light',
+                        color: 'red',
+                        position: 'topRight',
+                        overlayClose: true,
+                        progressBarColor: 'rgb(0,0,0)',
+                        overlayColor: 'rgba(0, 0, 0, 0.6)',
+                    })
+                }
+            });
+        })
+
         $("#section3-update-button").on('click',function(e){
             currentpw = $("#input_currentpw").val()
             newpw = $("#input_newpw").val()

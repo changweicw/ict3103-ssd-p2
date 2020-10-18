@@ -11,6 +11,7 @@ from flask import Flask,current_app
 import models
 from dao.cartDAO.cartDAO import cartDAO
 from dao.uniqueDAO.uniqueDAO import uniqueDAO
+import math
 
 
 logger = prepareLogger(__name__,'db.log',logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
@@ -41,7 +42,8 @@ class loginDAO:
                             result['removed'],
                             result['iduser'],
                             self.getAddr(iduser),
-                            self.cartDAO.retrieve_cart_items(iduser))
+                            self.cartDAO.retrieve_cart_items(iduser),
+                            result['lockout_start'])
                             
             if not result:
                 return None
@@ -90,6 +92,7 @@ class loginDAO:
             logger.error("User "+str(iduser)+ " encountered an error while retrieving address in "+__name__+":" +str(e))
             return None
 
+    #Return string 
     def check_login(self, email, password):
         query = "SELECT * FROM user WHERE email = %s"
         try:
@@ -101,9 +104,13 @@ class loginDAO:
 
             u = models.User(result['fname'],result['lname'],result['email'], 
             result['password'],result['total_revenue'],result['rating_avg'],result['password_change_date'],result['incorrect_login_count'],result['user_join_date'],result['removed'],result['iduser'])
-            
-            if u.incorrectLoginCount>=5:
-                return "Your account has been locked. Please check your email for a reset link."
+            dtdiff = math.fabs((datetime.now() - result['lockout_start']).total_seconds())/60
+            if dtdiff < DefaultConfig.ACCOUNT_LOCOKOUT_MINUTES:
+                return "Your account has been locked out. Please wait for another {:.0f} min".format(DefaultConfig.ACCOUNT_LOCOKOUT_MINUTES-dtdiff)
+
+            # Account lockout permenant until reset password
+            # if u.incorrectLoginCount>=5:
+            #     return "Your account has been locked. Please check your email for a reset link."
 
             if password_validator(password, result['password']):
                 logger.info(email + " just logged in")
@@ -111,20 +118,37 @@ class loginDAO:
                 self.unikDAO.delete_unik_by_iduser(u.iduser)
                 return u
             else:
-                logger.info(email + " failed to login")
+                #FAILURE TO LOGIN
+                logger.info(email + " failed to login for the {} time".format(u.incorrectLoginCount+1))
                 self.increase_fail_login_count(u.iduser)
-                if u.incorrectLoginCount>=4:
-                    unik=self.get_random_string(45)
-                    self.unikDAO.delete_unik_by_iduser(u.iduser)
-                    self.unikDAO.insert_unik(u.iduser,unik,"password")
-                    send_reset_pw_email("http://"+str(DefaultConfig.SERVER_IP)+":"+str(DefaultConfig.SERVER_PORT)+"/reset/password/"+unik,u.email)
-                    return "Your account has been locked. Please check your email for a reset link."
+
+                # Lockout for X minutes if login count>=3
+                if u.incorrectLoginCount>=2:
+                    self.increase_fail_login_count(u.iduser,0)
+                    self.insert_lockout_start(u.iduser)
+                    return "Your account has been locked out. Please wait for another {:.0f} min".format(DefaultConfig.ACCOUNT_LOCOKOUT_MINUTES)
+
+
+
+                #If continuous logout count reaches 5, send reset email
+                # if u.incorrectLoginCount>=4:
+                #     unik=self.get_random_string(45)
+                #     self.unikDAO.delete_unik_by_iduser(u.iduser)
+                #     self.unikDAO.insert_unik(u.iduser,unik,"password")
+                #     send_reset_pw_email("http://"+str(DefaultConfig.SERVER_IP)+":"+str(DefaultConfig.SERVER_PORT)+"/reset/password/"+unik,u.email)
+                #     return "Your account has been locked. Please check your email for a reset link."
+                
                 return None
         except Exception as e:
             logger.error("User "+str(email)+ " encountered an error while checking for valid login in "+__name__+":" +str(e))
             return None
 
-    
+    def request_reset_pw_email(self,iduser,email):
+        unik=self.get_random_string(45)
+        self.unikDAO.delete_unik_by_iduser(iduser)
+        self.unikDAO.insert_unik(iduser,unik,"password")
+        send_reset_pw_email("http://"+str(DefaultConfig.SERVER_IP)+":"+str(DefaultConfig.SERVER_PORT)+"/reset/password/"+unik,email)
+        return True
 
     def increase_fail_login_count(self,iduser,count_to_set=-1):
         if count_to_set==-1:
@@ -175,7 +199,31 @@ class loginDAO:
             logger.error("User "+str(user.iduser)+ " encountered an error while sign-ing up in "+__name__+":" +str(e))
             return None
 
-    
+    def insert_lockout_start(self,iduser):
+        query="update user set lockout_start = %s where iduser=%s"
+        try:
+            cur = self.mysql.connection.cursor()
+            cur.execute(query,(datetime.now(),iduser))
+            self.mysql.connection.commit()
+            logger.info("User {} recorded a last login attempt.".format(iduser))
+            return True
+        except Exception as e:
+            logger.error("User {} encountered error when inserting last login attempt in {}".format(iduser,__name__))
+            return False
+
+    def date_test(self):
+        query_select = "SELECT lockout_start FROM user where iduser = %s"
+        try:
+            cur = self.mysql.connection.cursor()
+            cur.execute(query_select,(2,))
+            result = cur.fetchone()
+            a = result['lockout_start']-datetime.now()
+            print("This is microseconds {} and this is entire. {} minutes".format(a,math.fabs(a.total_seconds()/60)))
+            return True
+        except Exception as e:
+            print(e)
+            # logger.error("User "+str(iduser)+ " encountered an error while checking if is new login in "+__name__+":" +str(e))
+            return None
 
     def is_new_login(self,iduser,ipaddress):
         query_select = "SELECT * FROM login_origin_history where iduser = %s and ip_address = %s"
@@ -241,6 +289,18 @@ class loginDAO:
             logger.error("User "+str(iduser)+ " encountered an error while updating address in "+__name__+":" +str(e))
             return False
 
+    def update_pw_change_date(self,iduser):
+        query = "update user set password_change_date = %s where iduser = %s"
+        try:
+            cur = self.mysql.connection.cursor()
+            cur.execute(query,(datetime.now(),iduser))
+            self.mysql.connection.commit()
+            return True
+            
+        except Exception as e:
+            logger.warning("User {} encountered an error while updating password change date".format(iduser,__name__))
+            return None
+
     def update_pw(self,iduser,currentpw,newpw):
         query_select = "select * from user where iduser = %s"
         query_update = "update user set password = %s where iduser = %s"
@@ -265,7 +325,8 @@ class loginDAO:
             cur.execute(query_update,(encrypt_password(newpw),iduser))
             self.mysql.connection.commit()
             self.insert_pw_history(iduser,newpw)
-            
+            self.update_pw_change_date(iduser)
+
             logger.info("User "+str(iduser)+" updated their password")
             return True,"Successfully updated"
         except Exception as e:
@@ -275,12 +336,12 @@ class loginDAO:
     
 
     def update_pw_from_unik(self,uniqueString,newPassword):
-        query = "update user set password = %s ,incorrect_login_count=0\
+        query = "update user set password = %s ,incorrect_login_count=0,password_change_date=%s\
             where iduser in (select fk_iduser from unique_link where idunique_link = %s)"
         query_delete = "delete from unique_link where idunique_link =  %s"
         try:
             cur = self.mysql.connection.cursor()
-            result = cur.execute(query,(encrypt_password(newPassword),uniqueString))
+            result = cur.execute(query,(encrypt_password(newPassword),datetime.now(),uniqueString))
             result = cur.execute(query_delete,(uniqueString,))
             self.unikDAO.delete_unik_by_string(uniqueString)
             self.mysql.connection.commit()
