@@ -99,7 +99,7 @@ class publishForm(FlaskForm):
 def landing():
     session['title'] = "Collaboratory Mall"
     # print(dbh.retrieve_all_products())
-    
+    # loginDAO.date_test()
     # print(str(ipaddress.IPv4Address(int(ipaddress.IPv4Address(request.remote_addr)))))
     products = productDAO.retrieve_all_products()
     cartItems = []
@@ -167,7 +167,7 @@ def login_landing():
                                             login_form.password.data)
         if isinstance(login_result, str):
             flash(login_result, 'login')
-            logger.warning(login_form.username.data+" Tried to login with wrong password",extra={'ip': request.remote_addr})
+            logger.warning(login_form.username.data+" Attempted login failed",extra={'ip': request.remote_addr})
         elif login_result:
             # Handle Redirect after login success
             login_user(login_result, remember=remember_me, duration=timedelta(
@@ -248,6 +248,14 @@ def registration():
         logger.info("Not validate on submit",extra={'ip': request.remote_addr})
     return render_template('account/login.html', form=login_form, reg_form=registration_form, src=src, tab=tab, iziMsg=iziMsg)
 
+@app.route("/reset/sendEmail",methods=['post'])
+@login_required
+def reset_pw_send_email():
+    result = loginDAO.request_reset_pw_email(current_user.iduser,current_user.email)
+    if result:
+        return {'msg':'Email sent to '+current_user.email},200
+    else:
+        return {'msg':'Error requesting for email.'},400
 
 @app.route('/reset/password/<unik>')
 def reset_pw_link(unik):
