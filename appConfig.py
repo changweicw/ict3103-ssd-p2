@@ -17,7 +17,7 @@ class DefaultConfig:
     GOOGLE_BUCKET_ID = os.getenv('GOOGLE_BUCKET_ID')
     GOOGLE_BUCKET_URL = os.getenv('GOOGLE_BUCKET_URL')
     GOOGLE_BUCKET_JSON_PATH = os.getenv('GOOGLE_BUCKET_JSON')
-    os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="bucket_key.json"
+    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "bucket_key.json"
     ALLOWED_EXTENSIONS = os.getenv('ALLOWED_EXTENSIONS').split(",")
     TEMP_UPLOAD_FOLDER_NAME = os.getenv('TEMP_UPLOAD_FOLDER_NAME')
     GMAIL_ID = os.getenv('GMAIL_ID')
@@ -30,14 +30,16 @@ class DefaultConfig:
     SMTP_PORTS = os.getenv('SMTP_PORTS').split(',')
     LOGGING_FOLDER = os.getenv('LOGGING_FOLDER')
     SESSION_TIMEOUT = os.getenv('SESSION_TIMEOUT')
-    TESTING=os.getenv('TESTING')
-    LOGING_DISABLED=os.getenv('LOGIN_DISABLED')
-    REMEMBER_ME_TIMEOUT_DAYS=os.getenv('REMEMBER_ME_TIMEOUT_DAYS')
-    SENDGRID_API_KEY=os.getenv('SENDGRID_API_KEY')
+    TESTING = os.getenv('TESTING')
+    LOGING_DISABLED = os.getenv('LOGIN_DISABLED')
+    REMEMBER_ME_TIMEOUT_DAYS = os.getenv('REMEMBER_ME_TIMEOUT_DAYS')
+    SENDGRID_API_KEY = os.getenv('SENDGRID_API_KEY')
 
     SERVER_IP = os.getenv('SERVER_IP')
     SERVER_PORT = os.getenv('SERVER_PORT')
 
     ACCOUNT_LOCOKOUT_MINUTES = int(os.getenv('ACCOUNT_LOCKOUT_MINUTES'))
 
-    PASSWORD_COMMON_FILENAME= os.getenv('PASSWORD_COMMON_FILENAME')
+    PASSWORD_COMMON_FILENAME = os.getenv('PASSWORD_COMMON_FILENAME')
+
+    RECAPTCHA_SITE_KEY = os.getenv('RECAPTCHA_SITE_KEY')

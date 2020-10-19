@@ -37,6 +37,9 @@ app = Flask(__name__, template_folder="templates")
 csrf = CSRFProtect()
 csrf.init_app(app)
 
+# ========================================
+# Flask Login Manager
+# ========================================
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_message = "Please login first."
@@ -49,7 +52,6 @@ app.permanent_session_lifetime = timedelta(
 # ========================================
 # DATABASE
 # ========================================
-
 app.config.from_object(DefaultConfig)
 mysql = MySQL(app)
 loginDAO = loginDAO(mysql)
@@ -70,10 +72,10 @@ ALLOWED_EXTENSIONS = DefaultConfig.ALLOWED_EXTENSIONS
 # server = "dev"
 # server = "prod"
 # if server == "dev":
-ip = "0.0.0.0"
-# ip = "127.0.0.1"
-port = app.config['SERVER_PORT']
-# port = "8000"
+# ip = "0.0.0.0"
+ip = "127.0.0.1"
+# port = app.config['SERVER_PORT']
+port = "8000"
 
 # if server == "prod":
 #     ip = "0.0.0.0"
@@ -165,6 +167,7 @@ def login_landing():
     login_form = LoginForm()
     ip_source = ipaddress.IPv4Address(request.remote_addr)
     registration_form = RegistrationForm()
+    recaptcha_site_key = app.config['RECAPTCHA_SITE_KEY']
     if 'src' in request.args:
         session['src'] = request.args["src"]
     if login_form.validate_on_submit():
@@ -193,7 +196,7 @@ def login_landing():
             flash(
                 'Your username or password is incorrect or you do not have an account with us.', 'login')
 
-    return render_template('account/login.html', form=login_form, reg_form=registration_form, src=src)
+    return render_template('account/login.html', form=login_form, reg_form=registration_form, recaptcha_site_key=recaptcha_site_key, src=src)
 
 
 @app.route("/register", methods=['GET', 'POST'])
