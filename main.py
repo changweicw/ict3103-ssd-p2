@@ -29,8 +29,13 @@ import ipaddress
 import platform
 
 
-
 app = Flask(__name__, template_folder="templates")
+
+# ========================================
+# Flask WTF CSRF Protection
+# ========================================
+csrf = CSRFProtect()
+csrf.init_app(app)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -44,7 +49,7 @@ app.permanent_session_lifetime = timedelta(
 # ========================================
 # DATABASE
 # ========================================
-# csrf = CSRFProtect(app)
+
 app.config.from_object(DefaultConfig)
 mysql = MySQL(app)
 loginDAO = loginDAO(mysql)
@@ -66,7 +71,9 @@ ALLOWED_EXTENSIONS = DefaultConfig.ALLOWED_EXTENSIONS
 # server = "prod"
 # if server == "dev":
 ip = "0.0.0.0"
+# ip = "127.0.0.1"
 port = app.config['SERVER_PORT']
+# port = "8000"
 
 # if server == "prod":
 #     ip = "0.0.0.0"
@@ -167,7 +174,8 @@ def login_landing():
                                             login_form.password.data)
         if isinstance(login_result, str):
             flash(login_result, 'login')
-            logger.warning(login_form.username.data+" Attempted login failed",extra={'ip': request.remote_addr})
+            logger.warning(login_form.username.data +
+                           " Attempted login failed", extra={'ip': request.remote_addr})
         elif login_result:
             # Handle Redirect after login success
             login_user(login_result, remember=remember_me, duration=timedelta(
@@ -176,10 +184,12 @@ def login_landing():
                 sendLoginEmail(ip_source, login_result.email)
 
                 # Redirect to landing page
-            logger.info(login_form.username.data+" Successfully logged in.",extra={'ip': request.remote_addr})
+            logger.info(login_form.username.data+" Successfully logged in.",
+                        extra={'ip': request.remote_addr})
             return redirect(session['src'] if 'src' in session else url_for('landing'))
         else:
-            logger.warning(login_form.username.data+" Tried to login with wrong password",extra={'ip': request.remote_addr})
+            logger.warning(login_form.username.data +
+                           " Tried to login with wrong password", extra={'ip': request.remote_addr})
             flash(
                 'Your username or password is incorrect or you do not have an account with us.', 'login')
 
@@ -200,9 +210,10 @@ def registration():
     iziMsg = "Not successful"
     if registration_form.validate_on_submit():
         if isCommonPassword(password):
-            flash('This is a common password. Please use a new one.','register')
-            successFlag=False
-            logger.warning(email+" tried to register with a common password.",extra={'ip': request.remote_addr})
+            flash('This is a common password. Please use a new one.', 'register')
+            successFlag = False
+            logger.warning(email+" tried to register with a common password.",
+                           extra={'ip': request.remote_addr})
         nameRegex = "(^[\w\s]{1,}[\w\s]{1,}$)"
         namePat = re.compile(nameRegex)
         emailRegex = "^(([^<>()\[\]\\.,;:\s@\"]+(\.[^<>()\[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$"
@@ -217,45 +228,55 @@ def registration():
         if not email_matched:
             flash('Please enter a valid email', 'register')
             successFlag = False
-            logger.warning("email failed regex",extra={'ip': request.remote_addr})
+            logger.warning("email failed regex", extra={
+                           'ip': request.remote_addr})
         if password != passwordConfirm:
             flash('Please enter the same password for both fields', 'register')
-            logger.warning("password don't match",extra={'ip': request.remote_addr})
+            logger.warning("password don't match", extra={
+                           'ip': request.remote_addr})
             successFlag = False
         else:
             if not password_matched:
-                logger.warning("Password doesn't satisfy criteria",extra={'ip': request.remote_addr})
+                logger.warning("Password doesn't satisfy criteria",
+                               extra={'ip': request.remote_addr})
                 successFlag = False
                 flash('Password must contain minimum 8 characters, with 1 uppercase, 1 lowercase, 1 digit & 1 special char', 'register')
 
         if loginDAO.email_exist(email):
             successFlag = False
             flash('Email Already Exist', 'register')
-            logger.info("Register failed because "+email+" already exist",extra={'ip': request.remote_addr})
+            logger.info("Register failed because "+email +
+                        " already exist", extra={'ip': request.remote_addr})
 
         if not fname_matched or not lname_matched:
             successFlag = False
-            logger.info("Firstname or lastname needs to be legitimate.",extra={'ip': request.remote_addr})
+            logger.info("Firstname or lastname needs to be legitimate.", extra={
+                        'ip': request.remote_addr})
             flash('First Name or last name might not be legitimate.', 'register')
 
         if successFlag:
             user = User(fname, lname, email, password)
-            logger.info("Information sufficient to register.",extra={'ip': request.remote_addr})
+            logger.info("Information sufficient to register.",
+                        extra={'ip': request.remote_addr})
             loginDAO.signup(user)
             tab = "log"
             iziMsg = "Account Successfully created!"
     else:
-        logger.info("Not validate on submit",extra={'ip': request.remote_addr})
+        logger.info("Not validate on submit", extra={
+                    'ip': request.remote_addr})
     return render_template('account/login.html', form=login_form, reg_form=registration_form, src=src, tab=tab, iziMsg=iziMsg)
 
-@app.route("/reset/sendEmail",methods=['post'])
+
+@app.route("/reset/sendEmail", methods=['post'])
 @login_required
 def reset_pw_send_email():
-    result = loginDAO.request_reset_pw_email(current_user.iduser,current_user.email)
+    result = loginDAO.request_reset_pw_email(
+        current_user.iduser, current_user.email)
     if result:
-        return {'msg':'Email sent to '+current_user.email},200
+        return {'msg': 'Email sent to '+current_user.email}, 200
     else:
-        return {'msg':'Error requesting for email.'},400
+        return {'msg': 'Error requesting for email.'}, 400
+
 
 @app.route('/reset/password/<unik>')
 def reset_pw_link(unik):
@@ -313,7 +334,8 @@ def addtocart():
         retdata = {'msg': 'Successfully added to cart.'}
         return retdata, 200
     else:
-        logger.warning("Attempted to add to cart but 0 rows updated.",extra={'ip': request.remote_addr})
+        logger.warning("Attempted to add to cart but 0 rows updated.", extra={
+                       'ip': request.remote_addr})
         retdata = {'msg': 'Not added to cart.'}
         return retdata, 400
 
@@ -358,9 +380,10 @@ def publish():
     if not isinstance(title, str) or not isinstance(desc, str) or not isinstance(price, str):
         return jsonify(success=False)
     urlList = []
-    logger.info("Title:"+title+".Desc:"+desc+".Price:"+price,extra={'ip': request.remote_addr})
+    logger.info("Title:"+title+".Desc:"+desc+".Price:" +
+                price, extra={'ip': request.remote_addr})
     logger.info("Somebody is going to pubilish a listing with " +
-                str(len(files))+" pictures",extra={'ip': request.remote_addr})
+                str(len(files))+" pictures", extra={'ip': request.remote_addr})
     for f in files:
         if f.split(';')[0].split('/')[1] not in app.config['ALLOWED_EXTENSIONS'] or (len(f.split(',')[1]) - 814)/1.37 / 1024 > 1024:
             return jsonify(success=False)
@@ -381,9 +404,10 @@ def publish():
     idprod = productDAO.publish_listing(tempProd)
     if idprod:
         logger.info(str(current_user.iduser)+":"+current_user.fname +
-                    " has just published a product with id: "+str(idprod),extra={'ip': request.remote_addr})
+                    " has just published a product with id: "+str(idprod), extra={'ip': request.remote_addr})
     else:
-        logger.warning(str(current_user.iduser)+" publish failed",extra={'ip': request.remote_addr})
+        logger.warning(str(current_user.iduser)+" publish failed",
+                       extra={'ip': request.remote_addr})
 
     # dbh.upload_to_bucket(files[0].filename)
     return jsonify(success=True)
@@ -408,26 +432,31 @@ def checkout():
     # td["Product1"] = {"name": "Chia Seeds", "price": 28, "quantity": 3}
     # td["Product2"] = {"name": "Apple", "price": 28.2, "quantity": 4}
     cartItems = cartDAO.retrieve_cart_items(current_user.iduser)
-    if len(cartItems)<=0:
+    if len(cartItems) <= 0:
         return redirect('/')
-    total = round(sum([x['price']*x['qty'] for x in cartItems]) + ship_fee,2) #calculating total price
+    # calculating total price
+    total = round(sum([x['price']*x['qty'] for x in cartItems]) + ship_fee, 2)
     for x in cartItems:
-        cart.append({"name": x['name'], "price": x['price'], "quantity": x['qty']})
+        cart.append(
+            {"name": x['name'], "price": x['price'], "quantity": x['qty']})
 
-    return render_template('products/checkout.html', checkout_total=total, cartItems = cart,shipping = ship_fee)
+    return render_template('products/checkout.html', checkout_total=total, cartItems=cart, shipping=ship_fee)
+
 
 @app.route('/products/<randomString>/after_pay')
 @login_required
 def after_pay(randomString):
     print(randomString)
-    res = transactionDAO.insert_transaction(current_user.iduser,randomString)
+    res = transactionDAO.insert_transaction(current_user.iduser, randomString)
     del_res = cartDAO.empty_cart(current_user.iduser)
     retmsg = "Thank you for purchasing!"
-    if not res :
-        logger.error("User {} attempted inserting transaction after paying, but not recorded ".format(current_user.iduser))
+    if not res:
+        logger.error("User {} attempted inserting transaction after paying, but not recorded ".format(
+            current_user.iduser))
     else:
         print(res)
     return redirect('/')
+
 
 @app.route('/logout')
 def logout():
@@ -451,13 +480,14 @@ def get_random_string(length):
     result_str = ''.join(random.choice(letters) for i in range(length))
     print("Random string of length", length, "is:", result_str)
 
+
 def isCommonPassword(password):
     f = open(app.config['PASSWORD_COMMON_FILENAME'], "r")
     for x in f:
         if password in x:
             return True
     return False
-        
+
 
 if __name__ == '__main__':
     app.secret_key = b'_5#y2L"4Q8z178s/\\n\xec]/'
