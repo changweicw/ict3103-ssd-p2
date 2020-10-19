@@ -201,13 +201,17 @@
                 type: "POST",
                 dataType: "json",
                 contentType: "application/json",
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('X-CSRFToken','{{csrf_token()}}');
+                },
                 data: JSON.stringify(object),
                 success: function (data) {
                     alert("Successfully uploaded!")
                     window.location.replace("/")
                 },
-                fail:function(data){
-                    alert("Failed. Please double check your information, or contact the administrator.")
+                fail: function (data) {
+                    alert(
+                        "Failed. Please double check your information, or contact the administrator.")
                 }
             });
         })
@@ -252,7 +256,7 @@
                 var img = document.createElement("img");
                 img.setAttribute("style",
                     "min-height:150px;max-height:150px;border:1px solid black;margin:20px;inline-block"
-                    )
+                )
                 img.setAttribute("class", "product_images")
                 img.src = response
                 $("#images-container").prepend(img)
