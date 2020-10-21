@@ -38,6 +38,9 @@ app = Flask(__name__, template_folder="templates")
 csrf = CSRFProtect()
 csrf.init_app(app)
 
+# ========================================
+# Flask Login Manager
+# ========================================
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_message = "Please login first."
@@ -50,7 +53,6 @@ app.permanent_session_lifetime = timedelta(
 # ========================================
 # DATABASE
 # ========================================
-
 app.config.from_object(DefaultConfig)
 mysql = MySQL(app)
 loginDAO = loginDAO(mysql)
@@ -68,10 +70,20 @@ ALLOWED_EXTENSIONS = DefaultConfig.ALLOWED_EXTENSIONS
 # ========================================
 # SERVER ENV
 # ========================================
+
+# server = "dev"
+# server = "prod"
+# if server == "dev":
+# ip = "0.0.0.0"
+# ip = "127.0.0.1"
+# port = app.config['SERVER_PORT']
+# port = "8000"
+
 ip = "0.0.0.0"
 # ip = "127.0.0.1"
 port = app.config['SERVER_PORT']
 # port = "8000"
+
 
 src = "http://"+ip+":"+port+"/"
 
@@ -100,6 +112,7 @@ class publishForm(FlaskForm):
 # def logIp():
 #     # logger.info("Accessed the page login with wrong password", extra={'ip': request.remote_addr})
 #     print(request)
+
 
 @app.route('/')
 def landing():
@@ -473,9 +486,11 @@ def getout():
     x = request
     return redirect(url_for('login_landing', src=x.base_url))
 
+
 @app.errorhandler(CSRFError)
 def handle_csrf_error(e):
-    return {'msg':"Don't be a bad user. Give me a proper CSRF Token."}, 400
+    return {'msg': "Don't be a bad user. Give me a proper CSRF Token."}, 400
+
 
 def get_random_string(length):
     letters = string.ascii_lowercase
