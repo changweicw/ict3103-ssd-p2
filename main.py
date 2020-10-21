@@ -2,6 +2,7 @@ from flask import Flask, render_template, redirect, url_for, flash, session, req
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user, UserMixin
 from flask_mysqldb import MySQL
 from flask_wtf import CSRFProtect, FlaskForm
+from flask_wtf.csrf import CSRFError
 from wtforms import StringField, FileField, DecimalField
 from werkzeug.utils import secure_filename
 from models import User, Product_listing
@@ -69,17 +70,21 @@ ALLOWED_EXTENSIONS = DefaultConfig.ALLOWED_EXTENSIONS
 # ========================================
 # SERVER ENV
 # ========================================
+
 # server = "dev"
 # server = "prod"
 # if server == "dev":
 # ip = "0.0.0.0"
-ip = "127.0.0.1"
+# ip = "127.0.0.1"
 # port = app.config['SERVER_PORT']
-port = "8000"
+# port = "8000"
 
-# if server == "prod":
-#     ip = "0.0.0.0"
-#     port = "3389"
+ip = "0.0.0.0"
+# ip = "127.0.0.1"
+port = app.config['SERVER_PORT']
+# port = "8000"
+
+
 src = "http://"+ip+":"+port+"/"
 
 # ========================================
@@ -102,6 +107,11 @@ class publishForm(FlaskForm):
     desc = StringField("desc")
     price = DecimalField("price")
     files = FileField("files")
+
+# @app.before_request
+# def logIp():
+#     # logger.info("Accessed the page login with wrong password", extra={'ip': request.remote_addr})
+#     print(request)
 
 
 @app.route('/')
@@ -475,6 +485,11 @@ def load_user(iduser):
 def getout():
     x = request
     return redirect(url_for('login_landing', src=x.base_url))
+
+
+@app.errorhandler(CSRFError)
+def handle_csrf_error(e):
+    return {'msg': "Don't be a bad user. Give me a proper CSRF Token."}, 400
 
 
 def get_random_string(length):

@@ -264,6 +264,9 @@
                 type: "POST",
                 dataType: "json",
                 contentType: "application/json",
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('X-CSRFToken','{{csrf_token()}}');
+                },
                 data: JSON.stringify(obj),
                 success: function (data) {
                     // alert(data.msg)
