@@ -1,6 +1,7 @@
 import sys
 import os
 from dotenv import load_dotenv
+import distutils.util
 
 load_dotenv()
 
@@ -30,7 +31,7 @@ class DefaultConfig:
     SMTP_PORTS = os.getenv('SMTP_PORTS').split(',')
     LOGGING_FOLDER = os.getenv('LOGGING_FOLDER')
     SESSION_TIMEOUT = os.getenv('SESSION_TIMEOUT')
-    TESTING = os.getenv('TESTING')
+    TESTING = bool(distutils.util.strtobool(os.getenv('TESTING')))
     LOGING_DISABLED = os.getenv('LOGIN_DISABLED')
     REMEMBER_ME_TIMEOUT_DAYS = os.getenv('REMEMBER_ME_TIMEOUT_DAYS')
     SENDGRID_API_KEY = os.getenv('SENDGRID_API_KEY')

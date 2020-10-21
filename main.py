@@ -211,7 +211,6 @@ def registration():
     tab = "reg"
     iziMsg = "Not successful"
     if registration_form.validate_on_submit():
-        flash(registration_form.recaptcha, 'register')
         if isCommonPassword(password):
             flash('This is a common password. Please use a new one.', 'register')
             successFlag = False
