@@ -82,8 +82,8 @@
                     reg_form.lastName(placeholder="Last Name") }} {{
                     reg_form.password(placeholder="Password") }} {{
                     reg_form.confirmPassword(placeholder="Confirm Password") }}
-                    <div class="g-recaptcha" data-sitekey="{{recaptcha_site_key}}"></div>
-                    <br/>
+                      {{ reg_form.recaptcha }}
+                      <br/>
                     <div class="button-box">
                       <button type="submit"><span>Register</span></button>
                     </div>

@@ -167,7 +167,6 @@ def login_landing():
     login_form = LoginForm()
     ip_source = ipaddress.IPv4Address(request.remote_addr)
     registration_form = RegistrationForm()
-    recaptcha_site_key = app.config['RECAPTCHA_SITE_KEY']
     if 'src' in request.args:
         session['src'] = request.args["src"]
     if login_form.validate_on_submit():
@@ -196,7 +195,7 @@ def login_landing():
             flash(
                 'Your username or password is incorrect or you do not have an account with us.', 'login')
 
-    return render_template('account/login.html', form=login_form, reg_form=registration_form, recaptcha_site_key=recaptcha_site_key, src=src)
+    return render_template('account/login.html', form=login_form, reg_form=registration_form, src=src)
 
 
 @app.route("/register", methods=['GET', 'POST'])
@@ -212,6 +211,7 @@ def registration():
     tab = "reg"
     iziMsg = "Not successful"
     if registration_form.validate_on_submit():
+        flash(registration_form.recaptcha, 'register')
         if isCommonPassword(password):
             flash('This is a common password. Please use a new one.', 'register')
             successFlag = False
