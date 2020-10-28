@@ -148,7 +148,7 @@
                         <div class="add-to-link">
                             <ul>
                                 <li class="cart"><a class="cart-btn" href="#">ADD TO CART </a></li>
-                                <div class="product_id" style="display:none">{{product.idproduct_listing}}</div>
+                                <div id="product_id" style="display:none">{{product.idproduct_listing}}</div>
                             </ul>
                         </div>
                     </article>
@@ -196,7 +196,74 @@
         <script>
             $(document).ready(function () {
                 prepareSendToCart();
+
             })
+
+            function incrementMiniCart(img) {
+
+            }
+
+            function updateMiniCart(img, price, name) {
+                var imgUrls = $(".mini-cart-content ul").find('img')
+                for (var j = 0; j < imgUrls.length; j++) {
+                    if (imgUrls[j].getAttribute('src') == img) {
+                        var qty = imgUrls[j].parentElement.nextElementSibling.textContent
+                        qty = qty.replace('x', '')
+                        qty = parseInt(qty) + 1
+                        imgUrls[j].parentElement.nextElementSibling.textContent = qty + 'x'
+                        return
+                    }
+                }
+                var li = document.createElement("li")
+                li.setAttribute('class', 'single-shopping-cart')
+
+                var div1 = document.createElement('div')
+                div1.setAttribute('class', 'shopping-cart-img')
+
+                var img1 = document.createElement('img')
+                img1.setAttribute('alt', '')
+                img1.setAttribute('src', img)
+
+                var a1 = document.createElement('a')
+                a1.setAttribute('href', 'single-product.html')
+                a1.append(img1)
+
+                var span1 = document.createElement('span')
+                span1.setAttribute('class', 'product-quantity')
+                span1.append('1')
+
+                div1.append(a1, span1)
+
+                var div2 = document.createElement('div')
+                div2.setAttribute('class', 'shopping-cart-title')
+
+                var h4 = document.createElement('h4')
+                var a2 = document.createElement('a')
+                a2.setAttribute('href', 'single-product.html')
+                a2.append(name)
+                h4.append(a2)
+
+                var span2 = document.createElement('span')
+                var newprice = price.replace('SG', '')
+                span2.append(newprice)
+
+
+                var div3 = document.createElement('div')
+                var a3 = document.createElement('a')
+                var i = document.createElement('i')
+
+                div3.setAttribute('class', 'shopping-cart-delete')
+                a3.setAttribute('href', '#')
+                i.setAttribute('class', 'ion-android-cancel')
+                a3.append(i)
+                div3.append(a3)
+
+                div2.append(h4, span2, div3)
+
+                li.append(div1, div2)
+
+                $(".mini-cart-content ul")[0].append(li)
+            }
 
             function prepareSendToCart() {
                 var object = {}
@@ -205,29 +272,43 @@
                     object.idproduct = $(this).siblings()[0].innerHTML
                     object.qty = 1
                     object.name = $(this).parent().parent().parent().find('a.product-link')[0].text
+                    var img_url = $(this).parent().parent().parent().find('img.first-img')[0].getAttribute(
+                        'src')
+                    var item_price = $(this).parent().parent().parent().find('li.current-price')[0].innerText
                     $.ajax({
                         url: "/cart/addToCart",
                         type: "POST",
                         dataType: "json",
                         contentType: "application/json",
                         data: JSON.stringify(object),
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader('X-CSRFToken', '{{csrf_token()}}');
+                        },
                         success: function (data) {
                             // alert(data.msg)
+
+                            // li
+                            //     div1
+                            //     div2
+
+                            updateMiniCart(img_url, item_price, object.name)
+
+
                             iziToast.show({
-                                title:'Added '+object.name+' to your cart!',
-                                theme:'light',
-                                color:'green',
-                                position:'topRight',
+                                title: 'Added ' + object.name + ' to your cart!',
+                                theme: 'light',
+                                color: 'green',
+                                position: 'topRight',
                                 overlayClose: true,
                                 progressBarColor: 'rgb(0,0,0)',
                             })
                         },
                         error: function (data) {
                             iziToast.show({
-                                title:data.responseJSON.msg,
-                                theme:'light',
-                                color:'red',
-                                position:'topRight',
+                                title: data.responseJSON.msg,
+                                theme: 'light',
+                                color: 'red',
+                                position: 'topRight',
                                 overlayClose: true,
                                 progressBarColor: 'rgb(0,0,0)',
                             })
