@@ -18,6 +18,8 @@ class LoginForm(FlaskForm):
     username = StringField('Email', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
 
+class resetForm(FlaskForm):
+    email = StringField('Email', validators=[DataRequired()])
 
 class publishForm(FlaskForm):
     title = StringField("title")

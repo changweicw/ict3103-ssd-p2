@@ -53,7 +53,7 @@ class loginDAO:
             return None
 
     def get_user_by_email(self,email):
-        query = "SELECT * FROM user WHERE iduser = %s"
+        query = "SELECT * FROM user WHERE email = %s"
         try:
             cur = self.mysql.connection.cursor()
             cur.execute(query, (email,))

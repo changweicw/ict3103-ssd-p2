@@ -207,6 +207,20 @@ def login_landing():
 
     return render_template('account/login.html', form=login_form, reg_form=registration_form, src=src)
 
+@app.route('/initiate_reset_pw',methods=['POST','GET'])
+def init_reset_pw():
+    return render_template('account/init-reset-pw.html',form=resetForm())
+
+@app.route("/reset_password_email",methods=['POST'])
+def send_reset_email():
+    unik=get_random_string(45)
+    email = request.form.get("email")
+    user = loginDAO.get_user_by_email(email)
+    unikDAO.delete_unik_by_iduser(user.iduser)
+    unikDAO.insert_unik(user.iduser,unik,"password")
+    # print("{}-{}-{}-{}".format(DefaultConfig.SERVER_IP,DefaultConfig.SERVER_PORT,unik,email))
+    send_reset_pw_email("http://"+str(DefaultConfig.SERVER_IP)+":"+str(DefaultConfig.SERVER_PORT)+"/reset/password/"+unik,email)
+    return redirect(url_for('login_landing'))
 
 @app.route("/register", methods=['GET', 'POST'])
 def registration():
@@ -441,8 +455,6 @@ def sell_dashboard():
 def checkout():
     ship_fee = 7
     cart = []
-    # td["Product1"] = {"name": "Chia Seeds", "price": 28, "quantity": 3}
-    # td["Product2"] = {"name": "Apple", "price": 28.2, "quantity": 4}
     cartItems = cartDAO.retrieve_cart_items(current_user.iduser)
     if len(cartItems) <= 0:
         return redirect('/')
@@ -495,7 +507,7 @@ def handle_csrf_error(e):
 def get_random_string(length):
     letters = string.ascii_lowercase
     result_str = ''.join(random.choice(letters) for i in range(length))
-    print("Random string of length", length, "is:", result_str)
+    return result_str
 
 
 def isCommonPassword(password):

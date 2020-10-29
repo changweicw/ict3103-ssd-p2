@@ -19,9 +19,9 @@ def sendLoginEmail(content, email_to):
     context = ssl.SSLContext(ssl.PROTOCOL_TLS)
     username = DefaultConfig.GMAIL_ID
     password = DefaultConfig.GMAIL_PW
-
+    return True
     try:
-        with smtplib.SMTP(server_name, port[0]) as server:
+        with smtplib.SMTP(server_name,port[0]) as server:
             # server.connect(server_name,port[2])
             server.ehlo()
             server.starttls()
@@ -37,7 +37,7 @@ def sendLoginEmail(content, email_to):
             server.send_message(msg)
             # server.sendmail(username,email_to,msg)
             del msg
-    except Exception as e:
+    except smtplib.SMTPException as e:
         logger.error(e)
         return False
     return True
@@ -48,9 +48,9 @@ def send_reset_pw_email(content,email_to):
     server_name = DefaultConfig.SMTP_SERVER
     username = DefaultConfig.GMAIL_ID
     password = DefaultConfig.GMAIL_PW
-
+    return True
     try:
-        with smtplib.SMTP(server_name, port[0]) as server:
+        with smtplib.SMTP(host=server_name, port=port[0]) as server:
             # server.connect(server_name,port[2])
             server.ehlo()
             server.starttls()
