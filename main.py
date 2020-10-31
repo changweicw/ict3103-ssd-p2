@@ -108,18 +108,11 @@ class publishForm(FlaskForm):
     price = DecimalField("price")
     files = FileField("files")
 
-# @app.before_request
-# def logIp():
-#     # logger.info("Accessed the page login with wrong password", extra={'ip': request.remote_addr})
-#     print(request)
 
-
+# This is the 'index.html' of the application.
 @app.route('/')
 def landing():
     session['title'] = "Collaboratory Mall"
-    # print(dbh.retrieve_all_products())
-    # loginDAO.date_test()
-    # print(str(ipaddress.IPv4Address(int(ipaddress.IPv4Address(request.remote_addr)))))
     products = productDAO.retrieve_all_products()
     cartItems = []
     cartTotal = 0.0
@@ -195,15 +188,16 @@ def login_landing():
             if loginDAO.is_new_login(login_result.iduser, int(ip_source)):
                 sendLoginEmail(ip_source, login_result.email)
 
-                # Redirect to landing page
+            # Redirect to landing page
             logger.info(login_form.username.data+" Successfully logged in.",
                         extra={'ip': request.remote_addr})
             return redirect(session['src'] if 'src' in session else url_for('landing'))
         else:
             logger.warning(login_form.username.data +
-                           " Tried to login with wrong password", extra={'ip': request.remote_addr})
+                           " Unexpected error occurred attempting to login for user".format(login_form.username.data),
+                            extra={'ip': request.remote_addr})
             flash(
-                'Your username or password is incorrect or you do not have an account with us.', 'login')
+                'Unknown error had occured', 'login')
 
     return render_template('account/login.html', form=login_form, reg_form=registration_form, src=src)
 
@@ -213,7 +207,7 @@ def init_reset_pw():
 
 @app.route("/reset_password_email",methods=['POST'])
 def send_reset_email():
-    unik=get_random_string(45)
+    unik=loginDAO.get_random_string(45)
     email = request.form.get("email")
     user = loginDAO.get_user_by_email(email)
     unikDAO.delete_unik_by_iduser(user.iduser)
@@ -501,7 +495,7 @@ def getout():
 
 @app.errorhandler(CSRFError)
 def handle_csrf_error(e):
-    return {'msg': "Don't be a bad user. Give me a proper CSRF Token."}, 400
+    return {'msg': "Session might have expired. Please refresh the page!"}, 400
 
 
 def get_random_string(length):
@@ -516,7 +510,6 @@ def isCommonPassword(password):
         if password in x:
             return True
     return False
-
 
 if __name__ == '__main__':
     app.secret_key = b'_5#y2L"4Q8z178s/\\n\xec]/'

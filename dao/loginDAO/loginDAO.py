@@ -23,6 +23,17 @@ class loginDAO:
         self.cartDAO = cartDAO(mysql)
         self.unikDAO = uniqueDAO(mysql)
 
+    # ------------------------------------------ 
+    # Retrieve user 
+    # ------------------------------------------
+    # test inputs: 
+    #   #1 - [user id to retrieve]
+    #   #2 - [invalid user id]
+    # ------------------------------------------
+    # Returns 
+    #   [False]         if failed
+    #   [user object]   if successful
+    # ------------------------------------------
     def getUser(self,iduser):
         query = "SELECT * FROM user WHERE iduser = %s"
         try:
@@ -52,6 +63,17 @@ class loginDAO:
             logger.error("User "+str(iduser)+ " encountered an error while retrieving user in "+__name__+":" +str(e))
             return None
 
+    # ------------------------------------------ 
+    # Retrieve user by email
+    # ------------------------------------------
+    # test inputs: 
+    #   #1 - [email of user to retrieve]
+    #   #2 - [invalid email]
+    # ------------------------------------------
+    # Returns 
+    #   [False]         if failed
+    #   [user object]   if successful
+    # ------------------------------------------
     def get_user_by_email(self,email):
         query = "SELECT * FROM user WHERE email = %s"
         try:
@@ -79,8 +101,20 @@ class loginDAO:
         except Exception as e:
             logger.error("User "+str(email)+ " encountered an error while retrieving user by email in "+__name__+":" +str(e))
             return None
-
-
+    
+    # ------------------------------------------ 
+    # Retrieve address of user 
+    # ------------------------------------------
+    # test inputs: 
+    #   #1 - [user id to retrieve]
+    #   #2 - [invalid user id]
+    # ------------------------------------------
+    # Returns 
+    #   [False]           if failed
+    #   [address object]  if successful, containing
+    #       [address id(int)], [user id address belongs to(int)],
+    #       [address line(string)], [unit num(string)], [zipcode(int)]
+    # ------------------------------------------
     def getAddr(self,iduser):
         query="Select * from address where iduser = %s"
         try:
@@ -92,7 +126,18 @@ class loginDAO:
             logger.error("User "+str(iduser)+ " encountered an error while retrieving address in "+__name__+":" +str(e))
             return None
 
-    #Return string 
+    # ------------------------------------------ 
+    # Check credentials before logging in
+    # ------------------------------------------
+    # test inputs: 
+    #   #1 - [email], [password]
+    #   #2 - [invalid email], [password]
+    #   #3 - [email], [invalid password]
+    # ------------------------------------------
+    # Returns 
+    #   [string err msg]    if failed
+    #   [user object]       if successful
+    # ------------------------------------------
     def check_login(self, email, password):
         query = "SELECT * FROM user WHERE email = %s"
         try:
@@ -104,13 +149,11 @@ class loginDAO:
 
             u = models.User(result['fname'],result['lname'],result['email'], 
             result['password'],result['total_revenue'],result['rating_avg'],result['password_change_date'],result['incorrect_login_count'],result['user_join_date'],result['removed'],result['iduser'])
+            
+            #Calculating whether locked out or not
             dtdiff = math.fabs((datetime.now() - result['lockout_start']).total_seconds())/60
             if dtdiff < DefaultConfig.ACCOUNT_LOCOKOUT_MINUTES:
                 return "Your account has been locked out. Please wait for another {:.0f} min".format(DefaultConfig.ACCOUNT_LOCOKOUT_MINUTES-dtdiff)
-
-            # Account lockout permenant until reset password
-            # if u.incorrectLoginCount>=5:
-            #     return "Your account has been locked. Please check your email for a reset link."
 
             if password_validator(password, result['password']):
                 logger.info(email + " just logged in")
@@ -128,8 +171,6 @@ class loginDAO:
                     self.insert_lockout_start(u.iduser)
                     return "Your account has been locked out. Please wait for another {:.0f} min".format(DefaultConfig.ACCOUNT_LOCOKOUT_MINUTES)
 
-
-
                 #If continuous logout count reaches 5, send reset email
                 # if u.incorrectLoginCount>=4:
                 #     unik=self.get_random_string(45)
@@ -138,11 +179,12 @@ class loginDAO:
                 #     send_reset_pw_email("http://"+str(DefaultConfig.SERVER_IP)+":"+str(DefaultConfig.SERVER_PORT)+"/reset/password/"+unik,u.email)
                 #     return "Your account has been locked. Please check your email for a reset link."
                 
-                return None
+                return "Your username or password is incorrect or you do not have an account with us."
         except Exception as e:
             logger.error("User "+str(email)+ " encountered an error while checking for valid login in "+__name__+":" +str(e))
             return None
 
+    # Not in use
     def request_reset_pw_email(self,iduser,email):
         unik=self.get_random_string(45)
         self.unikDAO.delete_unik_by_iduser(iduser)
@@ -150,6 +192,19 @@ class loginDAO:
         send_reset_pw_email("http://"+str(DefaultConfig.SERVER_IP)+":"+str(DefaultConfig.SERVER_PORT)+"/reset/password/"+unik,email)
         return True
 
+    # ------------------------------------------ 
+    # Increasing continuous failed login count
+    # ------------------------------------------
+    # test inputs: 
+    #   #1 - [id of user to increase]
+    #   #2 - [id of user to increase], [1]
+    #   #3 - [invalid user id]
+    #   #4 - [invalid user id], [1]
+    # ------------------------------------------
+    # Returns 
+    #   [None]    if failed
+    #   [not None]       if successful
+    # ------------------------------------------
     def increase_fail_login_count(self,iduser,count_to_set=-1):
         if count_to_set==-1:
             query = "update user set incorrect_login_count = incorrect_login_count+1 where iduser = %s"
@@ -162,12 +217,22 @@ class loginDAO:
             cur = self.mysql.connection.cursor()
             result = cur.execute(query,var_tuple)
             self.mysql.connection.commit()
-            print(result)
-            return True
+            return result
         except Exception as e:
             logger.warning("User "+str(iduser)+ " encountered an error while increasing fail login count in "+__name__+":" +str(e))
             return None
 
+    # ------------------------------------------ 
+    # Checking if email already exist in database
+    # ------------------------------------------
+    # test inputs: 
+    #   #1 - [email]
+    #   #2 - [invalid email]
+    # ------------------------------------------
+    # Returns 
+    #   [True]  if email exist or error encountered with server
+    #   [None]  if email does not exist
+    # ------------------------------------------
     def email_exist(self, email):
         query_checkemail = "SELECT * from user where email = %s"
         try:
@@ -177,11 +242,22 @@ class loginDAO:
             if result is not None:
                 logger.info(email+" already exist")
                 return True
+            return None
         except Exception as e:
             logger.error("encountered an error while checking if email exist in "+__name__+":" +str(e))
-        
-        return None
+            return True
 
+    # ------------------------------------------ 
+    # Signing up a new user (inserting)
+    # ------------------------------------------
+    # test inputs: 
+    #   #1 - [user object]
+    #   #2 - [invalid user object]
+    # ------------------------------------------
+    # Returns 
+    #   [True]  if success
+    #   [None]  if failed
+    # ------------------------------------------
     def signup(self, user):
         query_insert = "INSERT INTO user (fname,lname,email,password,total_revenue,rating_avg,password_change_date,incorrect_login_count,user_join_date,removed) "
         query_insert = query_insert + "VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
@@ -199,6 +275,17 @@ class loginDAO:
             logger.error("User "+str(user.iduser)+ " encountered an error while sign-ing up in "+__name__+":" +str(e))
             return None
 
+    # ------------------------------------------ 
+    # Starting an account lockout
+    # ------------------------------------------
+    # test inputs: 
+    #   #1 - [user id]
+    #   #2 - [invalid user id]
+    # ------------------------------------------
+    # Returns 
+    #   [True]  if success
+    #   [None]  if failed
+    # ------------------------------------------
     def insert_lockout_start(self,iduser):
         query="update user set lockout_start = %s where iduser=%s"
         try:
@@ -209,22 +296,33 @@ class loginDAO:
             return True
         except Exception as e:
             logger.error("User {} encountered error when inserting last login attempt in {}".format(iduser,__name__))
-            return False
-
-    def date_test(self):
-        query_select = "SELECT lockout_start FROM user where iduser = %s"
-        try:
-            cur = self.mysql.connection.cursor()
-            cur.execute(query_select,(2,))
-            result = cur.fetchone()
-            a = result['lockout_start']-datetime.now()
-            print("This is microseconds {} and this is entire. {} minutes".format(a,math.fabs(a.total_seconds()/60)))
-            return True
-        except Exception as e:
-            print(e)
-            # logger.error("User "+str(iduser)+ " encountered an error while checking if is new login in "+__name__+":" +str(e))
             return None
 
+    # def date_test(self):
+    #     query_select = "SELECT lockout_start FROM user where iduser = %s"
+    #     try:
+    #         cur = self.mysql.connection.cursor()
+    #         cur.execute(query_select,(2,))
+    #         result = cur.fetchone()
+    #         a = result['lockout_start']-datetime.now()
+    #         print("This is microseconds {} and this is entire. {} minutes".format(a,math.fabs(a.total_seconds()/60)))
+    #         return True
+    #     except Exception as e:
+    #         print(e)
+    #         # logger.error("User "+str(iduser)+ " encountered an error while checking if is new login in "+__name__+":" +str(e))
+    #         return None
+
+    # ------------------------------------------ 
+    # Checking if is new login form new IP address not in history
+    # ------------------------------------------
+    # test inputs: 
+    #   #1 - [user id] , [ip address]
+    #   #2 - [invalid user id], [ip address]
+    # ------------------------------------------
+    # Returns 
+    #   [True]  if is a new login
+    #   [None]  if its not a new login, or error in server
+    # ------------------------------------------
     def is_new_login(self,iduser,ipaddress):
         query_select = "SELECT * FROM login_origin_history where iduser = %s and ip_address = %s"
         try:
@@ -235,11 +333,21 @@ class loginDAO:
             if not result:
                 self.insert_login_history(iduser,ipaddress)
                 return True
-            return False
+            return None
         except Exception as e:
             logger.error("User "+str(iduser)+ " encountered an error while checking if is new login in "+__name__+":" +str(e))
             return None
     
+    # ------------------------------------------ 
+    # Inserting login history
+    # ------------------------------------------
+    # test inputs: 
+    #   #1 - [user id] , [ip address]
+    # ------------------------------------------
+    # Returns 
+    #   [True]  if success
+    #   [None]  if failed
+    # ------------------------------------------
     def insert_login_history(self,iduser,ipaddress):
         query_insert = "INSERT INTO login_origin_history VALUES (%s,%s)"
         try:
@@ -249,9 +357,18 @@ class loginDAO:
             return True
         except Exception as e:
             logger.error("User "+str(iduser)+ " encountered an error while inserting login history in "+__name__+":" +str(e))
-            return False
+            return None
 
-
+    # ------------------------------------------ 
+    # Updating email of user
+    # ------------------------------------------
+    # test inputs: 
+    #   #1 - [user id] , [ip address]
+    # ------------------------------------------
+    # Returns 
+    #   [True]  if success
+    #   [None]  if failed
+    # ------------------------------------------
     def update_email(self,iduser,email):
         query_insert = "update user set email = %s where iduser = %s"
         try:
@@ -264,6 +381,16 @@ class loginDAO:
             logger.error("User "+str(iduser)+ " encountered an error while updating email in "+__name__+":" +str(e))
             return False
 
+    # ------------------------------------------ 
+    # retrieving addres by user id
+    # ------------------------------------------
+    # test inputs: 
+    #   #1 - [user id]
+    # ------------------------------------------
+    # Returns 
+    #   [Address object]  if success
+    #   [None]  if failed
+    # ------------------------------------------
     def get_address_by_id(self,iduser):
         query = "select * from address where iduser = %s"
         try:
@@ -276,9 +403,21 @@ class loginDAO:
             logger.error("User "+str(iduser)+ " encountered an error while getting address in "+__name__+":" +str(e))
             return None
 
-
+    # ------------------------------------------ 
+    # Updating address of user
+    # ------------------------------------------
+    # test inputs: 
+    #   #1 - [user id] , [address object]
+    # ------------------------------------------
+    # Returns 
+    #   [True]  if success
+    #   [None]  if failed
+    # ------------------------------------------
     def update_address(self,iduser,address):
-        query = "update address set address_line = %s, unit_no=%s, zipcode=%s where iduser = %s"
+        if self.get_address_by_id(iduser):
+            query = "update address set address_line = %s, unit_no=%s, zipcode=%s where iduser = %s"
+        else:
+            query = "insert into address (address_line, unit_no, zipcode, iduser) values (%s,%s,%s,%s)"
         try:
             cur = self.mysql.connection.cursor()
             cur.execute(query,(address['line'],address['unitno'],address['zipcode'],iduser))
@@ -287,8 +426,19 @@ class loginDAO:
             return True
         except Exception as e:
             logger.error("User "+str(iduser)+ " encountered an error while updating address in "+__name__+":" +str(e))
-            return False
+            return None
 
+            
+    # ------------------------------------------ 
+    # Updating password last changed date to now
+    # ------------------------------------------
+    # test inputs: 
+    #   #1 - [user id]
+    # ------------------------------------------
+    # Returns 
+    #   [True]  if success
+    #   [None]  if failed
+    # ------------------------------------------
     def update_pw_change_date(self,iduser):
         query = "update user set password_change_date = %s where iduser = %s"
         try:
@@ -296,11 +446,20 @@ class loginDAO:
             cur.execute(query,(datetime.now(),iduser))
             self.mysql.connection.commit()
             return True
-            
         except Exception as e:
             logger.warning("User {} encountered an error while updating password change date".format(iduser,__name__))
             return None
 
+    # ------------------------------------------ 
+    # Updating password of user
+    # ------------------------------------------
+    # test inputs: 
+    #   #1 - [user id], [current password], [new password]
+    # ------------------------------------------
+    # Returns 
+    #   [tuple of (True, msg string)]  if success
+    #   [tuple of (None, msg string)]  if failed
+    # ------------------------------------------
     def update_pw(self,iduser,currentpw,newpw):
         query_select = "select * from user where iduser = %s"
         query_update = "update user set password = %s where iduser = %s"
@@ -334,7 +493,16 @@ class loginDAO:
             return None,"system error"
 
     
-
+    # ------------------------------------------ 
+    # Updating password using unique string
+    # ------------------------------------------
+    # test inputs: 
+    #   #1 - [unqiue string], [new password]
+    # ------------------------------------------
+    # Returns 
+    #   [True]  if success
+    #   [None]  if failed
+    # ------------------------------------------
     def update_pw_from_unik(self,uniqueString,newPassword):
         query = "update user set password = %s ,incorrect_login_count=0,password_change_date=%s\
             where iduser in (select fk_iduser from unique_link where idunique_link = %s)"
@@ -350,6 +518,16 @@ class loginDAO:
             logger.warning("encountered an error while updating password from unique string in "+__name__+":" +str(e))
             return None
 
+    # ------------------------------------------ 
+    # retrieving password history of user
+    # ------------------------------------------
+    # test inputs: 
+    #   #1 - [id of user to retrieve]
+    # ------------------------------------------
+    # Returns 
+    #   [list of password history objects]  if success
+    #   [None]  if failed
+    # ------------------------------------------
     def retrieve_pw_history(self,iduser):
         query = "select * from pw_history where fK_iduser = %s order by date_changed desc"
         try:
@@ -360,6 +538,16 @@ class loginDAO:
             logger.warning("User "+str(iduser)+ " encountered an error while checking password history in "+__name__+":" +str(e))
             return None
 
+    # ------------------------------------------ 
+    # inserting password history of user
+    # ------------------------------------------
+    # test inputs: 
+    #   #1 - [id of user to retrieve], [pw]
+    # ------------------------------------------
+    # Returns 
+    #   [not None]  if success
+    #   [None]      if failed
+    # ------------------------------------------
     def insert_pw_history(self,iduser,pw):
         query = "insert into pw_history (fk_iduser,password,date_changed) values (%s,%s,%s)"
         try:
@@ -371,6 +559,16 @@ class loginDAO:
             logger.warning("User "+str(iduser)+ " encountered an error while inserting password history in "+__name__+":" +str(e))
             return None
 
+    # ------------------------------------------ 
+    # deleting one earliest password history
+    # ------------------------------------------
+    # test inputs: 
+    #   #1 - [id of user to delete]
+    # ------------------------------------------
+    # Returns 
+    #   [True]  if success
+    #   [None]      if failed
+    # ------------------------------------------
     def delete_one_earliest_pw_history(self,iduser):
         query_delete = "delete from pw_history where fk_iduser = %s order by date_changed asc limit 1"
         try:
@@ -382,7 +580,22 @@ class loginDAO:
             logger.warning("User "+str(iduser)+ " encountered an error while deleting password history in "+__name__+":" +str(e))
             return None
 
+    # ------------------------------------------ 
+    # Getting a random string of X length
+    # ------------------------------------------
+    # test inputs: 
+    #   #1 - [length of string to generate]
+    # ------------------------------------------
+    # Returns 
+    #   [True]  if success
+    #   [None]  if failed
+    # ------------------------------------------
     def get_random_string(self,length):
-        letters = string.ascii_lowercase
-        result_str = ''.join(random.choice(letters) for i in range(length))
-        return result_str
+        try:
+            letters = string.ascii_lowercase
+            result_str = ''.join(random.choice(letters) for i in range(length))
+            return result_str
+        except Exception as e:
+            logger.error("Error getting random string in {}\n{}".format(__name__,e))
+            return None
+        

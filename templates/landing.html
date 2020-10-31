@@ -199,17 +199,62 @@
 
             })
 
-            function incrementMiniCart(img) {
+            function updateShippingTotal(itemPrice) {
 
+                var imgUrls = $(".mini-cart-content ul").find('img')
+                console.log(imgUrls.length)
+                if (imgUrls.length > 0) {
+                    var beforeShipping = $(".shopping-cart-total h4 span")[0].innerHTML.split("$")[1]
+                    var afterShipping = parseFloat(beforeShipping) + 7
+
+                    $(".shopping-cart-total h4 span")[0].innerHTML = '$' + (parseFloat(beforeShipping) + itemPrice)
+                        .toFixed(2)
+                    $(".shopping-cart-total h4 span")[2].innerHTML = '$' + (parseFloat(afterShipping) + itemPrice)
+                        .toFixed(2)
+                    $(".count-cart span")[0].innerHTML = '$ ' + (parseFloat(afterShipping) + itemPrice).toFixed(2)
+                } else {
+                    $(".count-cart span")[0].innerHTML = '$ ' + (parseFloat(itemPrice+7).toFixed(2))
+                    var div1 = document.createElement('div')
+                    div1.setAttribute('class', 'shopping-cart-total')
+
+                    var h41 = document.createElement('h4')
+                    var span1 = document.createElement('span')
+                    span1.append("$" + parseFloat(itemPrice).toFixed(2))
+                    h41.append("Subtotal: ", span1)
+
+                    var h42 = document.createElement('h4')
+                    var span2 = document.createElement('span')
+                    span2.append("$7.00")
+                    h42.append("Shipping: ", span2)
+
+                    var h43 = document.createElement('h4')
+                    h43.setAttribute('class', 'shop-total')
+                    var span3 = document.createElement('span')
+                    span3.append("$" + parseFloat(itemPrice + 7).toFixed(2))
+                    h43.append("Total: ", span3)
+                    div1.append(h41, h42, h43)
+
+                    var divCheckout = document.createElement('div')
+                    divCheckout.setAttribute('class', 'shopping-cart-btn text-center')
+                    var a = document.createElement('a')
+                    a.setAttribute('class', 'default-btn')
+                    a.setAttribute('href', '/products/checkout')
+                    a.append('checkout')
+                    divCheckout.append(a)
+
+                    $(".mini-cart-content")[0].append(div1, divCheckout)
+                    $(".mini-cart-content h3")[0].remove()
+                }
             }
 
             function updateMiniCart(img, price, name) {
                 var imgUrls = $(".mini-cart-content ul").find('img')
+                updateShippingTotal(parseFloat(price.split("$")[1]))
                 for (var j = 0; j < imgUrls.length; j++) {
                     if (imgUrls[j].getAttribute('src') == img) {
                         var qty = imgUrls[j].parentElement.nextElementSibling.textContent
                         qty = qty.replace('x', '')
-                        qty = parseInt(qty) + 1
+                        qty = parseFloat(qty) + 1
                         imgUrls[j].parentElement.nextElementSibling.textContent = qty + 'x'
                         return
                     }
