@@ -63,10 +63,11 @@ class productDAO:
             return None
 
     # ------------------------------------------ 
-    # Retrieve all products in the db
+    # Retrieve all products in the db not including the one calling
     # ------------------------------------------
     # test inputs: 
-    #   -NA-
+    #   #1 - [valid id]
+    #   #2 - empty user id
     # ------------------------------------------
     # Returns 
     #   [False]             if failed
@@ -74,18 +75,71 @@ class productDAO:
     #       [product id], [name of product],
     #       [price], [user id of owner], [product description]
     # ------------------------------------------
-    def retrieve_all_products(self):
+    def retrieve_all_products(self, userid=-1):
         items=[]
-        query_select = "SELECT * FROM product_listing"
+        query_select = "SELECT * FROM product_listing where iduser not like %s"
         cur = self.mysql.connection.cursor()
         try:
-            cur.execute(query_select)
+            cur.execute(query_select,(userid,))
             result = cur.fetchall()
             for x in result:
                 x['price'] = float(x['price'])
-            logger.info("Retrieved "+str(len(result))+" items")
-            for r in result:
-                r["image_url"]=self.retrieve_one_image(str(r["idproduct_listing"]))
+                x["image_url"]=self.retrieve_one_image(str(x["idproduct_listing"]))
+            return result
+        except Exception as e:
+            print(e)
+            logger.error("Error retrieving all products in {}\n{}".format(__name__,e))
+            return None
+
+    # ------------------------------------------ 
+    # Retrieve all products in the db of the one calling
+    # ------------------------------------------
+    # test inputs: 
+    #   #1 - [valid id]
+    # ------------------------------------------
+    # Returns 
+    #   [False]             if failed
+    #   [list of products]  if success, containing
+    #       [product id], [name of product],
+    #       [price], [user id of owner], [product description]
+    # ------------------------------------------
+    def retrieve_dashboard_products(self,userid):
+        items=[]
+        query_select = "SELECT * FROM product_listing where iduser not like %s"
+        cur = self.mysql.connection.cursor()
+        try:
+            cur.execute(query_select,(userid,))
+            result = cur.fetchall()
+            for x in result:
+                x['price'] = float(x['price'])
+                x["image_url"]=self.retrieve_one_image(str(x["idproduct_listing"]))
+            return result
+        except Exception as e:
+            print(e)
+            logger.error("Error retrieving all products in {}\n{}".format(__name__,e))
+            return None
+
+    # ------------------------------------------ 
+    # Retrieve one product in the db
+    # ------------------------------------------
+    # test inputs: 
+    #   #1 - [valid id]
+    #   #2 - empty user id
+    # ------------------------------------------
+    # Returns 
+    #   [False]             if failed
+    #   [list of products]  if success, containing
+    #       [product id], [name of product],
+    #       [price], [user id of owner], [product description]
+    # ------------------------------------------
+    def retrieve_one_product(self, id):
+        query_select = "SELECT * FROM product_listing where idproduct_listing = %s"
+        cur = self.mysql.connection.cursor()
+        try:
+            cur.execute(query_select,(id,))
+            result = cur.fetchone()
+            result['price'] = float(result['price'])
+            result["image_url"]=self.retrieve_one_image(str(result["idproduct_listing"]))
             return result
         except Exception as e:
             print(e)

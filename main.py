@@ -113,15 +113,18 @@ class publishForm(FlaskForm):
 @app.route('/')
 def landing():
     session['title'] = "Collaboratory Mall"
-    products = productDAO.retrieve_all_products()
+    
     cartItems = []
     cartTotal = 0.0
     if current_user.is_authenticated:
+        products = productDAO.retrieve_all_products(current_user.iduser)
         cartItems = cartDAO.retrieve_cart_items(current_user.iduser)
         for item in cartItems:
             cartTotal = cartTotal + (item['price'] * item['qty'])
     # transactionDAO.insert_transaction(2)
     # sendLoginEmail("Raphael","raphaelisme@gmail.com")
+    else:
+        products = productDAO.retrieve_all_products()
     return render_template('landing.html', products=products, cartItems=cartItems)
     # sendLoginEmail("Raphael","raphaelisme@gmail.com")
     # return render_template('landing.html',products=products)
@@ -130,7 +133,17 @@ def landing():
 @app.route('/account', methods=['GET', 'POST'])
 @login_required
 def account():
-    return render_template('account/my-account.html')
+    msg = ""
+    src = ""
+    if 'src' in request.args:
+        src = request.args["src"]
+
+    if 'msg' in request.args:
+        msg = request.args['msg']
+
+
+    return render_template('account/my-account.html',msg=msg,src=src)
+
 
 
 @app.route('/account/update', methods=['POST'])
@@ -139,6 +152,7 @@ def account_update():
     ret_email = False
     ret_add = False
     retString = ""
+
     if not current_user.is_authenticated:
         return {'msg': "You need to be logged in first"}, 400
 
@@ -160,6 +174,7 @@ def account_update():
             ret_pw_status, msg = loginDAO.update_pw(
                 current_user.iduser, j['currentpw'], j['newpw'])
             retString = retString + msg if not ret_pw_status else ""
+ 
     return {'msg': retString}, 200 if retString == "" else 400
 
 
@@ -170,6 +185,7 @@ def login_landing():
     login_form = LoginForm()
     ip_source = ipaddress.IPv4Address(request.remote_addr)
     registration_form = RegistrationForm()
+    print(request.base_url)
     if 'src' in request.args:
         session['src'] = request.args["src"]
     if login_form.validate_on_submit():
@@ -359,34 +375,6 @@ def addtocart():
         retdata = {'msg': 'Not added to cart.'}
         return retdata, 400
 
-# @app.route('/cart/updateCartQty',methods=['POST'])
-# def updatecartqty():
-#     j = request.get_json()
-#     if 'idproduct' not in j or 'qty' not in j:
-#         retdata = {'msg':'Not added to cart.'}
-#         return retdata,400
-
-#     if not str(j['idproduct']).isnumeric() or not str(j['qty']).isnumeric():
-#         retdata = {'msg':'Not added to cart.'}
-#         return retdata,400
-
-#     productid = j['idproduct']
-#     quantity = j['qty'] if j['qty']>=0 else 0
-#     userid = current_user.iduser if current_user.is_authenticated else -1
-
-#     if userid == -1:
-#         retdata = {'msg':'You need to be logged in.'}
-#         return retdata,400
-
-#     if cartDAO.update_cart_qty(userid,productid,quantity)>0:
-#         retdata = {'msg':'Updated cart!'}
-#         return retdata,200
-#     else:
-#         logger.warning("Attempted to add to cart but 0 rows updated.")
-#         retdata = {'msg':'Not added to cart.'}
-#         return retdata,400
-
-
 @app.route("/sell/publish_listing", methods=['POST'])
 @login_required
 def publish():
@@ -437,16 +425,20 @@ def publish():
 @login_required
 def sell_dashboard():
     dashboard = {}
-
-    dashboard["lifetime_revenue"] = str.format("${:,.2f}", 67876.90)
-    dashboard["wallet_amt"] = str.format("${:,.2f}", 273.00)
-    dashboard["star_rating_avg"] = 4.7
+    productList = productDAO.retrieve_dashboard_products(current_user.iduser)
+    print(len(productList))
+    dashboard["lifetime_revenue"] = str.format("${:,.2f}", current_user.total_revenue)
+    dashboard["prod_listed"] = len(productList)
+    dashboard["star_rating_avg"] = 0
     return render_template('sell/sell_dashboard.html', dashboard=dashboard)
 
 
 @app.route('/products/checkout')
 @login_required
 def checkout():
+    if not current_user.address_details:
+        return redirect(url_for('account', src=request.base_url,msg = "addressneeded"))
+
     ship_fee = 7
     cart = []
     cartItems = cartDAO.retrieve_cart_items(current_user.iduser)
@@ -469,8 +461,8 @@ def after_pay(randomString):
     del_res = cartDAO.empty_cart(current_user.iduser)
     retmsg = "Thank you for purchasing!"
     if not res:
-        logger.error("User {} attempted inserting transaction after paying, but not recorded ".format(
-            current_user.iduser))
+        logger.error("User {} attempted inserting transaction after paying, but not recorded ".format(current_user.iduser),
+         extra={'ip': request.remote_addr})
     else:
         print(res)
     return redirect('/')
@@ -479,6 +471,7 @@ def after_pay(randomString):
 @app.route('/logout')
 def logout():
     logout_user()
+    session.clear()
     return redirect(url_for('landing'))
 
 
