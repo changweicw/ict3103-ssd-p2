@@ -60,9 +60,9 @@ class cartDAO:
             result = cur.fetchall()
             for x in result:
                 x['price'] = float(x['price'])
-            logger.info("User "+str(iduser)+" Retrieved "+str(len(result))+" cart items")
-            for r in result:
-                r["image_url"]=self.productDAO.retrieve_one_image(str(r["idproduct_listing"]))
+                x["image_url"]=self.productDAO.retrieve_one_image(str(x["idproduct_listing"]))
+            # for r in result:
+            #     r["image_url"]=self.productDAO.retrieve_one_image(str(r["idproduct_listing"]))
             return result
         except Exception as e:
             print(e)
