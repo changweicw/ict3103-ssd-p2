@@ -48,18 +48,6 @@
 
                                 <div class="column">
                                     <div class="card">
-                                        {% if dashboard is defined and dashboard.wallet_amt is defined %}
-                                        <h3>{{ dashboard.wallet_amt }}</h3>
-                                        {% else %}
-                                        <h3>$0</h3>
-                                        {% endif %}
-                                        <p>Wallet Amount</p>
-                                        <a class="stretched-link" href="#"></a>
-                                    </div>
-                                </div>
-
-                                <div class="column">
-                                    <div class="card">
                                         <h3>
                                             {% if dashboard is defined and dashboard.star_rating_avg is defined %}
                                             {{ dashboard.star_rating_avg }}
@@ -75,13 +63,13 @@
                                 <div class="column">
                                     <div class="card">
                                         <h3>
-                                            {% if star_rating_avg is defined %}
-                                            {{ star_rating_avg }}
+                                            {% if dashboard is defined and dashboard.prod_listed is defined %}
+                                            {{ dashboard.prod_listed }}
                                             {% else %}
-                                            -
+                                            0
                                             {% endif %}
                                         </h3>
-                                        <p>Out of 5 stars</p>
+                                        <p>Total products listed</p>
                                         <a class="stretched-link" href="#"></a>
                                     </div>
                                 </div>

@@ -567,7 +567,7 @@ class loginDAO:
     # ------------------------------------------
     # Returns 
     #   [True]  if success
-    #   [None]      if failed
+    #   [None]  if failed
     # ------------------------------------------
     def delete_one_earliest_pw_history(self,iduser):
         query_delete = "delete from pw_history where fk_iduser = %s order by date_changed asc limit 1"
@@ -578,6 +578,27 @@ class loginDAO:
             return True
         except Exception as e:
             logger.warning("User "+str(iduser)+ " encountered an error while deleting password history in "+__name__+":" +str(e))
+            return None
+
+    # ------------------------------------------ 
+    # Updating revenue
+    # ------------------------------------------
+    # test inputs: 
+    #   #1 - [id of user to update], [amount to add to revenue]
+    # ------------------------------------------
+    # Returns 
+    #   [True]  if success
+    #   [None]  if failed
+    # ------------------------------------------       
+    def update_revenue(self,iduser,amt):
+        query = "update user set total_revenue=total_revenue+%s where iduser = %s"
+        try:
+            cur = self.mysql.connection.cursor()
+            cur.execute(query,(amt,iduser))
+            self.mysql.connection.commit()
+            return True
+        except Exception as e:
+            logger.error("Userid {} Error updating revenue in {}".format(iduser,__name__))
             return None
 
     # ------------------------------------------ 
@@ -598,4 +619,5 @@ class loginDAO:
         except Exception as e:
             logger.error("Error getting random string in {}\n{}".format(__name__,e))
             return None
-        
+    
+    

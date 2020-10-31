@@ -167,7 +167,8 @@
                                                 <a href="#"><i class="fa fa-arrow-up"></i> back</a>
                                             </div>
                                             <div class="billing-btn">
-                                                <button id="section3-update-button-reset" type="submit">Reset Password</button>
+                                                <button id="section3-update-button-reset" type="submit">Reset
+                                                    Password</button>
                                                 <button id="section3-update-button" type="submit">Continue</button>
                                             </div>
                                         </div>
@@ -191,26 +192,41 @@
         prepareThirdButton()
         hidePwNoMatch()
         hideWrongPw()
+        if("{{msg if msg is defined}}"=="addressneeded"){
+            showToast("address is needed before checkout!")
+        }
     })
 
-    function showPwNoMatch(){
+    function showPwNoMatch() {
         $("#alert-pw-no-match").show()
-        
+
     }
 
-    function hidePwNoMatch(){
+    function showToast(message) {
+        iziToast.show({
+            title: message,
+            theme: 'light',
+            color: 'red',
+            position: 'topRight',
+            overlayClose: true,
+            progressBarColor: 'rgb(0,0,0)',
+            overlayColor: 'rgba(0, 0, 0, 0.6)'
+        })
+    }
+
+    function hidePwNoMatch() {
         $("#alert-pw-no-match").hide()
-        
+
     }
 
-    function showWrongPw(){
+    function showWrongPw() {
         $("#alert-wrong-pw").show()
-        
+
     }
 
-    function hideWrongPw(){
+    function hideWrongPw() {
         $("#alert-wrong-pw").hide()
-        
+
     }
 
     function prepareFirstButton() {
@@ -265,7 +281,7 @@
                 dataType: "json",
                 contentType: "application/json",
                 beforeSend: function (xhr) {
-                    xhr.setRequestHeader('X-CSRFToken','{{csrf_token()}}');
+                    xhr.setRequestHeader('X-CSRFToken', '{{csrf_token()}}');
                 },
                 data: JSON.stringify(obj),
                 success: function (data) {
@@ -279,6 +295,9 @@
                         progressBarColor: 'rgb(0,0,0)',
                         overlayColor: 'rgba(0, 0, 0, 0.6)',
                     })
+                    if ("{{msg if msg is defined else ''}}" == "addressneeded") {
+                        window.location.replace('{{src}}')
+                    }
                 },
                 error: function (data) {
                     iziToast.show({
@@ -294,10 +313,10 @@
             });
         })
     }
-    
-    function prepareThirdButton(){
-        $("#section3-update-button-reset").on('click',function(e){
-            obj={}
+
+    function prepareThirdButton() {
+        $("#section3-update-button-reset").on('click', function (e) {
+            obj = {}
             $.ajax({
                 url: "/reset/sendEmail",
                 type: "POST",
@@ -330,12 +349,12 @@
             });
         })
 
-        $("#section3-update-button").on('click',function(e){
+        $("#section3-update-button").on('click', function (e) {
             currentpw = $("#input_currentpw").val()
             newpw = $("#input_newpw").val()
             newpwconfirm = $("#input_newpwconfirm").val()
 
-            if (newpwconfirm != newpw){
+            if (newpwconfirm != newpw) {
                 showPwNoMatch()
                 return
             }
