@@ -36,12 +36,10 @@ class transactionDAO:
         try:
             address = self.loginDAO.get_address_by_id(idbuyer)
             cartItems = self.cartDAO.retrieve_cart_items(idbuyer)
-            print (address)
-            print (cartItems)
             totalCartPrice = sum([x['price']*x['qty'] for x in cartItems]) + 7 #calculating total price
             for item in cartItems:
                 self.loginDAO.update_revenue(item['iduser'],item['price']*item['qty'])
-                
+
             cur = self.mysql.connection.cursor()
             result_insert = cur.execute(query_insert,(address['idaddress'],idbuyer,totalCartPrice,tid))
             lastrowid = cur.lastrowid
@@ -50,7 +48,6 @@ class transactionDAO:
                 # print(round(x['price']*x['qty'],2))
                 cur.execute(query_insert_billItems,(lastrowid,x['idproduct'],x['qty'],round(x['price']*x['qty'],2)))
             self.mysql.connection.commit()
-            print("part 4")
 
             return True
         except Exception as e:

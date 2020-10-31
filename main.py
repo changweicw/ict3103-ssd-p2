@@ -426,7 +426,6 @@ def publish():
 def sell_dashboard():
     dashboard = {}
     productList = productDAO.retrieve_dashboard_products(current_user.iduser)
-    print(len(productList))
     dashboard["lifetime_revenue"] = str.format("${:,.2f}", current_user.total_revenue)
     dashboard["prod_listed"] = len(productList)
     dashboard["star_rating_avg"] = 0
