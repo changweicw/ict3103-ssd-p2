@@ -5,7 +5,6 @@ def encrypt_password(entered_password):
 
     encoded_enc_pw = entered_password.encode('utf-8')
     encrypted_pw = bcrypt.hashpw(encoded_enc_pw, bcrypt.gensalt())
-    print(encrypt_password)
     return encrypted_pw.decode('utf-8')
 
 
