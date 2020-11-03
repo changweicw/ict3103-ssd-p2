@@ -103,7 +103,7 @@ class productDAO:
     # ------------------------------------------
     def retrieve_dashboard_products(self,userid,conn=None):
         items=[]
-        query_select = "SELECT * FROM product_listing where iduser not like %s"
+        query_select = "SELECT * FROM product_listing where iduser like %s"
         cur = conn.cursor()
         try:
             cur.execute(query_select,(userid,))

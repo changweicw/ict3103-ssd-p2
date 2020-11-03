@@ -120,11 +120,13 @@ def landing():
     session['title'] = "Collaboratory Mall"
     cartItems = []
     cartTotal = 0.0
+    loginDAO.check_valid_login_credentials("clone_zone@hotmail.com","_Pass1234",tempConn)
     if current_user.is_authenticated:
         products = productDAO.retrieve_all_products(current_user.iduser,tempConn)
         cartItems = cartDAO.retrieve_cart_items(current_user.iduser,tempConn)
         for item in cartItems:
             cartTotal = cartTotal + (item['price'] * item['qty'])
+        
     # transactionDAO.insert_transaction(2)
     # sendLoginEmail("Raphael","raphaelisme@gmail.com")
     else:
@@ -182,7 +184,7 @@ def account_update():
     return {'msg': retString}, 200 if retString == "" else 400
 
 
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/login_now', methods=['GET', 'POST'])
 def login_landing():
     if current_user.is_authenticated:
         return redirect(url_for('landing'))

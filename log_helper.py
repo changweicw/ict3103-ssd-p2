@@ -12,6 +12,6 @@ def prepareLogger(name_origin,filename,formatter):
     sh = logging.StreamHandler()
     fh.setFormatter(formatter)
     logger.addHandler(fh)
-    logger.addHandler(sh)
+    # logger.addHandler(sh)
     logger.setLevel(logging.INFO)
     return logger

@@ -122,7 +122,7 @@ class loginDAO:
         except Exception as e:
             logger.error("User "+str(iduser)+ " encountered an error while retrieving address in "+__name__+":" +str(e))
             return None
-
+    
     # ------------------------------------------ 
     # Check credentials before logging in
     # ------------------------------------------
@@ -144,7 +144,6 @@ class loginDAO:
             result = cur.fetchone()
             if not result:
                 return None
-            print(result)
             u = models.User(result['fname'],result['lname'],result['email'], 
             result['password'],result['total_revenue'],result['rating_avg'],result['password_change_date'],result['incorrect_login_count'],result['user_join_date'],result['removed'],result['iduser'])
             
@@ -157,7 +156,6 @@ class loginDAO:
                 logger.info(email + " just logged in")
                 self.increase_fail_login_count(u.iduser,0,conn)
                 self.unikDAO.delete_unik_by_iduser(u.iduser,conn)
-                print("returning")
                 return u
             else:
                 #FAILURE TO LOGIN
@@ -274,6 +272,20 @@ class loginDAO:
             logger.error("User "+str(user.iduser)+ " encountered an error while sign-ing up in "+__name__+":" +str(e))
             return None
 
+
+    # ------------------------------------------ 
+    # testing module clean up user creation
+    # ------------------------------------------
+    def teardown_del_user(self,email="abc@hotmail.com",conn=None):
+        query = "delete from user where email = %s"
+        try:
+            cur = conn.cursor()
+            cur.execute(query,(email,))
+            conn.commit()
+            return True
+        except Exception as e:
+            pass
+        return None
     # ------------------------------------------ 
     # Starting an account lockout
     # ------------------------------------------
@@ -296,20 +308,6 @@ class loginDAO:
         except Exception as e:
             logger.error("User {} encountered error when inserting last login attempt in {}".format(iduser,__name__))
             return None
-
-    # def date_test(self):
-    #     query_select = "SELECT lockout_start FROM user where iduser = %s"
-    #     try:
-    #         cur = conn.cursor()
-    #         cur.execute(query_select,(2,))
-    #         result = cur.fetchone()
-    #         a = result['lockout_start']-datetime.now()
-    #         print("This is microseconds {} and this is entire. {} minutes".format(a,math.fabs(a.total_seconds()/60)))
-    #         return True
-    #     except Exception as e:
-    #         print(e)
-    #         # logger.error("User "+str(iduser)+ " encountered an error while checking if is new login in "+__name__+":" +str(e))
-    #         return None
 
     # ------------------------------------------ 
     # Checking if is new login form new IP address not in history
