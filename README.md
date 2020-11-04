@@ -14,6 +14,13 @@ Now go to your project folder and run
 1. ` pip install -r requirements.txt `
 1. ` python main.py `
 
+## Unit Testing Commands
+*Syntax*
+`python -m unittest <package>.<python file name> -v`
+
+*Example*
+`python -m unittest UnitTesting.testunittest -v`
+
 
 ## Docker Building instructions
 **PRE-REQUISITE**
@@ -23,12 +30,12 @@ Now go to your project folder and run
 1. Check your .env folder serverip and serverport are correct. (collaboratory.sitict.net,3389)
 
 **On your host:**
-1. docker build -t <docker_username>/<anyName>:<Tag/Branch>
-1. docker push <docker_username>/<anyName>:<Tag/Branch>
+1. docker build -t <docker_username>/<any_Name>:<Tag/Branch>
+1. docker push <docker_username>/<any_Name>:<Tag/Branch>
 
 **On the server:**
-1. docker pull <docker_username>/<anyName>:<Tag/Branch>
-1. docker run -d -p 5000:5000 <docker_username>/<anyName>:<Tag/Branch>
+1. docker pull <docker_username>/<any_Name>:<Tag/Branch>
+1. docker run -d -p 5000:5000 <docker_username>/<any_Name>:<Tag/Branch>
 
 
 ### **EXAMPLE**
