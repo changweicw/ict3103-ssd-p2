@@ -1,7 +1,7 @@
 from google.cloud import storage
 import os
 import uuid
-from appConfig import DefaultConfig
+from utils.appConfig import DefaultConfig
 from base64 import b64decode
 import werkzeug.utils as wzu
 

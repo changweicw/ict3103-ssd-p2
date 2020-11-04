@@ -6,19 +6,20 @@ from flask_wtf.csrf import CSRFError
 from wtforms import StringField, FileField, DecimalField
 from werkzeug.utils import secure_filename
 from models import User, Product_listing
-from appConfig import DefaultConfig
+from utils.appConfig import DefaultConfig
 from dao.loginDAO.loginDAO import loginDAO
 from dao.productDAO.productDAO import productDAO
 from dao.cartDAO.cartDAO import cartDAO
 from dao.uniqueDAO.uniqueDAO import uniqueDAO
 from dao.transactionDAO.transactionDAO import transactionDAO
-from wtform import *
+from utils.wtform import *
 from google.cloud import storage
-from cloudstore_utils import cloudstore_utils as csutils
-from mailing import *
-from log_helper import *
+from utils.cloudstore_utils import cloudstore_utils as csutils
+from utils.mailing import *
+from utils.log_helper import *
 from base64 import b64decode
 from datetime import datetime, timedelta
+from utils.funcs import *
 
 import string
 import random
@@ -55,11 +56,11 @@ app.permanent_session_lifetime = timedelta(
 # ========================================
 app.config.from_object(DefaultConfig)
 mysql = MySQL(app)
-loginDAO = loginDAO(mysql)
-productDAO = productDAO(mysql)
-cartDAO = cartDAO(mysql)
-unikDAO = uniqueDAO(mysql)
-transactionDAO = transactionDAO(mysql)
+loginDAO = loginDAO()
+productDAO = productDAO()
+cartDAO = cartDAO()
+unikDAO = uniqueDAO()
+transactionDAO = transactionDAO()
 
 # ========================================
 # GOOGLE BUCKET INIT
@@ -101,6 +102,7 @@ logging.basicConfig(filename=DefaultConfig.LOGGING_FOLDER+"/server.log", level=l
 # FLASK FORMS
 # ========================================
 
+tempConn = None
 
 class publishForm(FlaskForm):
     title = StringField("title")
@@ -108,23 +110,27 @@ class publishForm(FlaskForm):
     price = DecimalField("price")
     files = FileField("files")
 
+@app.before_request
+def execute_this():
+    global tempConn
+    tempConn = mysql.connection
 
 # This is the 'index.html' of the application.
 @app.route('/')
 def landing():
     session['title'] = "Collaboratory Mall"
-    
     cartItems = []
     cartTotal = 0.0
     if current_user.is_authenticated:
-        products = productDAO.retrieve_all_products(current_user.iduser)
-        cartItems = cartDAO.retrieve_cart_items(current_user.iduser)
+        products = productDAO.retrieve_all_products(current_user.iduser,tempConn)
+        cartItems = cartDAO.retrieve_cart_items(current_user.iduser,tempConn)
         for item in cartItems:
             cartTotal = cartTotal + (item['price'] * item['qty'])
+        
     # transactionDAO.insert_transaction(2)
     # sendLoginEmail("Raphael","raphaelisme@gmail.com")
     else:
-        products = productDAO.retrieve_all_products()
+        products = productDAO.retrieve_all_products(conn=tempConn)
     return render_template('landing.html', products=products, cartItems=cartItems)
     # sendLoginEmail("Raphael","raphaelisme@gmail.com")
     # return render_template('landing.html',products=products)
@@ -157,42 +163,42 @@ def account_update():
         return {'msg': "You need to be logged in first"}, 400
 
     if 'email' in j:
-        ret_email = loginDAO.update_email(current_user.iduser, j['email'])
-        retString = retString + "Error saving email" if not ret_email else ""
+        ret_email = loginDAO.update_email(current_user.iduser, j['email'],tempConn)
+        retString = retString + "Error saving email." if not ret_email else ""
 
     if 'address' in j:
-        ret_add = loginDAO.update_address(current_user.iduser, j['address'])
-        retString = retString + "Error saving address" if not ret_add else ""
+        ret_add = loginDAO.update_address(current_user.iduser, j['address'],tempConn)
+        retString = retString + "Error saving address." if not ret_add else ""
 
     if 'currentpw' in j and 'newpw' in j:
-        passwordRegex = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-_]).{8,}$"
-        passwordPat = re.compile(passwordRegex)
-        pw_match = re.search(passwordPat, j['newpw'])
-        if not pw_match:
-            retString = "Password must contain minimum 8 characters, with 1 uppercase, 1 lowercase, 1 digit & 1 special char"
+        
+        if not check_password(j['newpw']):
+            retString = "Password must contain minimum 8 characters, with 1 uppercase, 1 lowercase, 1 digit & 1 special char."
         else:
             ret_pw_status, msg = loginDAO.update_pw(
-                current_user.iduser, j['currentpw'], j['newpw'])
+                current_user.iduser, j['currentpw'], j['newpw'],tempConn)
             retString = retString + msg if not ret_pw_status else ""
+    
+    if retString != "":
+        retString = retString + " Ensure fields are properly filled up."
  
     return {'msg': retString}, 200 if retString == "" else 400
 
 
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/login_now', methods=['GET', 'POST'])
 def login_landing():
     if current_user.is_authenticated:
         return redirect(url_for('landing'))
     login_form = LoginForm()
     ip_source = ipaddress.IPv4Address(request.remote_addr)
     registration_form = RegistrationForm()
-    print(request.base_url)
     if 'src' in request.args:
         session['src'] = request.args["src"]
     if login_form.validate_on_submit():
         remember_me = True if 'remember_me' in request.form and request.form[
             'remember_me'] == 'on' else False
         login_result = loginDAO.check_login(login_form.username.data,
-                                            login_form.password.data)
+                                            login_form.password.data,tempConn)
         if isinstance(login_result, str):
             flash(login_result, 'login')
             logger.warning(login_form.username.data +
@@ -201,7 +207,7 @@ def login_landing():
             # Handle Redirect after login success
             login_user(login_result, remember=remember_me, duration=timedelta(
                 days=int(app.config['REMEMBER_ME_TIMEOUT_DAYS'])))
-            if loginDAO.is_new_login(login_result.iduser, int(ip_source)):
+            if loginDAO.is_new_login(login_result.iduser, int(ip_source),tempConn):
                 sendLoginEmail(ip_source, login_result.email)
 
             # Redirect to landing page
@@ -225,12 +231,13 @@ def init_reset_pw():
 def send_reset_email():
     unik=loginDAO.get_random_string(45)
     email = request.form.get("email")
-    user = loginDAO.get_user_by_email(email)
-    unikDAO.delete_unik_by_iduser(user.iduser)
-    unikDAO.insert_unik(user.iduser,unik,"password")
-    # print("{}-{}-{}-{}".format(DefaultConfig.SERVER_IP,DefaultConfig.SERVER_PORT,unik,email))
+    user = loginDAO.get_user_by_email(email,tempConn)
+    unikDAO.delete_unik_by_iduser(user.iduser,tempConn)
+    unikDAO.insert_unik(user.iduser,unik,"password",tempConn)
     send_reset_pw_email("http://"+str(DefaultConfig.SERVER_IP)+":"+str(DefaultConfig.SERVER_PORT)+"/reset/password/"+unik,email)
     return redirect(url_for('login_landing'))
+
+
 
 @app.route("/register", methods=['GET', 'POST'])
 def registration():
@@ -250,17 +257,10 @@ def registration():
             successFlag = False
             logger.warning(email+" tried to register with a common password.",
                            extra={'ip': request.remote_addr})
-        nameRegex = "(^[\w\s]{1,}[\w\s]{1,}$)"
-        namePat = re.compile(nameRegex)
-        emailRegex = "^(([^<>()\[\]\\.,;:\s@\"]+(\.[^<>()\[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$"
-        emailPat = re.compile(emailRegex)
-        passwordRegex = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-_]).{8,}$"
-        passwordPat = re.compile(passwordRegex)
-        email_matched = re.search(emailPat, email)
-        fname_matched = re.search(namePat, fname)
-        lname_matched = re.search(namePat, lname)
-        password_matched = re.search(
-            passwordPat, password)
+        email_matched = check_email(email)
+        fname_matched = check_name(fname)
+        lname_matched = check_name(lname)
+        password_matched = check_password(password)
         if not email_matched:
             flash('Please enter a valid email', 'register')
             successFlag = False
@@ -278,7 +278,7 @@ def registration():
                 successFlag = False
                 flash('Password must contain minimum 8 characters, with 1 uppercase, 1 lowercase, 1 digit & 1 special char', 'register')
 
-        if loginDAO.email_exist(email):
+        if loginDAO.email_exist(email,tempConn):
             successFlag = False
             flash('Email Already Exist', 'register')
             logger.info("Register failed because "+email +
@@ -294,7 +294,7 @@ def registration():
             user = User(fname, lname, email, password)
             logger.info("Information sufficient to register.",
                         extra={'ip': request.remote_addr})
-            loginDAO.signup(user)
+            loginDAO.signup(user,tempConn)
             tab = "log"
             iziMsg = "Account Successfully created!"
     else:
@@ -307,7 +307,7 @@ def registration():
 @login_required
 def reset_pw_send_email():
     result = loginDAO.request_reset_pw_email(
-        current_user.iduser, current_user.email)
+        current_user.iduser, current_user.email,tempConn)
     if result:
         return {'msg': 'Email sent to '+current_user.email}, 200
     else:
@@ -316,7 +316,7 @@ def reset_pw_send_email():
 
 @app.route('/reset/password/<unik>')
 def reset_pw_link(unik):
-    ret = unikDAO.search_unik(unik)
+    ret = unikDAO.search_unik(unik,tempConn)
     if ret:
         retMsg = ret['idunique_link']
         return render_template('account/reset_password_landing.html', unik=unik)
@@ -335,7 +335,7 @@ def reset_pw():
     passwordPat = re.compile(passwordRegex)
     pw_match = re.search(passwordPat, newPassword)
     if pw_match:
-        result = loginDAO.update_pw_from_unik(uniqueString, newPassword)
+        result = loginDAO.update_pw_from_unik(uniqueString, newPassword,tempConn)
         if result:
             msg = "Password updated!"
             return {'msg': msg}, 200
@@ -366,7 +366,7 @@ def addtocart():
         retdata = {'msg': 'You need to be logged in.'}
         return retdata, 400
 
-    if cartDAO.add_to_cart(userid, productid, quantity) > 0:
+    if cartDAO.add_to_cart(userid, productid, quantity,tempConn) > 0:
         retdata = {'msg': 'Successfully added to cart.'}
         return retdata, 200
     else:
@@ -409,7 +409,7 @@ def publish():
     # tempProd = Product_listing(title,desc,urlList,price,0) eventually replace the last 0 with iduser
     tempProd = Product_listing(
         title, desc, urlList, price, current_user.iduser, False, 100)
-    idprod = productDAO.publish_listing(tempProd)
+    idprod = productDAO.publish_listing(tempProd,tempConn)
     if idprod:
         logger.info(str(current_user.iduser)+":"+current_user.fname +
                     " has just published a product with id: "+str(idprod), extra={'ip': request.remote_addr})
@@ -425,7 +425,7 @@ def publish():
 @login_required
 def sell_dashboard():
     dashboard = {}
-    productList = productDAO.retrieve_dashboard_products(current_user.iduser)
+    productList = productDAO.retrieve_dashboard_products(current_user.iduser,tempConn)
     dashboard["lifetime_revenue"] = str.format("${:,.2f}", current_user.total_revenue)
     dashboard["prod_listed"] = len(productList)
     dashboard["star_rating_avg"] = 0
@@ -440,7 +440,7 @@ def checkout():
 
     ship_fee = 7
     cart = []
-    cartItems = cartDAO.retrieve_cart_items(current_user.iduser)
+    cartItems = cartDAO.retrieve_cart_items(current_user.iduser,tempConn)
     if len(cartItems) <= 0:
         return redirect('/')
     # calculating total price
@@ -455,15 +455,12 @@ def checkout():
 @app.route('/products/<randomString>/after_pay')
 @login_required
 def after_pay(randomString):
-    print(randomString)
-    res = transactionDAO.insert_transaction(current_user.iduser, randomString)
-    del_res = cartDAO.empty_cart(current_user.iduser)
+    res = transactionDAO.insert_transaction(current_user.iduser, randomString,tempConn)
+    del_res = cartDAO.empty_cart(current_user.iduser,tempConn)
     retmsg = "Thank you for purchasing!"
     if not res:
         logger.error("User {} attempted inserting transaction after paying, but not recorded ".format(current_user.iduser),
          extra={'ip': request.remote_addr})
-    else:
-        print(res)
     return redirect('/')
 
 
@@ -476,7 +473,7 @@ def logout():
 
 @login_manager.user_loader
 def load_user(iduser):
-    return loginDAO.getUser(iduser)
+    return loginDAO.getUser(iduser,tempConn)
 
 
 @login_manager.unauthorized_handler
@@ -496,12 +493,7 @@ def get_random_string(length):
     return result_str
 
 
-def isCommonPassword(password):
-    f = open(app.config['PASSWORD_COMMON_FILENAME'], "r")
-    for x in f:
-        if password in x:
-            return True
-    return False
+
 
 if __name__ == '__main__':
     app.secret_key = b'_5#y2L"4Q8z178s/\\n\xec]/'

@@ -167,8 +167,8 @@
                                                 <a href="#"><i class="fa fa-arrow-up"></i> back</a>
                                             </div>
                                             <div class="billing-btn">
-                                                <button id="section3-update-button-reset" type="submit">Reset
-                                                    Password</button>
+                                                <!-- <button id="section3-update-button-reset" type="submit">Reset
+                                                    Password</button> -->
                                                 <button id="section3-update-button" type="submit">Continue</button>
                                             </div>
                                         </div>
@@ -241,6 +241,9 @@
                 dataType: "json",
                 contentType: "application/json",
                 data: JSON.stringify(obj),
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('X-CSRFToken','{{csrf_token()}}');
+                },
                 success: function (data) {
                     // alert(data.msg)
                     iziToast.show({
@@ -323,6 +326,9 @@
                 dataType: "json",
                 contentType: "application/json",
                 data: JSON.stringify(obj),
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('X-CSRFToken','{{csrf_token()}}');
+                },
                 success: function (data) {
                     // alert(data.msg)
                     iziToast.show({
@@ -368,6 +374,9 @@
                 dataType: "json",
                 contentType: "application/json",
                 data: JSON.stringify(obj),
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('X-CSRFToken','{{csrf_token()}}');
+                },
                 success: function (data) {
                     // alert(data.msg)
                     iziToast.show({

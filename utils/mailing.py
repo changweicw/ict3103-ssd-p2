@@ -1,11 +1,11 @@
 import smtplib
 import ssl
 from string import Template
-from appConfig import DefaultConfig
+from utils.appConfig import DefaultConfig
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import asyncio
-from log_helper import *
+from utils.log_helper import *
 
 
 logger = prepareLogger(__name__, 'mailing.log', logging.Formatter(

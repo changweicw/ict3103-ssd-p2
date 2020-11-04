@@ -3,15 +3,14 @@ from models import User,Product_listing
 import logging
 from flask_mysqldb import MySQL
 from google.cloud import storage
-from log_helper import *
+from utils.log_helper import *
 from flask import Flask,current_app
 
 
 logger = prepareLogger(__name__,'db.log',logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
 
 class uniqueDAO:
-    def __init__(self,mysql):
-        self.mysql = mysql
+  
     
     # ------------------------------------------ 
     # Checking if unique link is valid
@@ -23,10 +22,10 @@ class uniqueDAO:
     #   [no None]  if success
     #   [None]  if failed
     # ------------------------------------------
-    def search_unik(self,unik):
+    def search_unik(self,unik,conn=None):
         query="Select * from unique_link where idunique_link = %s"
         try:
-            cur = self.mysql.connection.cursor()
+            cur = conn.cursor()
             cur.execute(query, (unik,))
             result = cur.fetchone()
             return result or None
@@ -45,12 +44,12 @@ class uniqueDAO:
     #   [no None]  if success
     #   [None]  if failed
     # ------------------------------------------
-    def insert_unik(self,iduser,unique,category):
+    def insert_unik(self,iduser,unique,category,conn=None):
         query = "insert into unique_link (fk_iduser,idunique_link,category) values (%s,%s,%s)"
         try:
-            cur = self.mysql.connection.cursor()
+            cur = conn.cursor()
             result = cur.execute(query, (iduser,unique,category))
-            self.mysql.connection.commit()
+            conn.commit()
             return result
         except Exception as e:
             logger.error("User "+str(iduser)+ " encountered an error while inserting unique link in "+__name__+":" +str(e))
@@ -66,12 +65,12 @@ class uniqueDAO:
     #   [no None]  if success
     #   [None]  if failed
     # ------------------------------------------
-    def delete_unik_by_iduser(self,iduser):
+    def delete_unik_by_iduser(self,iduser,conn=None):
         query = "delete from unique_link where fk_iduser = %s"
         try:
-            cur = self.mysql.connection.cursor()
+            cur = conn.cursor()
             result=cur.execute(query, (iduser,))
-            self.mysql.connection.commit()
+            conn.commit()
             return result
         except Exception as e:
             logger.error("User "+str(iduser)+ " encountered an error while deleting unque link by user id in "+__name__+":" +str(e))
@@ -87,10 +86,10 @@ class uniqueDAO:
     #   [no None]  if success
     #   [None]  if failed
     # ------------------------------------------
-    def delete_unik_by_string(self,string):
+    def delete_unik_by_string(self,string,conn=None):
         query = "delete from unique_link where idunique_link = %s"
         try:
-            cur = self.mysql.connection.cursor()
+            cur = conn.cursor()
             result=cur.execute(query, (string,))
             self.mysql.connection.commit()
             return result
