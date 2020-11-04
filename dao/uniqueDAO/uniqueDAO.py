@@ -3,7 +3,7 @@ from models import User,Product_listing
 import logging
 from flask_mysqldb import MySQL
 from google.cloud import storage
-from log_helper import *
+from utils.log_helper import *
 from flask import Flask,current_app
 
 

@@ -1,9 +1,9 @@
 from models import User,Product_listing
 import logging
-from bcrypt_hashing import encrypt_password, password_validator
+from utils.bcrypt_hashing import encrypt_password, password_validator
 from flask_mysqldb import MySQL
 from google.cloud import storage
-from log_helper import *
+from utils.log_helper import *
 from flask import Flask,current_app
 from dao.productDAO.productDAO import productDAO
 import models

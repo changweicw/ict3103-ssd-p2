@@ -6,19 +6,20 @@ from flask_wtf.csrf import CSRFError
 from wtforms import StringField, FileField, DecimalField
 from werkzeug.utils import secure_filename
 from models import User, Product_listing
-from appConfig import DefaultConfig
+from utils.appConfig import DefaultConfig
 from dao.loginDAO.loginDAO import loginDAO
 from dao.productDAO.productDAO import productDAO
 from dao.cartDAO.cartDAO import cartDAO
 from dao.uniqueDAO.uniqueDAO import uniqueDAO
 from dao.transactionDAO.transactionDAO import transactionDAO
-from wtform import *
+from utils.wtform import *
 from google.cloud import storage
-from cloudstore_utils import cloudstore_utils as csutils
-from mailing import *
-from log_helper import *
+from utils.cloudstore_utils import cloudstore_utils as csutils
+from utils.mailing import *
+from utils.log_helper import *
 from base64 import b64decode
 from datetime import datetime, timedelta
+from utils.funcs import *
 
 import string
 import random
@@ -120,7 +121,6 @@ def landing():
     session['title'] = "Collaboratory Mall"
     cartItems = []
     cartTotal = 0.0
-    loginDAO.check_valid_login_credentials("clone_zone@hotmail.com","_Pass1234",tempConn)
     if current_user.is_authenticated:
         products = productDAO.retrieve_all_products(current_user.iduser,tempConn)
         cartItems = cartDAO.retrieve_cart_items(current_user.iduser,tempConn)
@@ -164,22 +164,23 @@ def account_update():
 
     if 'email' in j:
         ret_email = loginDAO.update_email(current_user.iduser, j['email'],tempConn)
-        retString = retString + "Error saving email" if not ret_email else ""
+        retString = retString + "Error saving email." if not ret_email else ""
 
     if 'address' in j:
         ret_add = loginDAO.update_address(current_user.iduser, j['address'],tempConn)
-        retString = retString + "Error saving address" if not ret_add else ""
+        retString = retString + "Error saving address." if not ret_add else ""
 
     if 'currentpw' in j and 'newpw' in j:
-        passwordRegex = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-_]).{8,}$"
-        passwordPat = re.compile(passwordRegex)
-        pw_match = re.search(passwordPat, j['newpw'])
-        if not pw_match:
-            retString = "Password must contain minimum 8 characters, with 1 uppercase, 1 lowercase, 1 digit & 1 special char"
+        
+        if not check_password(j['newpw']):
+            retString = "Password must contain minimum 8 characters, with 1 uppercase, 1 lowercase, 1 digit & 1 special char."
         else:
             ret_pw_status, msg = loginDAO.update_pw(
                 current_user.iduser, j['currentpw'], j['newpw'],tempConn)
             retString = retString + msg if not ret_pw_status else ""
+    
+    if retString != "":
+        retString = retString + " Ensure fields are properly filled up."
  
     return {'msg': retString}, 200 if retString == "" else 400
 
@@ -236,6 +237,8 @@ def send_reset_email():
     send_reset_pw_email("http://"+str(DefaultConfig.SERVER_IP)+":"+str(DefaultConfig.SERVER_PORT)+"/reset/password/"+unik,email)
     return redirect(url_for('login_landing'))
 
+
+
 @app.route("/register", methods=['GET', 'POST'])
 def registration():
     login_form = LoginForm()
@@ -254,17 +257,10 @@ def registration():
             successFlag = False
             logger.warning(email+" tried to register with a common password.",
                            extra={'ip': request.remote_addr})
-        nameRegex = "(^[\w\s]{1,}[\w\s]{1,}$)"
-        namePat = re.compile(nameRegex)
-        emailRegex = "^(([^<>()\[\]\\.,;:\s@\"]+(\.[^<>()\[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$"
-        emailPat = re.compile(emailRegex)
-        passwordRegex = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-_]).{8,}$"
-        passwordPat = re.compile(passwordRegex)
-        email_matched = re.search(emailPat, email)
-        fname_matched = re.search(namePat, fname)
-        lname_matched = re.search(namePat, lname)
-        password_matched = re.search(
-            passwordPat, password)
+        email_matched = check_email(email)
+        fname_matched = check_name(fname)
+        lname_matched = check_name(lname)
+        password_matched = check_password(password)
         if not email_matched:
             flash('Please enter a valid email', 'register')
             successFlag = False
@@ -497,12 +493,7 @@ def get_random_string(length):
     return result_str
 
 
-def isCommonPassword(password):
-    f = open(app.config['PASSWORD_COMMON_FILENAME'], "r")
-    for x in f:
-        if password in x:
-            return True
-    return False
+
 
 if __name__ == '__main__':
     app.secret_key = b'_5#y2L"4Q8z178s/\\n\xec]/'

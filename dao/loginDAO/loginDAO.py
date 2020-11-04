@@ -1,17 +1,18 @@
 import string,random
-from mailing import *
+from utils.mailing import *
 from datetime import datetime
 from models import User,Product_listing
 import logging
-from bcrypt_hashing import encrypt_password, password_validator
+from utils.bcrypt_hashing import encrypt_password, password_validator
 from flask_mysqldb import MySQL
 from google.cloud import storage
-from log_helper import *
+from utils.log_helper import *
 from flask import Flask,current_app
 import models
 from dao.cartDAO.cartDAO import cartDAO
 from dao.uniqueDAO.uniqueDAO import uniqueDAO
 import math
+from utils.funcs import *
 
 
 logger = prepareLogger(__name__,'db.log',logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
@@ -256,6 +257,10 @@ class loginDAO:
     #   [None]  if failed
     # ------------------------------------------
     def signup(self, user,conn=None):
+        
+        if not check_password(user.password) or not check_name(user.fname) or not check_name(user.lname) or not check_email(user.email):
+            return None
+
         query_insert = "INSERT INTO user (fname,lname,email,password,total_revenue,rating_avg,password_change_date,incorrect_login_count,user_join_date,removed) "
         query_insert = query_insert + "VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
         try:
@@ -273,19 +278,7 @@ class loginDAO:
             return None
 
 
-    # ------------------------------------------ 
-    # testing module clean up user creation
-    # ------------------------------------------
-    def teardown_del_user(self,email="abc@hotmail.com",conn=None):
-        query = "delete from user where email = %s"
-        try:
-            cur = conn.cursor()
-            cur.execute(query,(email,))
-            conn.commit()
-            return True
-        except Exception as e:
-            pass
-        return None
+
     # ------------------------------------------ 
     # Starting an account lockout
     # ------------------------------------------
@@ -368,6 +361,8 @@ class loginDAO:
     # ------------------------------------------
     def update_email(self,iduser,email,conn=None):
         query_insert = "update user set email = %s where iduser = %s"
+        if not check_email(email):
+            return None
         try:
             cur = conn.cursor()
             cur.execute(query_insert,(email,iduser))
@@ -376,7 +371,7 @@ class loginDAO:
             return True
         except Exception as e:
             logger.error("User "+str(iduser)+ " encountered an error while updating email in "+__name__+":" +str(e))
-            return False
+            return None
 
     # ------------------------------------------ 
     # retrieving addres by user id
@@ -411,6 +406,9 @@ class loginDAO:
     #   [None]  if failed
     # ------------------------------------------
     def update_address(self,iduser,address,conn=None):
+        if not check_addr(address['line']) or not check_addr(address['unitno']) or not check_zipcode(address['zipcode']):
+            return None
+
         if self.get_address_by_id(iduser,conn):
             query = "update address set address_line = %s, unit_no=%s, zipcode=%s where iduser = %s"
         else:
@@ -617,4 +615,32 @@ class loginDAO:
             logger.error("Error getting random string in {}\n{}".format(__name__,e))
             return None
     
+        # ------------------------------------------ 
     
+    
+    # testing module clean up user creation
+    # ------------------------------------------
+    def teardown_del_user(self,email="abc@hotmail.com",conn=None):
+        query = "delete from user where email = %s"
+        try:
+            cur = conn.cursor()
+            cur.execute(query,(email,))
+            conn.commit()
+            return True
+        except Exception as e:
+            pass
+        return None
+
+    # ------------------------------------------ 
+    # testing module clean up address creation
+    # ------------------------------------------
+    def teardown_del_addr(self,iduser = -1,conn=None):
+        query = "delete from address where iduser = %s"
+        try:
+            cur = conn.cursor()
+            cur.execute(query,(iduser,))
+            conn.commit()
+            return True
+        except Exception as e:
+            pass
+        return None
