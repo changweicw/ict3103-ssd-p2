@@ -282,7 +282,7 @@ class loginDAO:
                                        user.rating, user.passwordChangeDate, user.incorrectLoginCount, user.userJoinDate, user.removed))
             conn.commit()
             logger.info("Register successful for "+user.fname)
-            self.insert_pw_history(cur.lastrowid,enPass,conn)
+            self.insert_pw_history(cur.lastrowid,user.password,conn)
             return True
         except Exception as e:
             logger.error("User "+str(user.iduser)+ " encountered an error while sign-ing up in "+__name__+":" +str(e))
