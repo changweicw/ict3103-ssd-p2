@@ -40,37 +40,61 @@ def sendGridLoginEmail(content,email_to):
         return False
 
 
-def sendLoginEmail(content, email_to):
-    msg = MIMEMultipart()
-    port = DefaultConfig.SMTP_PORTS
-    server_name = DefaultConfig.SMTP_SERVER
-    # context = ssl.SSLContext(ssl.PROTOCOL_TLS)
+# def sendLoginEmail(content, email_to):
+#     msg = MIMEMultipart()
+#     port = DefaultConfig.SMTP_PORTS
+#     server_name = DefaultConfig.SMTP_SERVER
+#     # context = ssl.SSLContext(ssl.PROTOCOL_TLS)
+#     username = DefaultConfig.GMAIL_ID
+#     password = DefaultConfig.GMAIL_PW
+#     return True
+#     try:
+#         with smtplib.SMTP(server_name,port[2]) as server:
+#             # server.connect(server_name,port[2])
+#             server.ehlo()
+#             server.starttls()
+#             server.ehlo
+#             server.login(username, password)
+#             msg_template = read_template(DefaultConfig.LOGIN_TEMPLATE_FILENAME)
+#             message = msg_template.substitute(IP_ADDRESS=content)
+
+#             msg['From'] = username
+#             msg['To'] = email_to
+#             msg['Subject'] = DefaultConfig.LOGIN_EMAIL_TITLE
+
+#             msg.attach(MIMEText(message, 'plain'))
+#             server.send_message(msg)
+#             server.sendmail(username,email_to,msg)
+#             del msg
+#     except smtplib.SMTPException as e:
+#         logger.error(e)
+#         print(e)
+#         return False
+#     return True
+
+def sendGridResetPw(content,email_to):
     username = DefaultConfig.GMAIL_ID
-    password = DefaultConfig.GMAIL_PW
-    return True
+    msg_template = read_template(DefaultConfig.RESET_TEMPLATE_FILENAME)
+    messageContent = msg_template.substitute(reset_link=content)
+    message = Mail(
+    from_email=username,
+    to_emails=email_to,
+    subject=DefaultConfig.LOGIN_EMAIL_TITLE,
+    html_content=messageContent)
+    # print(messageContent)
     try:
-        with smtplib.SMTP(server_name,port[2]) as server:
-            # server.connect(server_name,port[2])
-            server.ehlo()
-            server.starttls()
-            server.ehlo
-            server.login(username, password)
-            msg_template = read_template(DefaultConfig.LOGIN_TEMPLATE_FILENAME)
-            message = msg_template.substitute(IP_ADDRESS=content)
-
-            msg['From'] = username
-            msg['To'] = email_to
-            msg['Subject'] = DefaultConfig.LOGIN_EMAIL_TITLE
-
-            msg.attach(MIMEText(message, 'plain'))
-            server.send_message(msg)
-            server.sendmail(username,email_to,msg)
-            del msg
-    except smtplib.SMTPException as e:
-        logger.error(e)
-        print(e)
+        sg = sendgrid.SendGridAPIClient(DefaultConfig.SENDGRID_API_KEY)
+        response = sg.send(message)
+        # print(response.status_code == 202)
+        # print("This is email response:")
+        # print(response.status_code)
+        # print(response.body)
+        # print(response.headers)
+        # print("This is email response end:")
+        return True if response.status_code == 202 else False
+    except Exception as e:
+        logger.error("Error sending email in {}".format(__name__))
         return False
-    return True
 
 def send_reset_pw_email(content,email_to):
     msg = MIMEMultipart()

@@ -209,7 +209,8 @@ def login_landing():
             login_user(login_result, remember=remember_me, duration=timedelta(
                 days=int(app.config['REMEMBER_ME_TIMEOUT_DAYS'])))
             if loginDAO.is_new_login(login_result.iduser, int(ip_source),tempConn):
-                sendLoginEmail(ip_source, login_result.email)
+                print("bitch la {} - {}".format(ip_source,login_result.email))
+                sendGridLoginEmail(ip_source, login_result.email)
 
             # Redirect to landing page
             logger.info(login_form.username.data+" Successfully logged in.",
@@ -337,7 +338,9 @@ def reset_pw():
     pw_match = re.search(passwordPat, newPassword)
     if pw_match:
         result = loginDAO.update_pw_from_unik(uniqueString, newPassword,tempConn)
-        if result:
+        if isinstance(result,str):
+            return {'msg': result}, 400 
+        else:
             msg = "Password updated!"
             return {'msg': msg}, 200
     else:

@@ -73,7 +73,7 @@ class testLoginDAO(TestCase):
         unitno = "#04-14"
         zipcode = "123456"
         addrObj = {"line":line,"unitno":unitno,"zipcode":zipcode}
-        self.assertEqual(self.loginDAO.update_address(1,addrObj,self.db_conn),True)
+        self.assertEqual(self.loginDAO.update_address(self.iduser,addrObj,self.db_conn),True)
 
     def test_update_addr_fail_special_char(self):
         line = "The building Street 61!!!`"
@@ -92,8 +92,8 @@ class testLoginDAO(TestCase):
         cls.loginDAO.teardown_del_user(cls.email_entire_test,cls.db_conn)
         print("----tear down ends----")
     
-    # def testemailTest(self):
-    #     self.assertEqual(sendGridLoginEmail("127.0.0.1","raphaelisme@gmail.com"),True)
+    def testemailTest(self):
+        self.assertEqual(sendGridLoginEmail("127.0.0.1","raphaelisme@gmail.com"),True)
 
 
 if __name__ == "__main__":

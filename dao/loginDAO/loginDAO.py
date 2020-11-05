@@ -155,7 +155,7 @@ class loginDAO:
             cur.execute(query, (email,))
             result = cur.fetchone()
             if not result:
-                return None
+                return "Your username or password is incorrect or you do not have an account with us."
             u = models.User(result['fname'],result['lname'],result['email'], 
             result['password'],result['total_revenue'],result['rating_avg'],result['password_change_date'],result['incorrect_login_count'],result['user_join_date'],result['removed'],result['iduser'])
             
@@ -198,7 +198,7 @@ class loginDAO:
         unik=self.get_random_string(45)
         self.unikDAO.delete_unik_by_iduser(iduser,conn)
         self.unikDAO.insert_unik(iduser,unik,"password",conn)
-        send_reset_pw_email("http://"+str(DefaultConfig.SERVER_IP)+":"+str(DefaultConfig.SERVER_PORT)+"/reset/password/"+unik,email)
+        sendGridResetPw("http://"+str(DefaultConfig.SERVER_IP)+":"+str(DefaultConfig.SERVER_PORT)+"/reset/password/"+unik,email)
         return True
 
     # ------------------------------------------ 
@@ -282,7 +282,7 @@ class loginDAO:
                                        user.rating, user.passwordChangeDate, user.incorrectLoginCount, user.userJoinDate, user.removed))
             conn.commit()
             logger.info("Register successful for "+user.fname)
-
+            self.insert_pw_history(cur.lastrowid,enPass,conn)
             return True
         except Exception as e:
             logger.error("User "+str(user.iduser)+ " encountered an error while sign-ing up in "+__name__+":" +str(e))
@@ -419,7 +419,6 @@ class loginDAO:
     def update_address(self,iduser,address,conn=None):
         if not check_addr(address['line']) or not check_addr(address['unitno']) or not check_zipcode(address['zipcode']):
             return None
-
         if self.get_address_by_id(iduser,conn):
             query = "update address set address_line = %s, unit_no=%s, zipcode=%s where iduser = %s"
         else:
@@ -466,18 +465,22 @@ class loginDAO:
     #   [tuple of (True, msg string)]  if success
     #   [tuple of (None, msg string)]  if failed
     # ------------------------------------------
-    def update_pw(self,iduser,currentpw,newpw,conn=None):
+    def update_pw(self,iduser,currentpw="",newpw="",conn=None):
         query_select = "select * from user where iduser = %s"
         query_update = "update user set password = %s where iduser = %s"
         try:
             cur = conn.cursor()
             cur.execute(query_select,(iduser,))
             user = cur.fetchone()
-            if not password_validator(currentpw,user['password']):
-                logger.warning("User "+str(iduser)+" tried to change their password with a wrong current password")
-                return None,"wrong current password"
+            if currentpw:
+                if not password_validator(currentpw,user['password']):
+                    logger.warning("User "+str(iduser)+" tried to change their password with a wrong current password")
+                    return None,"wrong current password"
 
-            pw_hist = self.retrieve_pw_history(iduser)
+            if password_validator(newpw,user['password']):
+                logger.warning("User "+str(iduser)+" tried to change their password to the current password")
+                return None,"You cannot use your current password"
+            pw_hist = self.retrieve_pw_history(iduser,conn)
 
             if len(pw_hist)>5:
                 self.delete_one_earliest_pw_history(iduser,conn)
@@ -493,6 +496,7 @@ class loginDAO:
             self.update_pw_change_date(iduser,conn)
 
             logger.info("User "+str(iduser)+" updated their password")
+            self.unikDAO.delete_unik_by_iduser(iduser,conn)
             return True,"Successfully updated"
         except Exception as e:
             logger.error("User "+str(iduser)+ " encountered an error while updating password in "+__name__+":" +str(e))
@@ -513,13 +517,18 @@ class loginDAO:
         query = "update user set password = %s ,incorrect_login_count=0,password_change_date=%s\
             where iduser in (select fk_iduser from unique_link where idunique_link = %s)"
         query_delete = "delete from unique_link where idunique_link =  %s"
+        query_select = "select * from unique_link where idunique_link = %s"
         try:
+            
             cur = conn.cursor()
-            result = cur.execute(query,(encrypt_password(newPassword),datetime.now(),uniqueString))
-            result = cur.execute(query_delete,(uniqueString,))
-            self.unikDAO.delete_unik_by_string(uniqueString,conn)
+            cur.execute(query_select,(uniqueString,))
+            res = cur.fetchone()
+            res,msg = self.update_pw(res["fk_iduser"],newpw=newPassword,conn=conn)
+            # result = cur.execute(query,(encrypt_password(newPassword),datetime.now(),uniqueString))
+            # result = cur.execute(query_delete,(uniqueString,))
+            # self.unikDAO.delete_unik_by_string(uniqueString,conn)
             conn.commit()
-            return True if result else None
+            return True if res else msg
         except Exception as e:
             logger.warning("encountered an error while updating password from unique string in "+__name__+":" +str(e))
             return None

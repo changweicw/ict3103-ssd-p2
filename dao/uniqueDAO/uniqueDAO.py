@@ -91,7 +91,7 @@ class uniqueDAO:
         try:
             cur = conn.cursor()
             result=cur.execute(query, (string,))
-            self.mysql.connection.commit()
+            conn.commit()
             return result
         except Exception as e:
             logger.error("unique string: "+string+" encountered an error while deleting unique link by string in "+__name__+":" +str(e))
