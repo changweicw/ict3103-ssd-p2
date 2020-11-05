@@ -23,6 +23,17 @@ class loginDAO:
         self.cartDAO = cartDAO()
         self.unikDAO = uniqueDAO()
 
+    def is_valid_user(self,iduser = "-1",conn=None):
+        query = "select * from user where iduser = %s"
+        try:
+            cur = conn.cursor()
+            cur.execute(query,(iduser,))
+            results = cur.fetchone()
+            return True if results else False
+        except Exception as e:
+            logger.log("Validating iduser {} in {}".format(iduser,__name__))
+            return False
+
     # ------------------------------------------ 
     # Retrieve user 
     # ------------------------------------------
@@ -261,13 +272,13 @@ class loginDAO:
         if not check_password(user.password) or not check_name(user.fname) or not check_name(user.lname) or not check_email(user.email):
             return None
 
+
         query_insert = "INSERT INTO user (fname,lname,email,password,total_revenue,rating_avg,password_change_date,incorrect_login_count,user_join_date,removed) "
         query_insert = query_insert + "VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
         try:
             cur = conn.cursor()
             enPass = encrypt_password(user.password)
-
-            cur.execute(query_insert, (user.fname, user.lname, user.email, enPass, user.total_revenue,
+            res = cur.execute(query_insert, (user.fname, user.lname, user.email, enPass, user.total_revenue,
                                        user.rating, user.passwordChangeDate, user.incorrectLoginCount, user.userJoinDate, user.removed))
             conn.commit()
             logger.info("Register successful for "+user.fname)
@@ -365,7 +376,7 @@ class loginDAO:
             return None
         try:
             cur = conn.cursor()
-            cur.execute(query_insert,(email,iduser))
+            res = cur.execute(query_insert,(email,iduser))
             conn.commit()
             logger.info("User "+str(iduser)+" updated their email")
             return True

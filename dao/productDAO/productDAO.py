@@ -6,6 +6,7 @@ from google.cloud import storage
 from utils.log_helper import *
 from flask import Flask,current_app
 from flask_mysqldb import MySQL
+from utils.funcs import *
 
 logger = prepareLogger(__name__,'db.log',logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
 
@@ -24,6 +25,8 @@ class productDAO:
     #   [new product id (int)]  if success
     # ------------------------------------------
     def publish_listing(self,listing,conn=None):
+        if not isValidListing(listing):
+            return False
         lastid = 0
         query_insert_product = "INSERT INTO product_listing (name,price,iduser,removed,description,stock_count) VALUES (%s,%s,%s,%s,%s,%s)"
         cur = conn.cursor()
@@ -101,7 +104,7 @@ class productDAO:
     #       [product id], [name of product],
     #       [price], [user id of owner], [product description]
     # ------------------------------------------
-    def retrieve_dashboard_products(self,userid,conn=None):
+    def retrieve_dashboard_products(self,userid=-1,conn=None):
         items=[]
         query_select = "SELECT * FROM product_listing where iduser like %s"
         cur = conn.cursor()
@@ -141,3 +144,5 @@ class productDAO:
         except Exception as e:
             logger.error("Error retrieving all products in {}\n{}".format(__name__,e))
             return None
+    
+    

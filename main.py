@@ -121,6 +121,7 @@ def landing():
     session['title'] = "Collaboratory Mall"
     cartItems = []
     cartTotal = 0.0
+    # sendTestEmail("Hi")
     if current_user.is_authenticated:
         products = productDAO.retrieve_all_products(current_user.iduser,tempConn)
         cartItems = cartDAO.retrieve_cart_items(current_user.iduser,tempConn)

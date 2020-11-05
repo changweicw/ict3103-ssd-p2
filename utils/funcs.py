@@ -14,8 +14,9 @@ from utils.appConfig import DefaultConfig
 #   [False] if failed
 #   [True] if matched
 # ------------------------------------------
-def check_name(name):
-    nameRegex = "(^[\w\s]{1,}[\w\s]{1,}$)"
+def check_name(name,upperlimit = 45):
+    nameRegex = "(^[\w\s]{1,"+str(upperlimit)+"}[\w\s]{1,"+str(upperlimit)+"}$)"
+    # nameRegex = "(^[\w\s]{1,"+str(upperlimit)+"[\w\s]{1,"+str(upperlimit)+"}$)"
     pat = re.compile(nameRegex)
     return True if re.search(pat,name) else False
 
@@ -100,4 +101,37 @@ def isCommonPassword(password):
     for x in f:
         if password in x:
             return True
-    return False
+    return 
+
+def isValidURL(url):
+    urlRegex = "[a-zA-Z:\\/.]{1,10}.[a-zA-Z]{2,6}"
+    pat = re.compile(urlRegex)
+    return True if re.search(pat,url) else False
+
+def isPrice(price):
+    priceRegex = "^\d+(.\d{1,2})?$"
+    pat = re.compile(priceRegex)
+    
+    try:
+        return True if re.search(pat,str(price)) and price>0 else False
+    except Exception as e:
+        print(e)
+        return False
+
+def isValidDescription(desc):
+    descRegex = "^[a-zA-Z.!-@\/ ]{1,500}$"
+    pat = re.compile(descRegex)
+    return True if re.search(pat,desc) else False
+
+    
+def isValidListing(listing):
+    if not check_name(listing.name,upperlimit=100):
+        return False
+    if not isValidDescription(listing.description):
+        return False
+    if not isValidURL(listing.image_url[0]):
+        return False
+    if not isPrice(listing.price):
+        return False
+    return True
+    

@@ -1,5 +1,6 @@
 from unittest import TestCase,main
 from utils.funcs import *
+from utils.mailing import *
 from utils.bcrypt_hashing import *
 
 class testFuncs(TestCase):
@@ -59,3 +60,5 @@ class testFuncs(TestCase):
         entered_pw = "_Fail1234"
         pw_encrypted = encrypt_password(pw)
         self.assertEqual(password_validator(entered_pw,pw_encrypted),False)
+
+    
